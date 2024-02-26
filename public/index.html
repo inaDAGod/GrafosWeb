@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplicación de Grafos</title>
+  <link rel="stylesheet" type="text/css" href="../styles/styles.css">
+</head>
+<body>
+  <h1>Aplicación de Grafos</h1>
+
+  <!-- Contenedor para el lienzo y la matriz -->
+  <div id="contenedor">
+    <div id="lienzo"></div>
+    <div id="matriz"></div>
+  </div>
+
+  <!-- Botones y scripts -->
+  <button onclick="agregarNodo()">Agregar Nodo</button>
+  <button onclick="cambiarNombre()">Cambiar Nombre</button>
+  <button onclick="eliminarNodo()">Eliminar Nodo</button>
+  <button onclick="activarModoEliminarArista()">Eliminar Arista</button>
+  <button onclick="generarMatriz()">Generar Matriz de Adyacencia</button>
+
+  <script src="../scripts/script.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
+</body>
+</html>
