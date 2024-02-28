@@ -108,3 +108,15 @@ h1{
     padding: 20px;
 }
 
+.contactos td,th{
+    width: 33%;
+    padding: 15px;
+}
+.contactos{
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #FBAD41;
+    color: #473179;
+}
+
