@@ -88,4 +88,23 @@ h1{
     text-align: center;
     padding-bottom: 20px;
 }
+.contenido{
+    text-align: center;
+    padding-left: 270px;
+    padding-right: 270px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    
+}
+
+.contenido p,h2 {
+    padding: 20px;
+    text-align: justify;
+}
+.mitades td{
+    width: 50%;
+}
+.contenido img{
+    padding: 20px;
+}
 
