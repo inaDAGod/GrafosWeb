@@ -220,7 +220,14 @@ function limpiar(){
     inicializarGrafo();
 }
 
+//Pruebas
+function cambiarColorLienzo() {
+  const color = document.getElementById('colorSelector').value;
+  const lienzo = document.getElementById('lienzo');
+  lienzo.style.backgroundColor = color;
+}
 
+//fin prueba
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });
