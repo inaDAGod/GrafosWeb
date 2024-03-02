@@ -18,7 +18,7 @@ function inicializarGrafo() {
   // Eventos del grafo
   
   grafo.on('doubleClick', dobleClicEnArista);
-  grafo.on('click', eliminarAristaSeleccionada);
+
 }
 
 
@@ -53,17 +53,25 @@ function dobleClicEnArista(propiedades) {
   }
 }
 
-// Función para eliminar la arista seleccionada
-function eliminarAristaSeleccionada(propiedades) {
-    
-  if (modoEliminarArista) {
-    const aristaId = propiedades.edges[0];
-    if (aristaId !== undefined) {
-      eliminarArista(aristaId);
+// Función para activar o desactivar el modo de eliminar arista
+function eliminarAristaSeleccionada() {
+    if (modoEliminarArista) {
+        // Si el modo de eliminar arista está activado, desactívalo
+        modoEliminarArista = false;
+        grafo.off('click', eliminarArista);
+    } else {
+        // Si el modo de eliminar arista no está activado, actívalo
+        modoEliminarArista = true;
+        grafo.on('click', eliminarArista);
     }
-    modoEliminarArista = false;
-  }
 }
+
+// Función para eliminar una arista al hacer clic en ella
+function eliminarArista(event) {
+    const edgeId = event.edges[0]; // Obtener el ID de la arista clicada
+    aristasDataSet.remove({ id: edgeId }); // Eliminar la arista del dataset
+}
+
 
 function agregarAristaSeleccionada(){
     if(modoAgregarArista){
@@ -126,15 +134,8 @@ function eliminarNodo(event) {
 }
 
 // Función para eliminar una arista por su ID
-function eliminarArista(aristaId) {
-  aristasDataSet.remove({ id: aristaId });
-}
 
-// Función para activar el modo de eliminación de arista
-function activarModoEliminarArista() {
-  modoEliminarArista = true;
-  alert('Haz clic en la arista que deseas eliminar.');
-}
+
 
 // Función para generar la matriz de adyacencia
 function generarMatriz() {
