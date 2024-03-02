@@ -4,7 +4,7 @@ let aristasDataSet;
 let seleccionado;
 let modoEliminarArista = false;
 let modoAgregarNodo = false; 
-
+let modoAgregarArista = false;
 // Función para inicializar el grafo
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
@@ -15,12 +15,12 @@ function inicializarGrafo() {
   grafo = new vis.Network(lienzo, data, opciones);
 
   // Eventos del grafo
-  grafo.on('click', clicEnNodo);
+  
   grafo.on('doubleClick', dobleClicEnArista);
   grafo.on('click', eliminarAristaSeleccionada);
 }
 
-// Función para manejar el clic en un nodo
+
 function clicEnNodo(propiedades) {
   const { nodes } = propiedades;
   if (nodes.length > 0) {
@@ -28,17 +28,16 @@ function clicEnNodo(propiedades) {
       seleccionado = nodes[0];
     } else {
       if (seleccionado !== nodes[0]) {
-        // Se agrega una nueva arista
         aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
         seleccionado = undefined;
       } else {
-        // Conexión manual del nodo consigo mismo
         aristasDataSet.add({ from: seleccionado, to: seleccionado, arrows: 'to' });
         seleccionado = undefined;
       }
     }
   }
 }
+
 
 // Función para manejar el doble clic en una arista
 function dobleClicEnArista(propiedades) {
@@ -55,6 +54,7 @@ function dobleClicEnArista(propiedades) {
 
 // Función para eliminar la arista seleccionada
 function eliminarAristaSeleccionada(propiedades) {
+    
   if (modoEliminarArista) {
     const aristaId = propiedades.edges[0];
     if (aristaId !== undefined) {
@@ -64,17 +64,33 @@ function eliminarAristaSeleccionada(propiedades) {
   }
 }
 
-// Función para agregar un nodo al grafo
-// Función para agregar un nodo al grafo
-// Función para agregar un nodo al grafo
-function agregarNodo() {
-    modoAgregarNodo = true; 
+function agregarAristaSeleccionada(){
+    if(modoAgregarArista){
+        modoAgregarArista = false;
+        grafo.off('click', clicEnNodo);
+    }
+    else{
+        modoAgregarArista = true;
+        grafo.on('click', clicEnNodo);
+    }
     
-    grafo.once('click', function(event) {
-      nodosDataSet.add({ id: nodosDataSet.length + 1, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
-      modoAgregarNodo = false; 
-    });
-  }
+}
+
+function agregarNodoSeleccionado(){
+    if(modoAgregarNodo){
+        modoAgregarNodo = false;
+        grafo.off('click',agregarNodo);   
+    }
+    else{
+        modoAgregarNodo = true;
+        grafo.on('click',agregarNodo);  
+    }
+}
+
+function agregarNodo(event){
+    nodosDataSet.add({ id: nodosDataSet.length + 1, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+}
+
   
 
 // Función para cambiar el nombre de un nodo seleccionado
