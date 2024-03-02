@@ -7,6 +7,7 @@ let modoEliminarNodo = false;
 let modoAgregarNodo = false; 
 let modoAgregarArista = false;
 let btnActivos = 0;
+let dobleClicEnNodoManejado = false;
 // Función para inicializar el grafo
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
@@ -15,8 +16,12 @@ function inicializarGrafo() {
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
   const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
+
   
+  grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
+
+
 
 }
 
@@ -50,16 +55,35 @@ function clicEnNodo(propiedades) {
 
 
 
-function dobleClicEnArista(propiedades) {
-    grafo.off('click',eliminarArista);
-  const { edges } = propiedades;
-  if (edges.length > 0) {
-    const valor = prompt('Ingrese el valor para la conexión:', '');
-    if (valor !== null) {
-      aristasDataSet.update({ id: edges[0], label: valor });
+function dobleClicEnNodo(propiedades) {
+    const { nodes } = propiedades;
+    if (nodes.length > 0) {
+        const nodeId = nodes[0];
+        const nuevoNombre = prompt('Ingrese el nuevo nombre para el nodo:', nodosDataSet.get(nodeId).label);
+        if (nuevoNombre !== null) {
+            nodosDataSet.update({ id: nodeId, label: nuevoNombre });
+        }
+        dobleClicEnNodoManejado = true;
     }
-  }
 }
+
+
+function dobleClicEnArista(propiedades) {
+    if (dobleClicEnNodoManejado) {
+        dobleClicEnNodoManejado = false;
+        return;
+    }
+
+    const { edges } = propiedades;
+    if (edges.length > 0) {
+        const edgeId = edges[0];
+        const nuevoNombre = prompt('Ingrese el nuevo nombre para la arista:', aristasDataSet.get(edgeId).label);
+        if (nuevoNombre !== null) {
+            aristasDataSet.update({ id: edgeId, label: nuevoNombre });
+        }
+    }
+}
+
 
 
 function eliminarAristaSeleccionada() {
@@ -123,18 +147,7 @@ function agregarNodo(event){
 
   
 
-// Función para cambiar el nombre de un nodo seleccionado
-function cambiarNombre() {
-  if (seleccionado !== undefined) {
-    const nuevoNombre = prompt('Ingrese el nuevo nombre para el nodo:', seleccionado.label);
-    if (nuevoNombre !== null) {
-      nodosDataSet.update({ id: seleccionado, label: nuevoNombre });
-    }
-    seleccionado = undefined; // Esta línea establece que no hay ningún nodo seleccionado después de cambiar el nombre
-  } else {
-    alert('Por favor, seleccione un nodo primero.');
-  }
-}
+
 
 function eliminarNodoSeleccionado() {
     if (modoEliminarNodo) {
@@ -151,17 +164,17 @@ function eliminarNodoSeleccionado() {
     }
 }
 
-// Función para eliminar un nodo al hacer clic en él
+
 function eliminarNodo(event) {
-    const nodeId = event.nodes[0]; // Obtener el ID del nodo clicado
-    nodosDataSet.remove({ id: nodeId }); // Eliminar el nodo del dataset
+    const nodeId = event.nodes[0]; 
+    nodosDataSet.remove({ id: nodeId }); 
 }
 
-// Función para eliminar una arista por su ID
 
 
 
-// Función para generar la matriz de adyacencia
+
+
 function generarMatriz() {
   const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
   const matriz = [];
@@ -173,10 +186,9 @@ function generarMatriz() {
           (edge.from === nodo.id && edge.to === otroNodo.id)
       });
       if (conexion.length > 0) {
-        // Asignar valor numérico a la conexión
         fila.push(parseInt(conexion[0].label || 1));
       } else {
-        fila.push(0); // Sin conexión
+        fila.push(0); 
       }
     });
     matriz.push(fila);
@@ -184,18 +196,15 @@ function generarMatriz() {
   mostrarMatriz(nodos, matriz);
 }
 
-// Función para mostrar la matriz de adyacencia en el DOM
 function mostrarMatriz(nodos, matriz) {
   const contenedorMatriz = document.getElementById('matriz');
   let html = '<h2>Matriz de Adyacencia</h2>';
   html += '<table>';
-  // Encabezados de columna
   html += '<tr><th></th>';
   nodos.forEach((nodo, index) => {
     html += `<th>${nodo.label}</th>`;
   });
   html += '</tr>';
-  // Contenido de la matriz
   matriz.forEach((fila, index) => {
     html += `<tr><th>${nodos[index].label}</th>`;
     fila.forEach(valor => {
@@ -210,7 +219,8 @@ function mostrarMatriz(nodos, matriz) {
 function limpiar(){
     inicializarGrafo();
 }
-// Inicializar el grafo cuando se carga la página
+
+
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });
