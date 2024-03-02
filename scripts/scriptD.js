@@ -3,6 +3,7 @@ let nodosDataSet;
 let aristasDataSet;
 let seleccionado;
 let modoEliminarArista = false;
+let modoEliminarNodo = false;
 let modoAgregarNodo = false; 
 let modoAgregarArista = false;
 // Función para inicializar el grafo
@@ -106,15 +107,23 @@ function cambiarNombre() {
   }
 }
 
+function eliminarNodoSeleccionado() {
+    if (modoEliminarNodo) {
+        // Si el modo de eliminar nodo está activado, desactívalo
+        modoEliminarNodo = false;
+        grafo.off('click', eliminarNodo);
+    } else {
+        // Si el modo de eliminar nodo no está activado, actívalo
+        modoEliminarNodo = true;
+        grafo.on('click', eliminarNodo);
+    }
+}
 
-function eliminarNodo() {
-    alert('Dale click al nodo que deseas eliminar');
-    grafo.once('click', function(event) {
-      const nodeId = event.nodes[0]; 
-      nodosDataSet.remove({ id: nodeId }); 
-    });
-  }
-  
+// Función para eliminar un nodo al hacer clic en él
+function eliminarNodo(event) {
+    const nodeId = event.nodes[0]; // Obtener el ID del nodo clicado
+    nodosDataSet.remove({ id: nodeId }); // Eliminar el nodo del dataset
+}
 
 // Función para eliminar una arista por su ID
 function eliminarArista(aristaId) {
