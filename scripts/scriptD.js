@@ -173,6 +173,9 @@ function mostrarMatriz(nodos, matriz) {
   contenedorMatriz.innerHTML = html;
 }
 
+function limpiar(){
+    inicializarGrafo();
+}
 // Inicializar el grafo cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
