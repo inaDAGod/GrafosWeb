@@ -106,19 +106,15 @@ function cambiarNombre() {
   }
 }
 
-// Función para eliminar el nodo seleccionado
+
 function eliminarNodo() {
-  if (seleccionado !== undefined) {
-    nodosDataSet.remove({ id: seleccionado });
-    // Eliminar aristas relacionadas al nodo seleccionado
-    const aristas = aristasDataSet.get({ filter: function (item) { return item.from === seleccionado || item.to === seleccionado; } });
-    aristas.forEach(function (arista) {
-      aristasDataSet.remove({ id: arista.id });
+    alert('Dale click al nodo que deseas eliminar');
+    grafo.once('click', function(event) {
+      const nodeId = event.nodes[0]; 
+      nodosDataSet.remove({ id: nodeId }); 
     });
-  } else {
-    alert('Por favor, seleccione un nodo primero.');
   }
-}
+  
 
 // Función para eliminar una arista por su ID
 function eliminarArista(aristaId) {
