@@ -6,6 +6,7 @@ let modoEliminarArista = false;
 let modoEliminarNodo = false;
 let modoAgregarNodo = false; 
 let modoAgregarArista = false;
+let btnActivos = 0;
 // Función para inicializar el grafo
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
@@ -14,14 +15,22 @@ function inicializarGrafo() {
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
   const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
-
-  // Eventos del grafo
   
   grafo.on('doubleClick', dobleClicEnArista);
 
 }
 
-
+function desactivarBotones(){
+    grafo.off('click',eliminarArista);
+    modoEliminarArista = false;
+    grafo.off('click', eliminarNodo);
+    modoEliminarNodo = false;
+    grafo.off('click', clicEnNodo);
+    modoAgregarArista = false;
+    grafo.off('click',agregarNodo);  
+    modoAgregarNodo = false; 
+    btnActivos = 0;
+}
 function clicEnNodo(propiedades) {
   const { nodes } = propiedades;
   if (nodes.length > 0) {
@@ -40,45 +49,52 @@ function clicEnNodo(propiedades) {
 }
 
 
-// Función para manejar el doble clic en una arista
+
 function dobleClicEnArista(propiedades) {
+    grafo.off('click',eliminarArista);
   const { edges } = propiedades;
   if (edges.length > 0) {
-    // Se pide al usuario que ingrese un valor para la arista
     const valor = prompt('Ingrese el valor para la conexión:', '');
     if (valor !== null) {
-      // Se actualiza la arista con el valor ingresado
       aristasDataSet.update({ id: edges[0], label: valor });
     }
   }
 }
 
-// Función para activar o desactivar el modo de eliminar arista
+
 function eliminarAristaSeleccionada() {
     if (modoEliminarArista) {
-        // Si el modo de eliminar arista está activado, desactívalo
+        btnActivos--;
         modoEliminarArista = false;
         grafo.off('click', eliminarArista);
     } else {
-        // Si el modo de eliminar arista no está activado, actívalo
+        if(btnActivos > 0){
+            desactivarBotones();
+        }
+        btnActivos++;
         modoEliminarArista = true;
         grafo.on('click', eliminarArista);
     }
 }
 
-// Función para eliminar una arista al hacer clic en ella
+
 function eliminarArista(event) {
-    const edgeId = event.edges[0]; // Obtener el ID de la arista clicada
-    aristasDataSet.remove({ id: edgeId }); // Eliminar la arista del dataset
+    const edgeId = event.edges[0]; 
+    aristasDataSet.remove({ id: edgeId }); 
 }
 
 
 function agregarAristaSeleccionada(){
     if(modoAgregarArista){
+        btnActivos--;
         modoAgregarArista = false;
         grafo.off('click', clicEnNodo);
     }
     else{
+        if(btnActivos > 0){
+            desactivarBotones();
+        }
+        btnActivos++;
         modoAgregarArista = true;
         grafo.on('click', clicEnNodo);
     }
@@ -87,10 +103,15 @@ function agregarAristaSeleccionada(){
 
 function agregarNodoSeleccionado(){
     if(modoAgregarNodo){
+        btnActivos--;
         modoAgregarNodo = false;
         grafo.off('click',agregarNodo);   
     }
     else{
+        if(btnActivos > 0){
+            desactivarBotones();
+        }
+        btnActivos++;
         modoAgregarNodo = true;
         grafo.on('click',agregarNodo);  
     }
@@ -117,11 +138,14 @@ function cambiarNombre() {
 
 function eliminarNodoSeleccionado() {
     if (modoEliminarNodo) {
-        // Si el modo de eliminar nodo está activado, desactívalo
+        btnActivos--;
         modoEliminarNodo = false;
         grafo.off('click', eliminarNodo);
     } else {
-        // Si el modo de eliminar nodo no está activado, actívalo
+        if(btnActivos > 0){
+            desactivarBotones();
+        }
+        btnActivos++;
         modoEliminarNodo = true;
         grafo.on('click', eliminarNodo);
     }
