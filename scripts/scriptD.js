@@ -8,6 +8,7 @@ let modoAgregarNodo = false;
 let modoAgregarArista = false;
 let btnActivos = 0;
 let dobleClicEnNodoManejado = false;
+let ids = 0;
 // Función para inicializar el grafo
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
@@ -56,6 +57,7 @@ function clicEnNodo(propiedades) {
 
 
 function dobleClicEnNodo(propiedades) {
+    
     const { nodes } = propiedades;
     if (nodes.length > 0) {
         const nodeId = nodes[0];
@@ -142,7 +144,8 @@ function agregarNodoSeleccionado(){
 }
 
 function agregarNodo(event){
-    nodosDataSet.add({ id: nodosDataSet.length + 1, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+    nodosDataSet.add({ id: ids, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+    ids++;
 }
 
   
@@ -167,7 +170,13 @@ function eliminarNodoSeleccionado() {
 
 function eliminarNodo(event) {
     const nodeId = event.nodes[0]; 
-    nodosDataSet.remove({ id: nodeId }); 
+    const aristasAEliminar = aristasDataSet.get({ filter: item => item.from === nodeId || item.to === nodeId });
+    nodosDataSet.remove({ id: nodeId });
+    aristasAEliminar.forEach(arista => {
+        aristasDataSet.remove({ id: arista.id });
+    });
+
+    
 }
 
 
@@ -216,7 +225,7 @@ function mostrarMatriz(nodos, matriz) {
   contenedorMatriz.innerHTML = html;
 }
 
-function limpiar(){
+function limpiar(){ 
     inicializarGrafo();
 }
 
