@@ -80,8 +80,6 @@ function clicEnNodo(propiedades) {
   }
 }
 
-
-
 function dobleClicEnNodo(propiedades) {
     const { nodes } = propiedades;
     if (nodes.length > 0) {
@@ -207,15 +205,10 @@ function eliminarNodo(event) {
     nodosDataSet.remove({ id: nodeId }); 
 }
 
-
-
 function eliminarArista(event) {
     const edgeId = event.edges[0]; 
     aristasDataSet.remove({ id: edgeId }); 
 }
-
-
-
 
 
 function generarMatriz() {
