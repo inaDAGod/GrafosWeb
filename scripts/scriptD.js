@@ -30,7 +30,6 @@ function inicializarGrafo() {
 }
 
 function desactivarBotones(){
-<<<<<<< HEAD
   // Aquí desactivas todos los modos y ocultas el selector de color
   grafo.off('click',eliminarArista);
   modoEliminarArista = false;
@@ -46,21 +45,6 @@ function desactivarBotones(){
   // Ocultar selector de color
   const colorSelectorNode = document.getElementById('colorSelectorNode');
   colorSelectorNode.style.display = 'none';
-=======
-    grafo.off('click',eliminarArista);
-    modoEliminarArista = false;
-    grafo.off('click', eliminarNodo);
-    modoEliminarNodo = false;
-    grafo.off('click', clicEnNodo);
-    modoAgregarArista = false;
-    grafo.off('click', clicEnNodo2);
-    modoAgregarArista2 = false;
-    grafo.off('click',agregarNodo);  
-    modoAgregarNodo = false; 
-    grafo.off('click', cambiarColorNodo);
-    modoCambiarColorNodo = false;
-    btnActivos = 0;
->>>>>>> 52c408a165aa594228c22c065f1d0382a2462edc
 }
 function clicEnNodo(propiedades) {
   const { nodes } = propiedades;
