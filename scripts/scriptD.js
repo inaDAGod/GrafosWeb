@@ -148,7 +148,7 @@ function agregarNodoSeleccionado(){
 }
 
 function agregarNodo(event){
-    nodosDataSet.add({ id: ids, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+    nodosDataSet.add({ id: ids, label: 'Nodo ' + (ids + 1 ), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
     ids++;
 }
 
