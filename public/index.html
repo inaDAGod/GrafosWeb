@@ -16,13 +16,22 @@
   </div>
 
   <!-- Botones y scripts -->
-  <button onclick="agregarNodo()">Agregar Nodo</button>
-  <button onclick="cambiarNombre()">Cambiar Nombre</button>
-  <button onclick="eliminarNodo()">Eliminar Nodo</button>
-  <button onclick="activarModoEliminarArista()">Eliminar Arista</button>
+  <button onclick="agregarNodoSeleccionado()">Agregar Nodo</button>
+  <button onclick="agregarAristaSeleccionada()">Agregar arista direccionada</button>
+  <button onclick="agregarAristaSeleccionada2()">de ida y vuelta</button>
+  <button onclick="eliminarNodoSeleccionado()">Eliminar Nodo</button>
+  <button onclick="eliminarAristaSeleccionada()">Eliminar Arista</button>
   <button onclick="generarMatriz()">Generar Matriz de Adyacencia</button>
+  <button onclick=" limpiar()">Limpiar</button>
+  <button onclick="cambiarColorNodoSeleccionado()">Cambiar Color Nodo</button>
+  <input type="color" id="colorSelectorNode" style="display: none;" onchange="cambiarColorNodo(event)">
 
-  <script src="../scripts/script.js" defer></script>
+  <div id="colorPicker">
+    <label for="colorSelector">Cambiar Color Lienzo:</label>
+    <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()">
+  </div>
+
+  <script src="../scripts/scriptD.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
 </body>
 </html>
