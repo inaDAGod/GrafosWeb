@@ -6,6 +6,7 @@ let modoEliminarArista = false;
 let modoEliminarNodo = false;
 let modoAgregarNodo = false; 
 let modoAgregarArista = false;
+let modoAgregarArista2 = false;
 let btnActivos = 0;
 let dobleClicEnNodoManejado = false;
 let ids = 0;
@@ -35,6 +36,8 @@ function desactivarBotones(){
     modoEliminarNodo = false;
     grafo.off('click', clicEnNodo);
     modoAgregarArista = false;
+    grafo.off('click', clicEnNodo2);
+    modoAgregarArista2 = false;
     grafo.off('click',agregarNodo);  
     modoAgregarNodo = false; 
     grafo.off('click', cambiarColorNodo);
@@ -57,6 +60,26 @@ function clicEnNodo(propiedades) {
     }
   }
 }
+
+function clicEnNodo2(propiedades) {
+  const { nodes } = propiedades;
+  if (nodes.length > 0) {
+    if (seleccionado === undefined) {
+      seleccionado = nodes[0];
+    } else {
+      if (seleccionado !== nodes[0]) {
+        aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
+        aristasDataSet.add({ from: nodes[0], to: seleccionado, arrows: 'to' });
+        seleccionado = undefined;
+      } else {
+        aristasDataSet.add({ from: seleccionado, to: seleccionado, arrows: 'to' });
+        seleccionado = undefined;
+      }
+    }
+  }
+}
+
+
 
 
 
@@ -131,6 +154,24 @@ function agregarAristaSeleccionada(){
     }
     
 }
+
+function agregarAristaSeleccionada2(){
+  if(modoAgregarArista2){
+      btnActivos--;
+      modoAgregarArista2 = false;
+      grafo.off('click', clicEnNodo2);
+  }
+  else{
+      if(btnActivos > 0){
+          desactivarBotones();
+      }
+      btnActivos++;
+      modoAgregarArista2 = true;
+      grafo.on('click', clicEnNodo2);
+  }
+  
+}
+
 
 function agregarNodoSeleccionado(){
     if(modoAgregarNodo){
