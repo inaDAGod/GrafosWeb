@@ -164,6 +164,8 @@ function agregarAristaSeleccionada(){
 }
 
 function agregarAristaSeleccionada2(){
+  toggleButton('edge2Button');
+  setActiveButton('edge2Button');
   if(modoAgregarArista2){
       btnActivos--;
       modoAgregarArista2 = false;
