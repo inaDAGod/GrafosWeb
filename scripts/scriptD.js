@@ -19,7 +19,7 @@ function inicializarGrafo() {
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
   const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
-
+  desactivarBotones();
   
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
@@ -189,6 +189,7 @@ function eliminarNodo(event) {
 
 
 function generarMatriz() {
+  desactivarBotones();
   const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
   const matriz = [];
   const matrizObj = {};
