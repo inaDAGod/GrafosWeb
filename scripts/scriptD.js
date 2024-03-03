@@ -6,10 +6,13 @@ let modoEliminarArista = false;
 let modoEliminarNodo = false;
 let modoAgregarNodo = false; 
 let modoAgregarArista = false;
+let modoAgregarArista2 = false;
 let btnActivos = 0;
 let dobleClicEnNodoManejado = false;
+let ids = 0;
 let modoCambiarColorNodo = false;
-// Función para inicializar el grafo
+
+
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
   nodosDataSet = new vis.DataSet();
@@ -17,8 +20,8 @@ function inicializarGrafo() {
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
   const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
-
-  
+  desactivarBotones();
+  ids = 0;
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
 
@@ -27,6 +30,7 @@ function inicializarGrafo() {
 }
 
 function desactivarBotones(){
+<<<<<<< HEAD
   // Aquí desactivas todos los modos y ocultas el selector de color
   grafo.off('click',eliminarArista);
   modoEliminarArista = false;
@@ -42,6 +46,21 @@ function desactivarBotones(){
   // Ocultar selector de color
   const colorSelectorNode = document.getElementById('colorSelectorNode');
   colorSelectorNode.style.display = 'none';
+=======
+    grafo.off('click',eliminarArista);
+    modoEliminarArista = false;
+    grafo.off('click', eliminarNodo);
+    modoEliminarNodo = false;
+    grafo.off('click', clicEnNodo);
+    modoAgregarArista = false;
+    grafo.off('click', clicEnNodo2);
+    modoAgregarArista2 = false;
+    grafo.off('click',agregarNodo);  
+    modoAgregarNodo = false; 
+    grafo.off('click', cambiarColorNodo);
+    modoCambiarColorNodo = false;
+    btnActivos = 0;
+>>>>>>> 52c408a165aa594228c22c065f1d0382a2462edc
 }
 function clicEnNodo(propiedades) {
   const { nodes } = propiedades;
@@ -60,9 +79,30 @@ function clicEnNodo(propiedades) {
   }
 }
 
+function clicEnNodo2(propiedades) {
+  const { nodes } = propiedades;
+  if (nodes.length > 0) {
+    if (seleccionado === undefined) {
+      seleccionado = nodes[0];
+    } else {
+      if (seleccionado !== nodes[0]) {
+        aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
+        aristasDataSet.add({ from: nodes[0], to: seleccionado, arrows: 'to' });
+        seleccionado = undefined;
+      } else {
+        aristasDataSet.add({ from: seleccionado, to: seleccionado, arrows: 'to' });
+        seleccionado = undefined;
+      }
+    }
+  }
+}
+
+
+
 
 
 function dobleClicEnNodo(propiedades) {
+  desactivarBotones();
     const { nodes } = propiedades;
     if (nodes.length > 0) {
         const nodeId = nodes[0];
@@ -76,6 +116,7 @@ function dobleClicEnNodo(propiedades) {
 
 
 function dobleClicEnArista(propiedades) {
+  desactivarBotones();
     if (dobleClicEnNodoManejado) {
         dobleClicEnNodoManejado = false;
         return;
@@ -132,6 +173,24 @@ function agregarAristaSeleccionada(){
     
 }
 
+function agregarAristaSeleccionada2(){
+  if(modoAgregarArista2){
+      btnActivos--;
+      modoAgregarArista2 = false;
+      grafo.off('click', clicEnNodo2);
+  }
+  else{
+      if(btnActivos > 0){
+          desactivarBotones();
+      }
+      btnActivos++;
+      modoAgregarArista2 = true;
+      grafo.on('click', clicEnNodo2);
+  }
+  
+}
+
+
 function agregarNodoSeleccionado(){
     if(modoAgregarNodo){
         btnActivos--;
@@ -149,7 +208,8 @@ function agregarNodoSeleccionado(){
 }
 
 function agregarNodo(event){
-    nodosDataSet.add({ id: nodosDataSet.length + 1, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+    nodosDataSet.add({ id: ids, label: 'Nodo ' + (ids + 1 ), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+    ids++;
 }
 
   
@@ -174,7 +234,13 @@ function eliminarNodoSeleccionado() {
 
 function eliminarNodo(event) {
     const nodeId = event.nodes[0]; 
-    nodosDataSet.remove({ id: nodeId }); 
+    const aristasAEliminar = aristasDataSet.get({ filter: item => item.from === nodeId || item.to === nodeId });
+    nodosDataSet.remove({ id: nodeId });
+    aristasAEliminar.forEach(arista => {
+        aristasDataSet.remove({ id: arista.id });
+    });
+
+    
 }
 
 
@@ -183,20 +249,22 @@ function eliminarNodo(event) {
 
 
 function generarMatriz() {
+  desactivarBotones();
   const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
   const matriz = [];
+  const matrizObj = {};
+  nodos.forEach(nodo => {
+    matrizObj[nodo.id] = {};
+  });
+  const aristasArr = aristasDataSet.get();
+  aristasArr.forEach((arista) => {
+    const value = parseInt(arista.label || 1);
+    matrizObj[arista.from][arista.to] = value;
+  });
   nodos.forEach(nodo => {
     const fila = [];
     nodos.forEach(otroNodo => {
-      const conexion = aristasDataSet.get({
-        filter: edge =>
-          (edge.from === nodo.id && edge.to === otroNodo.id)
-      });
-      if (conexion.length > 0) {
-        fila.push(parseInt(conexion[0].label || 1));
-      } else {
-        fila.push(0); 
-      }
+      fila.push(matrizObj[nodo.id][otroNodo.id] || 0); 
     });
     matriz.push(fila);
   });
@@ -204,26 +272,53 @@ function generarMatriz() {
 }
 
 function mostrarMatriz(nodos, matriz) {
+  
   const contenedorMatriz = document.getElementById('matriz');
+  if(nodos.length > 0){
   let html = '<h2>Matriz de Adyacencia</h2>';
+  let entradas=[];
   html += '<table>';
   html += '<tr><th></th>';
+  let columna = 0;
   nodos.forEach((nodo, index) => {
     html += `<th>${nodo.label}</th>`;
+    entradas[columna] = 0;
+    columna++;
   });
+  html += '<th>Grado de salida</th>';
   html += '</tr>';
+ 
   matriz.forEach((fila, index) => {
     html += `<tr><th>${nodos[index].label}</th>`;
+    let salidas = 0;
+    columna = 0;
     fila.forEach(valor => {
       html += `<td>${valor}</td>`;
+      if(valor != 0){
+        salidas++;
+        entradas[columna]++;
+      }
+      columna++;
     });
-    html += '</tr>';
+    
+    html += `<td>${salidas}</td>`;
   });
+  html += '</tr><th>Grado de Entrada</th>';
+  columna = 0;
+  entradas.forEach(element => {
+    html += `<td>${element}</td>`;
+    if(element > 0){
+      columna += element;
+    }
+  });
+  html += `<th>${columna}</th>`;
+  html += '<tr>'
   html += '</table>';
   contenedorMatriz.innerHTML = html;
+  }
 }
 
-function limpiar(){
+function limpiar(){ 
     inicializarGrafo();
 }
 
