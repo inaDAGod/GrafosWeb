@@ -212,29 +212,50 @@ function generarMatriz() {
 }
 
 function mostrarMatriz(nodos, matriz) {
+  
   const contenedorMatriz = document.getElementById('matriz');
+  if(nodos.length > 0){
   let html = '<h2>Matriz de Adyacencia</h2>';
+  let entradas=[];
   html += '<table>';
   html += '<tr><th></th>';
+  let columna = 0;
   nodos.forEach((nodo, index) => {
     html += `<th>${nodo.label}</th>`;
+    entradas[columna] = 0;
+    columna++;
   });
   html += '<th>Grado de salida</th>';
   html += '</tr>';
+ 
   matriz.forEach((fila, index) => {
     html += `<tr><th>${nodos[index].label}</th>`;
     let salidas = 0;
+    columna = 0;
     fila.forEach(valor => {
       html += `<td>${valor}</td>`;
       if(valor != 0){
         salidas++;
+        entradas[columna]++;
       }
+      columna++;
     });
+    
     html += `<td>${salidas}</td>`;
-    html += '</tr>';
   });
+  html += '</tr><th>Grado de Entrada</th>';
+  columna = 0;
+  entradas.forEach(element => {
+    html += `<td>${element}</td>`;
+    if(element > 0){
+      columna += element;
+    }
+  });
+  html += `<th>${columna}</th>`;
+  html += '<tr>'
   html += '</table>';
   contenedorMatriz.innerHTML = html;
+  }
 }
 
 function limpiar(){ 
