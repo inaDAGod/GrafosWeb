@@ -187,18 +187,19 @@ function eliminarNodo(event) {
 function generarMatriz() {
   const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
   const matriz = [];
+  const matrizObj = {};
+  nodos.forEach(nodo => {
+    matrizObj[nodo.id] = {};
+  });
+  const aristasArr = aristasDataSet.get();
+  aristasArr.forEach((arista) => {
+    const value = parseInt(arista.label || 1);
+    matrizObj[arista.from][arista.to] = value;
+  });
   nodos.forEach(nodo => {
     const fila = [];
     nodos.forEach(otroNodo => {
-      const conexion = aristasDataSet.get({
-        filter: edge =>
-          (edge.from === nodo.id && edge.to === otroNodo.id)
-      });
-      if (conexion.length > 0) {
-        fila.push(parseInt(conexion[0].label || 1));
-      } else {
-        fila.push(0); 
-      }
+      fila.push(matrizObj[nodo.id][otroNodo.id] || 0); 
     });
     matriz.push(fila);
   });
