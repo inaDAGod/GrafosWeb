@@ -1,9 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
 * {
     margin : 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Playfair Display" ;
+    font-family: "Inter" ;
 }
 body {
     min-height: 100vh;
@@ -96,13 +97,25 @@ h1{
     padding-bottom: 20px;
     
 }
-
+.contenido h4{
+    text-align: justify;
+    font-size: 20px;
+    padding-left: 20px;
+}
 .contenido p,h2 {
     padding: 20px;
     text-align: justify;
 }
 .mitades td{
     width: 50%;
+}
+
+.help td{
+    width: 25%;
+}
+.help {
+    text-align: center; 
+    margin: 0 auto;
 }
 .contenido img{
     padding: 20px;
