@@ -214,12 +214,18 @@ function mostrarMatriz(nodos, matriz) {
   nodos.forEach((nodo, index) => {
     html += `<th>${nodo.label}</th>`;
   });
+  html += '<th>Grado de salida</th>';
   html += '</tr>';
   matriz.forEach((fila, index) => {
     html += `<tr><th>${nodos[index].label}</th>`;
+    let salidas = 0;
     fila.forEach(valor => {
       html += `<td>${valor}</td>`;
+      if(valor != 0){
+        salidas++;
+      }
     });
+    html += `<td>${salidas}</td>`;
     html += '</tr>';
   });
   html += '</table>';
