@@ -4,7 +4,11 @@ let nodoSeleccionadoId = null;
 let buttonStates = {
     nodeButton: false,
     edgeButton: false,
+    edge2Button: false,
     deleteEdgeButton: false,
+    importButton: false,
+    exportButton: false,
+    saveButton: false,
     deleteNodeButton: false
 };
 function toggleButton(buttonId) {
