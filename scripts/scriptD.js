@@ -276,14 +276,8 @@ function eliminarNodoSeleccionado() {
 
 
 function eliminarNodo(event) {
-    const nodeId = event.nodes[0]; 
-    const aristasAEliminar = aristasDataSet.get({ filter: item => item.from === nodeId || item.to === nodeId });
-    nodosDataSet.remove({ id: nodeId });
-    aristasAEliminar.forEach(arista => {
-        aristasDataSet.remove({ id: arista.id });
-    });
-
-    
+  const nodeId = event.nodes[0]; 
+  nodosDataSet.remove({ id: nodeId }); 
 }
 
 
