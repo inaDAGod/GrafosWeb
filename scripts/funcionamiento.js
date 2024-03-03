@@ -11,9 +11,32 @@ let dobleClicEnNodoManejado = false;
 let modoCambiarColorNodo = false;
 let nodoSeleccionadoId = null;
 
+let buttonStates = {
+    nodeButton: false,
+    edgeButton: false,
+    deleteEdgeButton: false,
+    deleteNodeButton: false
+};
 function toggleButton(buttonId) {
     var button = document.getElementById(buttonId);
     button.classList.toggle('active'); // Toggle the 'active' class
+}
+function setActiveButton(buttonId) {
+    for (const key in buttonStates) {
+        if (key !== buttonId && buttonStates[key]) {
+            toggleButton(key);
+            buttonStates[key] = false;
+        }
+    }
+    buttonStates[buttonId] = !buttonStates[buttonId];
+}
+function desactivarBotones() {
+    for (const key in buttonStates) {
+        if (buttonStates[key]) {
+            toggleButton(key);
+            buttonStates[key] = false;
+        }
+    }
 }
 
 // Función para inicializar el grafo
@@ -99,31 +122,26 @@ function dobleClicEnArista(propiedades) {
     }
 }
 
-function eliminarAristaSeleccionada() {
-    toggleButton('deleteEdgeButton');
-    if (modoEliminarArista) {
+function agregarNodoSeleccionado(){
+    toggleButton('nodeButton');
+    setActiveButton('nodeButton');
+    if(modoAgregarNodo){
         btnActivos--;
-        modoEliminarArista = false;
-        grafo.off('click', eliminarArista);
-    } else {
+        modoAgregarNodo = false;
+        grafo.off('click',agregarNodo);   
+    }
+    else{
         if(btnActivos > 0){
             desactivarBotones();
         }
         btnActivos++;
-        modoEliminarArista = true;
-        grafo.on('click', eliminarArista);
+        modoAgregarNodo = true;
+        grafo.on('click',agregarNodo);  
     }
 }
-
-
-function eliminarArista(event) {
-    const edgeId = event.edges[0]; 
-    aristasDataSet.remove({ id: edgeId }); 
-}
-
-
 function agregarAristaSeleccionada(){
     toggleButton('edgeButton');
+    setActiveButton('edgeButton');
     if(modoAgregarArista){
         btnActivos--;
         modoAgregarArista = false;
@@ -140,33 +158,9 @@ function agregarAristaSeleccionada(){
     
 }
 
-function agregarNodoSeleccionado(){
-    toggleButton('nodeButton');
-    if(modoAgregarNodo){
-        btnActivos--;
-        modoAgregarNodo = false;
-        grafo.off('click',agregarNodo);   
-    }
-    else{
-        if(btnActivos > 0){
-            desactivarBotones();
-        }
-        btnActivos++;
-        modoAgregarNodo = true;
-        grafo.on('click',agregarNodo);  
-    }
-}
-
-function agregarNodo(event){
-    nodosDataSet.add({ id: nodosDataSet.length + 1, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
-}
-
-  
-
-
-
 function eliminarNodoSeleccionado() {
     toggleButton('deleteNodeButton');
+    setActiveButton('deleteNodeButton');
     if (modoEliminarNodo) {
         btnActivos--;
         modoEliminarNodo = false;
@@ -181,12 +175,44 @@ function eliminarNodoSeleccionado() {
     }
 }
 
+function eliminarAristaSeleccionada() {
+    toggleButton('deleteEdgeButton');
+    setActiveButton('deleteEdgeButton');
+    if (modoEliminarArista) {
+        btnActivos--;
+        modoEliminarArista = false;
+        grafo.off('click', eliminarArista);
+    } else {
+        if(btnActivos > 0){
+            desactivarBotones();
+        }
+        btnActivos++;
+        modoEliminarArista = true;
+        grafo.on('click', eliminarArista);
+    }
+}
+
+function agregarNodo(event){
+    nodosDataSet.add({ id: nodosDataSet.length + 1, label: 'Nodo ' + (nodosDataSet.length + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y });
+}
+
+  
+
+
+
+
 
 function eliminarNodo(event) {
     const nodeId = event.nodes[0]; 
     nodosDataSet.remove({ id: nodeId }); 
 }
 
+
+
+function eliminarArista(event) {
+    const edgeId = event.edges[0]; 
+    aristasDataSet.remove({ id: edgeId }); 
+}
 
 
 
