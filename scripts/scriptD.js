@@ -20,7 +20,7 @@ function inicializarGrafo() {
   const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
   desactivarBotones();
-  
+  ids = 0;
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
 
@@ -61,7 +61,7 @@ function clicEnNodo(propiedades) {
 
 
 function dobleClicEnNodo(propiedades) {
-    
+  desactivarBotones();
     const { nodes } = propiedades;
     if (nodes.length > 0) {
         const nodeId = nodes[0];
@@ -75,6 +75,7 @@ function dobleClicEnNodo(propiedades) {
 
 
 function dobleClicEnArista(propiedades) {
+  desactivarBotones();
     if (dobleClicEnNodoManejado) {
         dobleClicEnNodoManejado = false;
         return;
