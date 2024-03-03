@@ -14,17 +14,19 @@
                 <label for="colorSelector">Canvas color:</label>
                 <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()">
             </div>
-            <button class="boton" id="nodeButton" onclick="agregarNodoSeleccionado()" onclick= ><img src="assets/nodeicon.png" alt="Node Icon" width="20px" height="20px">Node</button>
-            <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()"><img src="assets/edgeicon.png" alt="Node Icon" width="20px" height="20px">Edge</button>
-            <button class="boton" onclick="generarMatriz()">Adjacency Matrix</button>
-            <button class="boton" id="deleteNodeButton" onclick="eliminarNodoSeleccionado()"><img src="assets/borrarNodo.png" alt="Node Icon" width="20px" height="20px"></button>
-            <button class="boton" id="deleteEdgeButton" onclick="eliminarAristaSeleccionada()"><img src="assets/borrarEdges.png" alt="Node Icon" width="20px" height="20px"></button>
+            <button class="boton" id="nodeButton" onclick="agregarNodoSeleccionado()" onclick= ><img src="assets/node.png" alt="Node Icon" width="35px" height="40px"></button>
+            <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()"><img src="assets/edge1.png" alt="Edge1 Icon" width="35px" height="40px"></button>
+            <button class="boton" id="edge2Button" onclick="agregarAristaSeleccionada2()"><img src="assets/edge2.png" alt="Edge2 Icon" width="35px" height="40px"></button>
+            <button class="boton" id="matrixButton" onclick="generarMatriz()">Adjacency Matrix</button>
+            <button class="boton" id="deleteNodeButton" onclick="eliminarNodoSeleccionado()"><img src="assets/borrarNodo.png" alt="deleteNode Icon" width="35px" height="40px"></button>
+            <button class="boton" id="deleteEdgeButton" onclick="eliminarAristaSeleccionada()"><img src="assets/borrarEdges.png" alt="deleteEdge Icon" width="35px" height="40px"></button>
             
-            <button class="boton" onclick="limpiar()">Clean all</button>
+            <button class="boton" onclick="limpiar()"><img src="assets/clean2.png" alt="Clean Icon" width="35px" height="50px"></button>
 
-            <button class="botonOtro" onclick="guardarComoImagen()">Save</button>
-            <button class="botonOtro" onclick="exportarAJSON()">Export</button>
-            <a href="help.html" style="margin-left: 10%; color: white; text-align: right;"><b>Help me</b></a>
+            <button class="botonOtro" id="saveButton" onclick="guardarComoImagen()">Save</button>
+            <button class="botonOtro" id="exportButton" onclick="exportarAJSON()">Export</button>
+            <button class="botonOtro" id="importButton" onclick="">Import</button>
+            <a href="help.html" style="margin-left: 5%; color: white; text-align: right;"><b>Help me</b></a>
         </div>
     </header>
     <div id="contenedor">
