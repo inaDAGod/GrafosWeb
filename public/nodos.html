@@ -7,21 +7,22 @@
     <title>GrafosWeb</title>
 </head>
 <body>
-    <header class="header" style="background-color: #78ACC1; height: 70px;">
+    <header class="header" style="background-color: #78ACC1; height: 100px;">
         <div class="logo">
             <a href="inicio.html" style="margin-right: 20px; color: white;"><b>Back</b></a>
             <div id="colorPicker">
                 <label for="colorSelector">Canvas color:</label>
                 <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()">
             </div>
-            <button class="boton" id="nodeButton" onclick="agregarNodoSeleccionado()" onclick= >Node</button>
-            <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()">Edge</button>
+            <button class="boton" id="nodeButton" onclick="agregarNodoSeleccionado()" onclick= ><img src="assets/nodeicon.png" alt="Node Icon" width="20px" height="20px" align-items: center;>Node</button>
+            <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()"><img src="assets/edgeicon.png" alt="Node Icon" width="20px" height="20px" align-items: center;>Edge</button>
             <button class="boton" onclick="generarMatriz()">Adjacency Matrix</button>
-            <button class="boton" id="deleteButton" onclick="eliminarAristaSeleccionada()">Delete</button>
+            <button class="boton" id="deleteNodeButton" onclick="eliminarAristaSeleccionada()"><img src="assets/deletenodeicon.png" alt="Node Icon" width="20px" height="20px">Delete Node</button>
+            <button class="boton" id="deleteEdgeButton" onclick="eliminarNodoSeleccionado()"><img src="assets/deleteedgeicon.png" alt="Node Icon" width="20px" height="20px">Delete Edge</button>
             
             <button class="boton" onclick="limpiar()">Clean all</button>
 
-            <button class="botonOtro" onclick="">Save</button>
+            <button class="botonOtro" onclick="guardarComoImagen()">Save</button>
             <button class="botonOtro" onclick="exportarAJSON()">Export</button>
             <a href="help.html" style="margin-left: 10%; color: white; text-align: right;"><b>Help me</b></a>
         </div>

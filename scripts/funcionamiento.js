@@ -100,7 +100,7 @@ function dobleClicEnArista(propiedades) {
 }
 
 function eliminarAristaSeleccionada() {
-    toggleButton('deleteButton');
+    toggleButton('deleteEdgeButton');
     if (modoEliminarArista) {
         btnActivos--;
         modoEliminarArista = false;
@@ -166,7 +166,7 @@ function agregarNodo(event){
 
 
 function eliminarNodoSeleccionado() {
-    toggleButton('deleteButton');
+    toggleButton('deleteNodeButton');
     if (modoEliminarNodo) {
         btnActivos--;
         modoEliminarNodo = false;
@@ -327,4 +327,3 @@ function exportarAJSON() {
     // Liberar los recursos del objeto URL
     URL.revokeObjectURL(url);
 }
-

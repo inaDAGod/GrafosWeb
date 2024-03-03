@@ -36,10 +36,10 @@ body {
     text-align: center;
     align-items: center;
     margin: 0 auto;
-    height: 50px;
+    height: 60px;
     background-color: #78ACC1; 
     color: #ffffff;
-    padding: 10px 35px; 
+    padding: 20px 35px; 
     font-size: 14px; 
     cursor: pointer;
     
@@ -48,7 +48,7 @@ body {
     text-align: right;
     align-items: center;
     margin: 0 auto;
-    height: 50px;
+    height: 60px;
     background-color: #FD918F; 
     color: #ffffff;
     padding: 10px 20px; 
