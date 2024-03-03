@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/tipo.css">
+    <title>GrafosWeb</title>
+</head>
+<body>
+    <header class="header" style="background-color: #78ACC1; height: 70px;">
+        <div class="logo">
+            <a href="inicio.html" style="margin-right: 20px; color: white;"><b>Back</b></a>
+            <div id="colorPicker">
+                <label for="colorSelector">Canvas color:</label>
+                <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()">
+            </div>
+            <button class="boton" id="nodeButton" onclick="agregarNodoSeleccionado()" onclick= >Node</button>
+            <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()">Edge</button>
+            <button class="boton" onclick="generarMatriz()">Adjacency Matrix</button>
+            <button class="boton" id="deleteButton" onclick="eliminarAristaSeleccionada()">Delete</button>
+            
+            <button class="boton" onclick="limpiar()">Clean all</button>
+
+            <button class="botonOtro" onclick="">Save</button>
+            <button class="botonOtro" onclick="">Export</button>
+            <a href="help.html" style="margin-left: 10%; color: white; text-align: right;"><b>Help me</b></a>
+        </div>
+    </header>
+    <div id="contenedor">
+        <div id="lienzo"></div>
+        <div id="matriz"></div>
+    </div>
+
+    <!-- Botones y scripts -->
+
+    <div id="menu" class="menu">
+        <ul>
+            <li><h3>Node tools</h3></li>
+            <input type="text" id="nombreNodo" placeholder="New node name">
+            <button onclick="cambiarColorNodoSeleccionado()">Node color</button>
+            <input type="color" id="colorSelectorNode" value="#ffffff" style="display: none;" onchange="cambiarColorNodo(event)">
+        </ul>
+    </div>
+
+    <script src="../scripts/funcionamiento.js" defer></script>
+    <script src="../scripts/herramientas.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
+</body>
+</html>
