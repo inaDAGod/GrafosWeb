@@ -140,15 +140,13 @@ function desactivarBotones() {
 }
 
 
-
-
 function dobleClicEnNodo(propiedades) {
-    const { nodes } = propiedades;
-    if (nodes.length > 0) {
-        const nodeId = nodes[0];
-        // Muestra las herramientas para editar el nodo
-        mostrarHerramientas(nodeId);
-    }
+  const { nodes } = propiedades;
+  if (nodes.length > 0) {
+      const nodeId = nodes[0];
+      // Muestra las herramientas para editar el nodo
+      mostrarHerramientas(nodeId);
+  }
 }
 
 
@@ -172,18 +170,20 @@ function dobleClicEnArista(propiedades) {
 
 
 function eliminarAristaSeleccionada() {
-    if (modoEliminarArista) {
-        btnActivos--;
-        modoEliminarArista = false;
-        grafo.off('click', eliminarArista);
-    } else {
-        if(btnActivos > 0){
-            desactivarBotones();
-        }
-        btnActivos++;
-        modoEliminarArista = true;
-        grafo.on('click', eliminarArista);
-    }
+  toggleButton('deleteEdgeButton');
+  setActiveButton('deleteEdgeButton');
+  if (modoEliminarArista) {
+      btnActivos--;
+      modoEliminarArista = false;
+      grafo.off('click', eliminarArista);
+  } else {
+      if(btnActivos > 0){
+          desactivarBotones();
+      }
+      btnActivos++;
+      modoEliminarArista = true;
+      grafo.on('click', eliminarArista);
+  }
 }
 
 
@@ -210,38 +210,42 @@ function agregarAristaSeleccionada(){
     
 }
 
-function agregarAristaSeleccionada2(){
-  if(modoAgregarArista2){
+function agregarAristaSeleccionada(){
+  toggleButton('edgeButton');
+  setActiveButton('edgeButton');
+  if(modoAgregarArista){
       btnActivos--;
-      modoAgregarArista2 = false;
-      grafo.off('click', clicEnNodo2);
+      modoAgregarArista = false;
+      grafo.off('click', clicEnNodo);
   }
   else{
       if(btnActivos > 0){
           desactivarBotones();
       }
       btnActivos++;
-      modoAgregarArista2 = true;
-      grafo.on('click', clicEnNodo2);
+      modoAgregarArista = true;
+      grafo.on('click', clicEnNodo);
   }
-  
+
 }
 
 
 function agregarNodoSeleccionado(){
-    if(modoAgregarNodo){
-        btnActivos--;
-        modoAgregarNodo = false;
-        grafo.off('click',agregarNodo);   
-    }
-    else{
-        if(btnActivos > 0){
-            desactivarBotones();
-        }
-        btnActivos++;
-        modoAgregarNodo = true;
-        grafo.on('click',agregarNodo);  
-    }
+  toggleButton('nodeButton');
+  setActiveButton('nodeButton');
+  if(modoAgregarNodo){
+      btnActivos--;
+      modoAgregarNodo = false;
+      grafo.off('click',agregarNodo);   
+  }
+  else{
+      if(btnActivos > 0){
+          desactivarBotones();
+      }
+      btnActivos++;
+      modoAgregarNodo = true;
+      grafo.on('click',agregarNodo);  
+  }
 }
 
 function agregarNodo(event){
@@ -254,18 +258,20 @@ function agregarNodo(event){
 
 
 function eliminarNodoSeleccionado() {
-    if (modoEliminarNodo) {
-        btnActivos--;
-        modoEliminarNodo = false;
-        grafo.off('click', eliminarNodo);
-    } else {
-        if(btnActivos > 0){
-            desactivarBotones();
-        }
-        btnActivos++;
-        modoEliminarNodo = true;
-        grafo.on('click', eliminarNodo);
-    }
+  toggleButton('deleteNodeButton');
+  setActiveButton('deleteNodeButton');
+  if (modoEliminarNodo) {
+      btnActivos--;
+      modoEliminarNodo = false;
+      grafo.off('click', eliminarNodo);
+  } else {
+      if(btnActivos > 0){
+          desactivarBotones();
+      }
+      btnActivos++;
+      modoEliminarNodo = true;
+      grafo.on('click', eliminarNodo);
+  }
 }
 
 
