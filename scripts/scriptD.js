@@ -9,7 +9,9 @@ let modoAgregarArista = false;
 let btnActivos = 0;
 let dobleClicEnNodoManejado = false;
 let ids = 0;
-// Función para inicializar el grafo
+let modoCambiarColorNodo = false;
+
+
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
   nodosDataSet = new vis.DataSet();
@@ -35,6 +37,8 @@ function desactivarBotones(){
     modoAgregarArista = false;
     grafo.off('click',agregarNodo);  
     modoAgregarNodo = false; 
+    grafo.off('click', cambiarColorNodo);
+    modoCambiarColorNodo = false;
     btnActivos = 0;
 }
 function clicEnNodo(propiedades) {
@@ -236,7 +240,52 @@ function limpiar(){
     inicializarGrafo();
 }
 
+//Pruebas
+function cambiarColorLienzo() {
+  const color = document.getElementById('colorSelector').value;
+  const lienzo = document.getElementById('lienzo');
+  lienzo.style.backgroundColor = color;
+}
+//Prueba color de nodo
+function cambiarColorNodoSeleccionado() {
+  const colorSelectorNode = document.getElementById('colorSelectorNode');
+  if (modoCambiarColorNodo) {
+      // Desactivar el modo de cambiar color del nodo
+      btnActivos--;
+      modoCambiarColorNodo = false;
+      grafo.off('click'); // Desactivar todos los eventos de clic en el grafo
+      colorSelectorNode.style.display = 'none'; // Ocultar el selector de color
+  } else {
+      if (btnActivos > 0) {
+          // Si hay otros botones activos, desactivarlos
+          desactivarBotones();
+      }
+      // Activar el modo de cambiar color del nodo
+      btnActivos++;
+      modoCambiarColorNodo = true;
+      grafo.on('click', function (event) {
+          const nodeId = event.nodes[0];
+          if (nodeId !== undefined) {
+              // Si se hizo clic en un nodo, cambiar su color
+              colorSelectorNode.style.display = 'inline-block'; // Mostrar el selector de color
+              colorSelectorNode.onchange = function () {
+                  const color = colorSelectorNode.value;
+                  nodosDataSet.update({ id: nodeId, color: { background: color, border: color } });
+                  colorSelectorNode.style.display = 'none'; // Ocultar el selector de color
+              };
+          }
+      });
+  }
+}
 
+function cambiarColorNodo(event) {
+  const nodeId = event.nodes[0];
+  const color = document.getElementById('colorSelectorNode').value;
+  // Cambiar el color del nodo
+  nodosDataSet.update({ id: nodeId, color: { background: color, border: color } });
+}
+
+//fin prueba
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });

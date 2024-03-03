@@ -22,6 +22,13 @@
   <button onclick="eliminarAristaSeleccionada()">Eliminar Arista</button>
   <button onclick="generarMatriz()">Generar Matriz de Adyacencia</button>
   <button onclick=" limpiar()">Limpiar</button>
+  <button onclick="cambiarColorNodoSeleccionado()">Cambiar Color Nodo</button>
+  <input type="color" id="colorSelectorNode" style="display: none;" onchange="cambiarColorNodo(event)">
+
+  <div id="colorPicker">
+    <label for="colorSelector">Cambiar Color Lienzo:</label>
+    <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()">
+  </div>
 
   <script src="../scripts/scriptD.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
