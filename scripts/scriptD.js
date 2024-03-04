@@ -21,7 +21,7 @@ function inicializarGrafo() {
   const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
   desactivarBotones();
-  desactivarBotones2()
+  desactivarBotones2();
   ids = 0;
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
@@ -486,6 +486,7 @@ function openColorPicker() {
 
 
 function guardarGrafo() {
+  
     const estadoGrafo = {
       nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
       aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
