@@ -10,6 +10,9 @@ let buttonStates = {
     importButton: false,
     exportButton: false,
     saveButton: false,
+    cargarArchivo: false,
+    descargar: false,
+    cleanAllButton: false,
     deleteNodeButton: false
 };
 function toggleButton(buttonId) {
@@ -159,10 +162,7 @@ function exportarAJSON() {
     // Liberar los recursos del objeto URL
     URL.revokeObjectURL(url);
 }
-function openColorPicker() {
-    var colorSelector = document.getElementById('colorSelector');
-    colorSelector.click(); // Simular clic en el input de color
-}
+
 
 //Prueba en importar y exportar archivos json
 // Función para guardar el estado del grafo como archivo JSON y permitir su descarga
