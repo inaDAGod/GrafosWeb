@@ -23,12 +23,7 @@
   <button onclick="eliminarAristaSeleccionada()">Eliminar Arista</button>
   <button onclick="generarMatriz()">Generar Matriz de Adyacencia</button>
   <button onclick=" limpiar()">Limpiar</button>
-<!-- Botón para guardar el estado del grafo como archivo JSON -->
-<a id="descargar" download="grafo.json"><button>Descargar Grafo</button></a>
-<!-- Control de entrada de archivo para cargar el estado del grafo desde un archivo JSON -->
-<input type="file" id="cargarArchivo" accept=".json">
-
-<button onclick="cambiarColorNodoSeleccionado()">Cambiar Color Nodo</button>
+  <button onclick="cambiarColorNodoSeleccionado()">Cambiar Color Nodo</button>
 <input type="color" id="colorSelectorNode" style="display: none;" onchange="cambiarColorNodo(event)">
 
   <div id="colorPicker">
