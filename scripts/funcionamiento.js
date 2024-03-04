@@ -161,11 +161,10 @@ function exportarAJSON() {
 }
 function openColorPicker() {
     var colorSelector = document.getElementById('colorSelector');
-    colorSelector.click(); // Simular clic en el input de color
+    colorSelector.click(); 
 }
 
-//Prueba en importar y exportar archivos json
-// Función para guardar el estado del grafo como archivo JSON y permitir su descarga
+
 function guardarGrafo() {
     const estadoGrafo = {
       nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
@@ -173,16 +172,16 @@ function guardarGrafo() {
     };
     const estadoJSON = JSON.stringify(estadoGrafo);
     
-    // Crear un objeto Blob con el JSON
+    
     const blob = new Blob([estadoJSON], { type: 'application/json' });
     
-    // Crear una URL del Blob y asignarla al enlace de descarga
+  
     const url = URL.createObjectURL(blob);
     const enlaceDescargar = document.getElementById('descargar');
     enlaceDescargar.href = url;
   }
   
-  // Función para cargar el estado del grafo desde un archivo JSON
+  
   function cargarGrafo(event) {
     const archivo = event.target.files[0];
     if (!archivo) return;
@@ -195,11 +194,10 @@ function guardarGrafo() {
     lector.readAsText(archivo);
   }
   
-  // Función para cargar el estado del grafo desde un objeto JSON
   function cargarGrafoDesdeJSON(estadoJSON) {
-    limpiar(); // Limpiar el grafo antes de cargar el nuevo estado
+    limpiar();
     const estadoGrafo = JSON.parse(estadoJSON);
-    // Agregar nodos al DataSet
+  
     estadoGrafo.nodos.forEach(nodo => {
       nodosDataSet.add({
         id: nodo.id,
@@ -209,7 +207,7 @@ function guardarGrafo() {
         color: nodo.color
       });
     });
-    // Agregar aristas al DataSet
+  
     estadoGrafo.aristas.forEach(arista => {
       aristasDataSet.add({
         id: arista.id,
@@ -218,20 +216,19 @@ function guardarGrafo() {
         label: arista.label
       });
     });
+  
   }
   
-  // Evento para escuchar cuando se selecciona un archivo para cargar
   function importarArchivo() {
     const inputCargar = document.getElementById('cargarArchivo');
+    inputCargar.value = ''; 
     inputCargar.click();
-}
-
-// Evento para escuchar cuando se selecciona un archivo para cargar
-const inputCargar = document.getElementById('cargarArchivo');
-inputCargar.addEventListener('change', cargarGrafo);
-
+  }
   
-  // Prueba de guardado (al hacer clic en el botón Descargar)
+  const inputCargar = document.getElementById('cargarArchivo');
+  inputCargar.addEventListener('change', cargarGrafo);
+  
+
   const btnDescargar = document.getElementById('descargar');
   btnDescargar.addEventListener('click', guardarGrafo);
 

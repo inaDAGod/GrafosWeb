@@ -321,6 +321,7 @@ function mostrarMatriz(nodos, matriz) {
 
 function limpiar(){ 
     inicializarGrafo();
+    
 }
 
 
