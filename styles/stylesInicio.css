@@ -116,6 +116,8 @@ h1{
 .help {
     text-align: center; 
     margin: 0 auto;
+    background-color:#61678B;
+    color: #DEDEEA;
 }
 .contenido img{
     padding: 20px;
