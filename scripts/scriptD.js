@@ -538,7 +538,6 @@ function cambiarColorNodoSeleccionado() {
                     nodoSeleccionadoId = null; 
                 };
 
-               
                 nodoSeleccionadoId = nodeId;
             }
         });
