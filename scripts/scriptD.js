@@ -182,7 +182,6 @@ function agregarAristaSeleccionada2(){
   
 }
 
-
 function agregarNodoSeleccionado(){
     toggleButton('nodeButton');
     setActiveButton('nodeButton');
@@ -227,7 +226,13 @@ function eliminarNodoSeleccionado() {
     }
 }
 
-
+function openColorPicker() {
+  var colorSelector = document.getElementById('colorSelector');
+  colorSelector.click(); // Simular clic en el input de color
+  const color = document.getElementById('colorSelector').value;
+  const lienzo = document.getElementById('lienzo');
+  lienzo.style.backgroundColor = color;
+}
 function eliminarNodo(event) {
     const nodeId = event.nodes[0]; 
     const aristasAEliminar = aristasDataSet.get({ filter: item => item.from === nodeId || item.to === nodeId });
