@@ -228,6 +228,8 @@ function eliminarNodoSeleccionado() {
 }
 
 function openColorPicker() {
+  desactivarBotones();
+  desactivarBotones2();
   var colorSelector = document.getElementById('colorSelector');
   colorSelector.click(); // Simular clic en el input de color
   const color = document.getElementById('colorSelector').value;
@@ -252,7 +254,7 @@ function eliminarNodo(event) {
 
 function generarMatriz() {
   desactivarBotones();
-  desactivarBotones2()
+  desactivarBotones2();
   const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
   const matriz = [];
   const matrizObj = {};
@@ -275,7 +277,8 @@ function generarMatriz() {
 }
 
 function mostrarMatriz(nodos, matriz) {
-  
+  desactivarBotones();
+  desactivarBotones2();
   const contenedorMatriz = document.getElementById('matriz');
   if(nodos.length > 0){
   let html = '<h2>Matriz de Adyacencia</h2>';
