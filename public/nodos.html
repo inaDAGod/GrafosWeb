@@ -14,7 +14,7 @@
                 
                     <img src="assets/canvasColor.png" alt="Canvas Color" width="55px" height="70px">
                 
-                 <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()">
+                 <input type="color" id="colorSelector" value="#ffffff" onchange="cambiarColorLienzo()" onclick="desactivarBotones(); desactivarBotones2() ">
             </div>
             <button class="boton" id="nodeButton" onclick="agregarNodoSeleccionado()" onclick= ><img src="assets/node.png" alt="Node Icon" width="55px" height="70px"></button>
             <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()"><img src="assets/edge1.png" alt="Edge1 Icon" width="55px" height="70px"></button>

@@ -148,7 +148,7 @@ function exportarAJSON() {
 }
 function openColorPicker() {
     desactivarBotones();
-  desactivarBotones2();
+    desactivarBotones2();
     var colorSelector = document.getElementById('colorSelector');
     colorSelector.click(); // Simular clic en el input de color
 }
@@ -156,7 +156,7 @@ function openColorPicker() {
 
 function guardarGrafo() {
     desactivarBotones();
-  desactivarBotones2();
+    desactivarBotones2();
     const estadoGrafo = {
       nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
       aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
@@ -186,7 +186,7 @@ function guardarGrafo() {
   
   function cargarGrafoDesdeJSON(estadoJSON) {
     desactivarBotones();
-  desactivarBotones2();
+    desactivarBotones2();
     limpiar();
     const estadoGrafo = JSON.parse(estadoJSON);
     let nodosIngresados = 0;
@@ -216,7 +216,7 @@ function guardarGrafo() {
   
   function importarArchivo() {
     desactivarBotones();
-  desactivarBotones2();
+    desactivarBotones2();
     const inputCargar = document.getElementById('cargarArchivo');
     inputCargar.value = ''; 
     inputCargar.click();
