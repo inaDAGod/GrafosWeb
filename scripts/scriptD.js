@@ -371,6 +371,12 @@ function desactivarBotones2() {
     }
 }
 
+function openHelpPage() {
+  // Especifica la URL de la página de ayuda
+  var helpPageURL = 'help.html';
+  // Abre una nueva ventana emergente
+  window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+}
 /*
 function dobleClicEnNodo(propiedades) {
     const { nodes } = propiedades;
