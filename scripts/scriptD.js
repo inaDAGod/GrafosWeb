@@ -450,32 +450,31 @@ function cambiarColorNodoSeleccionado() {
 
 
 function exportarAJSON() {
-    const nodos = nodosDataSet.get({ returnType: "Object" });
-    const aristas = aristasDataSet.get({ returnType: "Object" });
-    const aristasConFlechas = aristas.map(arista => {
-        return {
-            id: arista.id,
-            from: arista.from,
-            to: arista.to,
-            label: arista.label,
-            arrows: arista.arrows  
-        };
-    });
+  const nodos = nodosDataSet.get({ returnType: "Object" });
+  const aristas = aristasDataSet.get({ returnType: "Object" });
+  const aristasConFlechas = aristas.map(arista => {
+      return {
+          id: arista.id,
+          from: arista.from,
+          to: arista.to,
+          label: arista.label,
+          arrows: arista.arrows  
+      };
+  });
 
-    const informacion = {
-        nodos: nodos,
-        aristas: aristasConFlechas  
-    };
+  const informacion = {
+      nodos: nodos,
+      aristas: aristasConFlechas  
+  };
+  const informacionJSON = JSON.stringify(informacion, null, 2);
+  const blob = new Blob([informacionJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
 
-    const informacionJSON = JSON.stringify(informacion, null, 2);
-    const blob = new Blob([informacionJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement('a');
-    enlace.href = url;
-    enlace.download = 'informacion.json';
-    document.body.appendChild(enlace);
-    enlace.click();
-    URL.revokeObjectURL(url);
+  const enlace = document.createElement('a');
+  enlace.download = 'informacion.json';
+  enlace.href = url;
+  enlace.click();
+  URL.revokeObjectURL(url);
 }
 
 
@@ -486,17 +485,19 @@ function openColorPicker() {
 
 
 function guardarGrafo() {
-  
-    const estadoGrafo = {
+  const estadoGrafo = {
       nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
       aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
-    };
-    const estadoJSON = JSON.stringify(estadoGrafo);
-    
-    const blob = new Blob([estadoJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const enlaceDescargar = document.getElementById('descargar');
-    enlaceDescargar.href = url;
+  };
+  const estadoJSON = JSON.stringify(estadoGrafo);
+  const blob = new Blob([estadoJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const enlace = document.createElement('a');
+  enlace.download = 'grafoNodolandia.json';
+  enlace.href = url;
+  enlace.click();
+  URL.revokeObjectURL(url);
 }
   
   
