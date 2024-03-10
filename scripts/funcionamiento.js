@@ -66,9 +66,11 @@ function dobleClicEnArista(propiedades) {
 
 
 function cambiarColorLienzo() {
-  const color = document.getElementById('colorSelector').value;
-  const lienzo = document.getElementById('lienzo');
-  lienzo.style.backgroundColor = color;
+   desactivarBotones();
+   desactivarBotones2();
+   const color = document.getElementById('colorSelector').value;
+   const lienzo = document.getElementById('lienzo');
+   lienzo.style.backgroundColor = color;
 }
 
 function cambiarColorNodo(event) {
@@ -116,6 +118,7 @@ function cambiarColorNodoSeleccionado() {
 
 
 function exportarAJSON() {
+    desactivarBotones2();
     const nodos = nodosDataSet.get({ returnType: "Object" });
     const aristas = aristasDataSet.get({ returnType: "Object" });
     const aristasConFlechas = aristas.map(arista => {
@@ -144,12 +147,16 @@ function exportarAJSON() {
     URL.revokeObjectURL(url);
 }
 function openColorPicker() {
+    desactivarBotones();
+  desactivarBotones2();
     var colorSelector = document.getElementById('colorSelector');
     colorSelector.click(); // Simular clic en el input de color
 }
 
 
 function guardarGrafo() {
+    desactivarBotones();
+  desactivarBotones2();
     const estadoGrafo = {
       nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
       aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
@@ -164,6 +171,8 @@ function guardarGrafo() {
   
   
   function cargarGrafo(event) {
+    desactivarBotones();
+  desactivarBotones2();
     const archivo = event.target.files[0];
     if (!archivo) return;
   
@@ -176,6 +185,8 @@ function guardarGrafo() {
   }
   
   function cargarGrafoDesdeJSON(estadoJSON) {
+    desactivarBotones();
+  desactivarBotones2();
     limpiar();
     const estadoGrafo = JSON.parse(estadoJSON);
     let nodosIngresados = 0;
@@ -204,6 +215,8 @@ function guardarGrafo() {
 
   
   function importarArchivo() {
+    desactivarBotones();
+  desactivarBotones2();
     const inputCargar = document.getElementById('cargarArchivo');
     inputCargar.value = ''; 
     inputCargar.click();
