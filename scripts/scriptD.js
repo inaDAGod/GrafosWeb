@@ -494,20 +494,25 @@ function openColorPicker() {
 
 
 function guardarGrafo() {
-  const estadoGrafo = {
-      nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
-      aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
-  };
-  const estadoJSON = JSON.stringify(estadoGrafo);
-  const blob = new Blob([estadoJSON], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
+  let nombreArchivo = prompt("Por favor, ingrese el nombre del archivo:", "grafoNodolandia.json");
 
-  const enlace = document.createElement('a');
-  enlace.download = 'grafoNodolandia.json';
-  enlace.href = url;
-  enlace.click();
-  URL.revokeObjectURL(url);
+  if (nombreArchivo != null) {
+      let estadoGrafo = {
+          nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
+          aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] })
+      };
+      let estadoJSON = JSON.stringify(estadoGrafo);
+      let blob = new Blob([estadoJSON], { type: 'application/json' });
+      let url = URL.createObjectURL(blob);
+
+      let enlace = document.createElement('a');
+      enlace.download = nombreArchivo;
+      enlace.href = url;
+      enlace.click();
+      URL.revokeObjectURL(url);
+  }
 }
+
   
   
   function cargarGrafo(event) {

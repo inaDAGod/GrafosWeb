@@ -66,8 +66,6 @@ function dobleClicEnArista(propiedades) {
 
 
 function cambiarColorLienzo() {
-   desactivarBotones();
-   desactivarBotones2();
    const color = document.getElementById('colorSelector').value;
    const lienzo = document.getElementById('lienzo');
    lienzo.style.backgroundColor = color;
@@ -147,8 +145,6 @@ function exportarAJSON() {
     URL.revokeObjectURL(url);
 }
 function openColorPicker() {
-    desactivarBotones();
-    desactivarBotones2();
     var colorSelector = document.getElementById('colorSelector');
     colorSelector.click(); // Simular clic en el input de color
 }
