@@ -218,6 +218,8 @@ function eliminarNodoSeleccionado() {
 }
 
 function openColorPicker() {
+  desactivarBotones();
+  desactivarBotones2();
   var colorSelector = document.getElementById('colorSelector');
   colorSelector.click(); // Simular clic en el input de color
   const color = document.getElementById('colorSelector').value;
@@ -242,7 +244,7 @@ function eliminarNodo(event) {
 
 function generarMatriz() {
   desactivarBotones();
-  desactivarBotones2()
+  desactivarBotones2();
   const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
   const matriz = [];
   const matrizObj = {};
@@ -265,7 +267,8 @@ function generarMatriz() {
 }
 
 function mostrarMatriz(nodos, matriz) {
-  
+  desactivarBotones();
+  desactivarBotones2();
   const contenedorMatriz = document.getElementById('matriz');
   if(nodos.length > 0){
   let html = '<h2>Matriz de Adyacencia</h2>';
@@ -469,6 +472,12 @@ function desactivarBotones2() {
     }
 }
 
+function openHelpPage() {
+  // Especifica la URL de la página de ayuda
+  var helpPageURL = 'help.html';
+  // Abre una nueva ventana emergente
+  window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+}
 /*
 function dobleClicEnNodo(propiedades) {
     const { nodes } = propiedades;
@@ -547,32 +556,31 @@ function cambiarColorNodoSeleccionado() {
 
 
 function exportarAJSON() {
-    const nodos = nodosDataSet.get({ returnType: "Object" });
-    const aristas = aristasDataSet.get({ returnType: "Object" });
-    const aristasConFlechas = aristas.map(arista => {
-        return {
-            id: arista.id,
-            from: arista.from,
-            to: arista.to,
-            label: arista.label,
-            arrows: arista.arrows  
-        };
-    });
+  const nodos = nodosDataSet.get({ returnType: "Object" });
+  const aristas = aristasDataSet.get({ returnType: "Object" });
+  const aristasConFlechas = aristas.map(arista => {
+      return {
+          id: arista.id,
+          from: arista.from,
+          to: arista.to,
+          label: arista.label,
+          arrows: arista.arrows  
+      };
+  });
 
-    const informacion = {
-        nodos: nodos,
-        aristas: aristasConFlechas  
-    };
+  const informacion = {
+      nodos: nodos,
+      aristas: aristasConFlechas  
+  };
+  const informacionJSON = JSON.stringify(informacion, null, 2);
+  const blob = new Blob([informacionJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
 
-    const informacionJSON = JSON.stringify(informacion, null, 2);
-    const blob = new Blob([informacionJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement('a');
-    enlace.href = url;
-    enlace.download = 'informacion.json';
-    document.body.appendChild(enlace);
-    enlace.click();
-    URL.revokeObjectURL(url);
+  const enlace = document.createElement('a');
+  enlace.download = 'informacion.json';
+  enlace.href = url;
+  enlace.click();
+  URL.revokeObjectURL(url);
 }
 
 
@@ -583,18 +591,25 @@ function openColorPicker() {
 
 
 function guardarGrafo() {
-  
-    const estadoGrafo = {
-      nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
-      aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
-    };
-    const estadoJSON = JSON.stringify(estadoGrafo);
-    
-    const blob = new Blob([estadoJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const enlaceDescargar = document.getElementById('descargar');
-    enlaceDescargar.href = url;
+  let nombreArchivo = prompt("Por favor, ingrese el nombre del archivo:", "grafoNodolandia.json");
+
+  if (nombreArchivo != null) {
+      let estadoGrafo = {
+          nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
+          aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] })
+      };
+      let estadoJSON = JSON.stringify(estadoGrafo);
+      let blob = new Blob([estadoJSON], { type: 'application/json' });
+      let url = URL.createObjectURL(blob);
+
+      let enlace = document.createElement('a');
+      enlace.download = nombreArchivo;
+      enlace.href = url;
+      enlace.click();
+      URL.revokeObjectURL(url);
+  }
 }
+
   
   
   function cargarGrafo(event) {
