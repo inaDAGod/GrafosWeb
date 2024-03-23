@@ -88,3 +88,27 @@ function generarMatriz() {
     contenedorMatriz.innerHTML = html;
     }
   }
+
+  function getMatriz() {
+    desactivarBotones();
+    desactivarBotones2();
+    const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
+    const matriz = [];
+    const matrizObj = {};
+    nodos.forEach(nodo => {
+      matrizObj[nodo.id] = {};
+    });
+    const aristasArr = aristasDataSet.get();
+    aristasArr.forEach((arista) => {
+      const value = parseInt(arista.label || 1);
+      matrizObj[arista.from][arista.to] = value;
+    });
+    nodos.forEach(nodo => {
+      const fila = [];
+      nodos.forEach(otroNodo => {
+        fila.push(matrizObj[nodo.id][otroNodo.id] || 0); 
+      });
+      matriz.push(fila);
+    });
+    return matriz;
+  }

@@ -208,8 +208,6 @@ function agregarNodo(event){
 
   
 
-
-
 function eliminarNodoSeleccionado() {
     toggleButton('deleteNodeButton');
     setActiveButton('deleteNodeButton');
@@ -249,11 +247,6 @@ function eliminarNodo(event) {
 
 
 
-
-
-
-
-
 function limpiar(){  
     inicializarGrafo();
     
@@ -265,5 +258,3 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });
 
-
-//-------------------------------------------------------
