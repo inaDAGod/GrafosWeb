@@ -9,18 +9,18 @@
 <body>
     <header class="header">
         <a  class = "logo">
-            <button class="boton" onclick="window.location.href='nodos.html'" >Construir Grafo</button>
+            <button class="boton" onclick="window.location.href='johnsonGrafo.html'" >Resolver con  Johnson</button>
         </a>
         <nav class="navbar">
             <a href="index.html"><b>Inicio </b> | </a> 
             <a href="nosotros.html"><b>Sobre Nosotros </b> | </a> 
-            <a href="#" onclick="toggleMenu()"><b>Algoritmos</b></a>
+            <a href="#" onclick="toggleMenu()"><b>Menu</b></a>
         </nav>
     </header>
 
     <div id="menu" class="menu">
         <ul>
-            <li><a href="nodos.html">Contruir un grafo</a></li>
+            <li><a href="nodos.html">Contruir un grafo J</a></li>
             <li><h3>Menú de Algoritmos</h3></li>
             <li><a href="johnson.html">Algoritmo de Johnson</a></li>
             <li><a href="proceso.html">Algoritmo de Asignacion</a></li>
@@ -34,7 +34,11 @@
     <script src="../scripts/menu.js"></script>
     <h1>Algoritmo de <span style="color: #FBAD41;">Johnson</span></h1>
     <article class="contenido">
-
+        <iframe width="800" height="400" src="https://www.youtube.com/embed/MV7EAD9zL64?si=hcS0kG-5WuuAM2CX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <p>El algoritmo de Johnson es un algoritmo para encontrar los caminos más cortos entre todos los pares de vértices en un grafo dirigido con pesos no negativos.</p>
+        <p>Funciona transformando el grafo original en un nuevo grafo, añadiendo un nuevo vértice y conectándolo con todos los demás vértices del grafo original con aristas de peso cero. Luego, se utiliza el algoritmo de Bellman-Ford para encontrar las distancias más cortas desde el nuevo vértice a todos los demás vértices. Después, se reasignan los pesos de las aristas del grafo original y se ejecuta el algoritmo de Dijkstra para cada vértice del grafo original para encontrar los caminos más cortos.</p>
+        <p>El algoritmo de Johnson es útil para resolver el problema de la ruta más corta en grafos con pesos negativos, siempre y cuando no haya ciclos negativos.</p>
+   
     </article>
 </body>
 </html>
