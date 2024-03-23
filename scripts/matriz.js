@@ -90,6 +90,7 @@ function generarMatriz() {
   }
 
   function getMatriz() {
+
     desactivarBotones();
     desactivarBotones2();
     const nodos = nodosDataSet.get({ fields: ['id', 'label'] });

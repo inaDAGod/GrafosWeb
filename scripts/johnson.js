@@ -24,29 +24,40 @@ function calcularGrados(matriz) {
 }
 
 
-function nodoOrigenDestino(){
+function nodoOrigen(){
     const matriz = getMatriz();
+    //console.log(matriz);
     const { gradosEntrada, gradosSalida } = calcularGrados(matriz);
     let nodoOrigen=0;
+  
+    gradosEntrada.forEach((value, i) => {
+        if(value == 0){
+            nodoOrigen = i;
+        }
+    });
+    return nodoOrigen;
+}
+function nodoDestino(){
+    const matriz = getMatriz();
+
+    const { gradosEntrada, gradosSalida } = calcularGrados(matriz);
+
     let nodoDestino=0;
     gradosSalida.forEach((value, i) => {
         if(value == 0){
             nodoDestino = i;
         }
     });
-    gradosEntrada.forEach((value, i) => {
-        if(value == 0){
-            nodoOrigen = i;
-        }
-    });
-    console.log("Nodo origen " +nodoOrigen);
-    console.log("Nodo destino " +nodoDestino);
-    return{nodoOrigen,nodoDestino};
+    return nodoDestino;
 }
 
 function solveMinimum() {
     const matriz = getMatriz();
-    const {from,to} = nodoOrigenDestino();
+    console.log(matriz);
+    const from = nodoOrigen();
+    const to = nodoDestino();
+    console.log("Nodo origen " +from);
+    console.log("Nodo destino " +to);
     const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
     let disIzq = Array(nodos.length).fill(Infinity);
     const mejorCamino = {};
@@ -70,7 +81,7 @@ function solveMinimum() {
   
     listaActual = [to];
     const distDerecha = Array(nodos.length).fill(Infinity);
-    distDerecha[to] = 0;
+    distDerecha[to] = disIzq[to];
     while (listaActual.length) {
       const current = listaActual.shift();
       for (let i = 0; i < nodos.length; i++) {
@@ -88,11 +99,16 @@ function solveMinimum() {
     console.log('fin de de regreso, los mejores pesos derecha', distDerecha);
     console.log('mejor camino', mejorCamino);
   }
-
+ 
   
   function solveMaximum() {
+    
     const matriz = getMatriz();
-    const {from,to} = nodoOrigenDestino();
+    console.log(matriz);
+    const from = nodoOrigen();
+    const to = nodoDestino();
+    console.log("Nodo origen "+from);
+    console.log("Nodo Destino "+to);
     const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
     let disIzq = Array(nodos.length).fill(-Infinity);
   
@@ -134,4 +150,7 @@ function solveMinimum() {
     for (let i = 0; i < nodos.length; i++) {
       console.log(i, distDerecha[i], disIzq[i]);
     }
+    
   }
+ 
+
