@@ -80,6 +80,8 @@ h1{
 .menu ul li a {
     text-decoration: none;
     color: #333;
+    text-align: center;
+    padding-bottom: 20px;
 }
 
 .menu ul li a:hover {
@@ -89,6 +91,7 @@ h1{
     text-align: center;
     padding-bottom: 20px;
 }
+
 .contenido{
     text-align: center;
     padding-left: 270px;
