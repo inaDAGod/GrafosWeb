@@ -123,12 +123,7 @@ function mostrarMatrizAsignacion(nodosOrigen, nodosDestino, matriz) {
     }
 }
 
-
-
-// Función para aplicar el algoritmo de asignación húngaro
 function algoritmoHungaroMaximizacion(costMatrix) {
-    // Implementación del algoritmo de asignación húngaro para maximización
-    
     const n = costMatrix.length;
     const assign = Array(n).fill(-1);
     const maxMatched = Array(n).fill(0);
@@ -140,7 +135,6 @@ function algoritmoHungaroMaximizacion(costMatrix) {
             costMatrix[i][j] -= minRow;
         }
     }
-
     // Paso 2: Restar el mínimo de cada columna
     for (let j = 0; j < n; j++) {
         let minCol = Infinity;
@@ -151,7 +145,6 @@ function algoritmoHungaroMaximizacion(costMatrix) {
             costMatrix[i][j] -= minCol;
         }
     }
-
     // Paso 3: Asignar tantos 0's como sea posible
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
@@ -162,12 +155,9 @@ function algoritmoHungaroMaximizacion(costMatrix) {
             }
         }
     }
-
     return assign;
 }
 function algoritmoHungaroMinimizacion(costMatrix) {
-    // Implementación del algoritmo de asignación húngaro para minimización
-
     const n = costMatrix.length;
     const assign = Array(n).fill(-1);
     const minMatched = Array(n).fill(0);
@@ -179,7 +169,6 @@ function algoritmoHungaroMinimizacion(costMatrix) {
             costMatrix[i][j] = maxRow - costMatrix[i][j];
         }
     }
-
     // Paso 2: Restar el máximo de cada columna
     for (let j = 0; j < n; j++) {
         let maxCol = -Infinity;
@@ -190,7 +179,6 @@ function algoritmoHungaroMinimizacion(costMatrix) {
             costMatrix[i][j] = maxCol - costMatrix[i][j];
         }
     }
-
     // Paso 3: Asignar tantos 0's como sea posible
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
@@ -201,7 +189,6 @@ function algoritmoHungaroMinimizacion(costMatrix) {
             }
         }
     }
-
     return assign;
 }
 
@@ -325,13 +312,26 @@ function generarMatrizCostos() {
     desactivarBotones();
     desactivarBotones2();
     const nodos = nodosDataSet.get({ fields: ['id', 'label', 'group'] });
+    const nodosOrigen = nodos.filter(nodo => nodo.group === 'origen');
+    const nodosDestino = nodos.filter(nodo => nodo.group === 'destino');
+    
+    if (nodosOrigen.length === 0 || nodosDestino.length === 0) {
+        alert('Debes agregar al menos un nodo de tipo origen y un nodo de tipo destino.');
+        return;
+    }
+
+    if (nodosOrigen.length !== nodosDestino.length) {
+        alert('La cantidad de nodos de origen debe ser igual a la cantidad de nodos de destino para generar una matriz de adyacencia cuadrada.');
+        return;
+    }
+
     const matriz = [];
     const matrizObj = {};
 
     nodos.forEach(nodo => {
         matrizObj[nodo.id] = {};
     });
- 
+
     const aristasArr = aristasDataSet.get();
     aristasArr.forEach((arista) => {
         const value = parseInt(arista.label || 1);
@@ -341,9 +341,7 @@ function generarMatrizCostos() {
             matrizObj[arista.from][arista.to] = value;
         }
     });
-   
-    const nodosOrigen = nodos.filter(nodo => nodo.group === 'origen');
-    const nodosDestino = nodos.filter(nodo => nodo.group === 'destino');
+
     nodosOrigen.forEach(nodoOrigen => {
         const fila = [];
         nodosDestino.forEach(nodoDestino => {
@@ -351,6 +349,7 @@ function generarMatrizCostos() {
         });
         matriz.push(fila);
     });
+
     mostrarMatrizCostos(nodosOrigen, nodosDestino, matriz);
 }
 
@@ -378,10 +377,10 @@ function mostrarMatrizCostos(nodosOrigen, nodosDestino, matriz) {
     }
 }
 
+
 function limpiar() {
     inicializarGrafo();
 }
-
 
 // ---PARA LOS EVENTOS DE CLICKS EN NODOS Y ARISTAS---
 document.addEventListener('DOMContentLoaded', () => {
