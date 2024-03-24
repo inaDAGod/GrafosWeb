@@ -202,6 +202,13 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
     nodo.shadow = false;
     nodosDataSet.update(nodo); 
   });
+  aristasDataSet.forEach(arista => {
+    arista.color = { color: '#2B7CE9', highlight: '#2B7CE9' }; 
+    arista.width = 1;
+    aristasDataSet.update(arista);
+});
+
+
   mejorCamino.forEach((value, i) => {
     console.log(value);
     if (value !== -1) {
@@ -209,8 +216,6 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
       const nodo = nodosDataSet.get(i); 
       if (nodo) { 
         nodo.color = { background: '#FD918F' }; 
-        nodo.borderWidth= 4;
-
         nodo.shadow = true;
         nodosDataSet.update(nodo); 
       }
@@ -219,10 +224,29 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
   const nodo = nodosDataSet.get(nodoDestinoId); 
       if (nodo) { 
         nodo.color = { background: '#FD918F' }; 
-        nodo.borderWidth= 4;
         nodo.shadow = true;
         nodosDataSet.update(nodo); 
       }
+
+      for (let i = 0; i < holguras.length; i++) {
+        const holgura = holguras[i].holgura; 
+        
+        if (holgura == 0) { 
+            const src = holguras[i].src;
+            const dest = holguras[i].dest;
+            const aristasFiltradas = aristasDataSet.get({ filter: item => item.from == src && item.to === dest });
+            aristasFiltradas.forEach(arista => {
+                arista.color = { color: '#FD918F' }; 
+                arista.width = 4;
+                console.log(arista.id);
+            });
+    
+            aristasDataSet.update(aristasFiltradas);
+        }
+    }
+    
+    
+    
       mostrarSolucion(distDerecha, disIzq,holguras);
 }
 
