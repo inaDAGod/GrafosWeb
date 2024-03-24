@@ -1,24 +1,37 @@
-// sort.js
-
 document.addEventListener("DOMContentLoaded", function() {
+  const inputNormal = document.getElementById("inputNormal");
+  const inputAleatorio = document.getElementById("inputAleatorio");
+
+  inputNormal.addEventListener("change", function() {
+    if (inputNormal.checked) {
+      inputAleatorio.checked = false;
+    }
+  });
+
+  inputAleatorio.addEventListener("change", function() {
+    if (inputAleatorio.checked) {
+      inputNormal.checked = false;
+    }
+  });
+
   const crearListaAleatoriaBtn = document.getElementById("crearListaAleatoriaBtn");
   const listaAleatoriaLabel = document.getElementById("listaAleatoriaLabel");
 
   crearListaAleatoriaBtn.addEventListener("click", function() {
-      const numElements = document.getElementById("numElements").value;
-      const lowerLimit = document.getElementById("lowerLimit").value;
-      const upperLimit = document.getElementById("upperLimit").value;
+    const numElements = document.getElementById("numElements").value;
+    const lowerLimit = document.getElementById("lowerLimit").value;
+    const upperLimit = document.getElementById("upperLimit").value;
 
-      const listaAleatoria = generarListaAleatoria(numElements, lowerLimit, upperLimit);
-      listaAleatoriaLabel.textContent = listaAleatoria.join(", ");
+    const listaAleatoria = generarListaAleatoria(numElements, lowerLimit, upperLimit);
+    listaAleatoriaLabel.textContent = listaAleatoria.join(", ");
   });
 
   function generarListaAleatoria(numElements, lowerLimit, upperLimit) {
-      const lista = [];
-      for (let i = 0; i < numElements; i++) {
-          const randomNumber = Math.floor(Math.random() * (upperLimit - lowerLimit + 1)) + parseInt(lowerLimit);
-          lista.push(randomNumber);
-      }
-      return lista;
+    const lista = [];
+    for (let i = 0; i < numElements; i++) {
+      const randomNumber = Math.floor(Math.random() * (upperLimit - lowerLimit + 1)) + parseInt(lowerLimit);
+      lista.push(randomNumber);
+    }
+    return lista;
   }
 });
