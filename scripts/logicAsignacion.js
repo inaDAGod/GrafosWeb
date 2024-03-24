@@ -4,18 +4,18 @@ let aristasDataSet;
 let seleccionado;
 let modoEliminarArista = false;
 let modoEliminarNodo = false;
-let modoAgregarNodoOferta = false; 
-let modoAgregarNodoDemanda= false; 
+let modoAgregarNodoOrigen = false; 
+let modoAgregarNodoDestino = false; 
 let modoAgregarArista = false;
 let btnActivos = 0;
 let dobleClicEnNodoManejado = false;
-let idsOferta = 0;
-let idsDemanda = 0; 
+let idsOrigen = 0;
+let idsDestino = 0; 
 let nodoSeleccionadoId = null;
 
 let buttonStates = {
-    nodeOfertaButton: false,
-    nodeDemandaButton: false,
+    nodeOrigenButton: false,
+    nodeDestinoButton: false,
     edgeButton: false,
     deleteEdgeButton: false,
     matrixButton: false,
@@ -78,10 +78,10 @@ function desactivarBotones(){
     modoAgregarArista = false;
     grafo.off('click', clicEnNodo2);
     modoAgregarArista2 = false;
-    grafo.off('click', agregarNodoOferta);
-    modoAgregarNodoOferta = false; 
-    grafo.off('click', agregarNodoDemanda);  
-    modoAgregarNodoDemanda = false;
+    grafo.off('click', agregarNodoOrigen);
+    modoAgregarNodoOrigen = false; 
+    grafo.off('click', agregarNodoDestino);  
+    modoAgregarNodoDestino = false;
     btnActivos = 0;
     for (const key in buttonStates) {
         if (buttonStates[key]) {
@@ -108,13 +108,10 @@ function clicEnNodo(propiedades) {
         if (seleccionado === undefined) {
             seleccionado = nodes[0];
         } else {
-            // Obtener el grupo del nodo seleccionado y del nodo actual
             const grupoSeleccionado = nodosDataSet.get(seleccionado).group;
             const grupoActual = nodosDataSet.get(nodes[0]).group;
-            // Verificar si la arista se puede agregar según las restricciones
             if (grupoSeleccionado !== grupoActual && 
-                ((grupoSeleccionado === 'oferta' && grupoActual === 'demanda'))) {
-                // Agregar la arista solo si se cumple la condición
+                ((grupoSeleccionado === 'origen' && grupoActual === 'destino'))) {
                 aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
             }
             seleccionado = undefined;
@@ -145,7 +142,7 @@ function clicEnNodo2(propiedades) {
 
 function dobleClicEnNodo(propiedades) {
     console.log('Doble clic en nodo');
-  desactivarBotones();
+    desactivarBotones();
     const { nodes } = propiedades;
     if (nodes.length > 0) {
         const nodeId = nodes[0];
@@ -192,55 +189,56 @@ function agregarAristaSeleccionada(){
     }
     
 }
-function agregarNodoOfertaSeleccionado() {
-    const buttonId = 'nodeOfertaButton';
+
+
+
+function agregarNodoOrigenSeleccionado() {
+    const buttonId = 'nodeOrigenButton';
     toggleButton(buttonId);
     setActiveButton(buttonId);
     toggleActiveState(buttonId);
-    if (modoAgregarNodoOferta) {
+    if (modoAgregarNodoOrigen) {
         btnActivos--;
-        modoAgregarNodoOferta = false;
-        grafo.off('click', agregarNodoOferta);
+        modoAgregarNodoOrigen = false;
+        grafo.off('click', agregarNodoOrigen);
     } else {
         if (btnActivos > 0) {
             desactivarBotones();
         }
         btnActivos++;
-        modoAgregarNodoOferta = true;
-        grafo.on('click', agregarNodoOferta);
+        modoAgregarNodoOrigen = true;
+        grafo.on('click', agregarNodoOrigen);
     }
 }
 
-function agregarNodoDemandaSeleccionado() {
-    const buttonId = 'nodeDemandaButton';
+function agregarNodoDestinoSeleccionado() {
+    const buttonId = 'nodeDestinoButton';
     toggleButton(buttonId);
     setActiveButton(buttonId);
     toggleActiveState(buttonId);
-    if (modoAgregarNodoDemanda) {
+    if (modoAgregarNodoDestino) {
         btnActivos--;
-        modoAgregarNodoDemanda = false;
-        grafo.off('click', agregarNodoDemanda);
+        modoAgregarNodoDestino = false;
+        grafo.off('click', agregarNodoDestino);
     } else {
         if (btnActivos > 0) {
             desactivarBotones();
         }
         btnActivos++;
-        modoAgregarNodoDemanda = true;
-        grafo.on('click', agregarNodoDemanda);
+        modoAgregarNodoDestino = true;
+        grafo.on('click', agregarNodoDestino);
     }
 }
 
-
-function agregarNodoOferta(event) {
-    nodosDataSet.add({ id: 'oferta_' + idsOferta, label: 'Nodo Oferta ' + (idsOferta + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'oferta', color: '#FFD700' }); // Amarillo
-    idsOferta++;
+function agregarNodoOrigen(event) {
+    nodosDataSet.add({ id: 'origen_' + idsOrigen, label: 'Nodo Origen ' + (idsOrigen + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'origen', color: '#FFD700' }); // Amarillo
+    idsOrigen++;
 }
 
-function agregarNodoDemanda(event) {
-    nodosDataSet.add({ id: 'demanda_' + idsDemanda, label: 'Nodo Demanda ' + (idsDemanda + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'demanda', color: '#ADD8E6' }); // Celeste
-    idsDemanda++;
+function agregarNodoDestino(event) {
+    nodosDataSet.add({ id: 'destino_' + idsDestino, label: 'Nodo Destino ' + (idsDestino + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'destino', color: '#ADD8E6' }); // Celeste
+    idsDestino++;
 }
-
 
 function eliminarNodoSeleccionado() {
     toggleButton('deleteNodeButton');
@@ -250,7 +248,7 @@ function eliminarNodoSeleccionado() {
         modoEliminarNodo = false;
         grafo.off('click', eliminarNodo);
     } else {
-        if(btnActivos > 0){
+        if (btnActivos > 0) {
             desactivarBotones();
         }
         btnActivos++;
@@ -258,6 +256,7 @@ function eliminarNodoSeleccionado() {
         grafo.on('click', eliminarNodo);
     }
 }
+
 function eliminarAristaSeleccionada() {
     toggleButton('deleteEdgeButton');
     setActiveButton('deleteEdgeButton');
@@ -266,7 +265,7 @@ function eliminarAristaSeleccionada() {
         modoEliminarArista = false;
         grafo.off('click', eliminarArista);
     } else {
-        if(btnActivos > 0){
+        if (btnActivos > 0) {
             desactivarBotones();
         }
         btnActivos++;
@@ -276,21 +275,78 @@ function eliminarAristaSeleccionada() {
 }
 
 function eliminarNodo(event) {
-    const nodeId = event.nodes[0]; 
+    const nodeId = event.nodes[0];
     const aristasAEliminar = aristasDataSet.get({ filter: item => item.from === nodeId || item.to === nodeId });
     nodosDataSet.remove({ id: nodeId });
     aristasAEliminar.forEach(arista => {
         aristasDataSet.remove({ id: arista.id });
     });
 }
+
 function eliminarArista(event) {
-    const edgeId = event.edges[0]; 
-    aristasDataSet.remove({ id: edgeId }); 
+    const edgeId = event.edges[0];
+    aristasDataSet.remove({ id: edgeId });
 }
 
-function limpiar(){  
+function generarMatrizCostos() {
+    desactivarBotones();
+    desactivarBotones2();
+    const nodos = nodosDataSet.get({ fields: ['id', 'label', 'group'] });
+    const matriz = [];
+    const matrizObj = {};
+    // Inicializar matrizObj
+    nodos.forEach(nodo => {
+        matrizObj[nodo.id] = {};
+    });
+    // Construir matrizObj con valores de aristas de origen a destino
+    const aristasArr = aristasDataSet.get();
+    aristasArr.forEach((arista) => {
+        const value = parseInt(arista.label || 1);
+        const nodoFromGroup = nodosDataSet.get(arista.from).group;
+        const nodoToGroup = nodosDataSet.get(arista.to).group;
+        if (nodoFromGroup === 'origen' && nodoToGroup === 'destino') {
+            matrizObj[arista.from][arista.to] = value;
+        }
+    });
+    // Construir matriz con nodos de origen como filas y nodos de destino como columnas
+    const nodosOrigen = nodos.filter(nodo => nodo.group === 'origen');
+    const nodosDestino = nodos.filter(nodo => nodo.group === 'destino');
+    nodosOrigen.forEach(nodoOrigen => {
+        const fila = [];
+        nodosDestino.forEach(nodoDestino => {
+            fila.push(matrizObj[nodoOrigen.id][nodoDestino.id] || 0);
+        });
+        matriz.push(fila);
+    });
+    mostrarMatrizCostos(nodosOrigen, nodosDestino, matriz);
+}
+
+function mostrarMatrizCostos(nodosOrigen, nodosDestino, matriz) {
+    desactivarBotones();
+    desactivarBotones2();
+    const contenedorMatriz = document.getElementById('matriz');
+    if (nodosOrigen.length > 0 && nodosDestino.length > 0) {
+        let html = '<h2>Matriz de Adyacencia</h2>';
+        html += '<table>';
+        html += '<tr><th></th>'; // Espacio vacío en la esquina superior izquierda
+        nodosDestino.forEach(nodo => {
+            html += `<th>${nodo.label}</th>`;
+        });
+        html += '</tr>';
+        matriz.forEach((fila, index) => {
+            html += `<tr><th>${nodosOrigen[index].label}</th>`;
+            fila.forEach(valor => {
+                html += `<td>${valor}</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</table>';
+        contenedorMatriz.innerHTML = html;
+    }
+}
+
+function limpiar() {
     inicializarGrafo();
-    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -299,5 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
     grafo.on('doubleClick', dobleClicEnNodo);
     grafo.on('doubleClick', dobleClicEnArista);
 });
+
 
   
