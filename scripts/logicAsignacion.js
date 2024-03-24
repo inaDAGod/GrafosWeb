@@ -103,21 +103,26 @@ function desactivarBotones2() {
 
 function clicEnNodo(propiedades) {
     console.log('clic en nodo');
-  const { nodes } = propiedades;
-  if (nodes.length > 0) {
-    if (seleccionado === undefined) {
-      seleccionado = nodes[0];
-    } else {
-      if (seleccionado !== nodes[0]) {
-        aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
-        seleccionado = undefined;
-      } else {
-        aristasDataSet.add({ from: seleccionado, to: seleccionado, arrows: 'to' });
-        seleccionado = undefined;
-      }
+    const { nodes } = propiedades;
+    if (nodes.length > 0) {
+        if (seleccionado === undefined) {
+            seleccionado = nodes[0];
+        } else {
+            // Obtener el grupo del nodo seleccionado y del nodo actual
+            const grupoSeleccionado = nodosDataSet.get(seleccionado).group;
+            const grupoActual = nodosDataSet.get(nodes[0]).group;
+            // Verificar si la arista se puede agregar según las restricciones
+            if (grupoSeleccionado !== grupoActual && 
+                ((grupoSeleccionado === 'oferta' && grupoActual === 'demanda'))) {
+                // Agregar la arista solo si se cumple la condición
+                aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
+            }
+            seleccionado = undefined;
+        }
     }
-  }
 }
+
+
 
 function clicEnNodo2(propiedades) {
     console.log('clic en nodo 2');
