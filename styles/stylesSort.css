@@ -9,35 +9,36 @@
 }
 
 body {
-    min-height: 100vh;
-    background-color: #DEDEEA;
-    margin-top: 180px; 
+  min-height: 100vh;
+  background-color: #DEDEEA;
+  margin-top: 180px; 
 }
 
 .header{
-    display: flex;
-    position: fixed;
-    top: 0;
-    left:0;
-    width: 100%;
-    padding: 40px 100px;
-    background: #61678B;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%;
+  padding: 40px 100px;
+  background: #61678B;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
 }
 
 .header a{
-    color: rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
 }
 
 .logo{
-    display: flex;
+  display: flex;
 }
 
 .container {
   display: flex;
-  justify-content: flex-end; /* Alinea el contenido a la derecha */
+  flex-direction: column; /* Cambia la dirección del flujo a vertical */
+  align-items: flex-start; /* Alinea los elementos a la izquierda */
   padding: 20px;
 }
 
@@ -53,12 +54,24 @@ body {
   cursor: pointer;
 }
 
-.formulario {
-  margin-right: 20px; /* Espacio entre los botones y el resto del contenido */
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.button-column {
+  flex: 1;
+}
+
+.form-column {
+  flex: 1;
+  padding-left: 20px;
 }
 
 .output {
-  margin-right: 20px; /* Espacio entre los botones y el resto del contenido */
+  margin-bottom: 10px; /* Espacio entre los campos de output */
 }
 
 .boton:hover {

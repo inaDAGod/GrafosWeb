@@ -29,36 +29,41 @@
 </div>
 <script src="../scripts/menu.js"></script>
 <h1>Algoritmos de <span style="color: #FBAD41;">Ordenamiento</span></h1>
-<div>
-  <div class="container">
-    <button id="selectionSortBtn" class="boton">Selection Sort</button>
-    <button id="insertionSortBtn" class="boton">Insertion Sort</button>
-    <button id="shellSortBtn" class="boton">Shell Sort</button>
-    <button id="bubbleSortBtn" class="boton">Bubble Sort</button>
+
+<div class="content-wrapper">
+  <div class="button-column">
+    <div class="container">
+      <button id="selectionSortBtn" class="boton">Selection Sort</button>
+      <button id="insertionSortBtn" class="boton">Insertion Sort</button>
+      <button id="shellSortBtn" class="boton">Shell Sort</button>
+      <button id="bubbleSortBtn" class="boton">Bubble Sort</button>
+    </div>
   </div>
   
-  <div>
-    <label for="inputLabel">Input</label><br>
-    <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"><br>
-    <button id="randomInputBtn">Input Aleatorio</button><br>
-    <label for="numElements">Número de elementos</label>
-    <input type="number" id="numElements" value="10"><br>
-    <label for="lowerLimit">Límite inferior</label>
-    <input type="number" id="lowerLimit" value="0">
-    <label for="upperLimit">Límite superior</label>
-    <input type="number" id="upperLimit" value="100">
+  <div class="form-column">
+    <div>
+      <label for="inputLabel">Input</label><br>
+      <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"><br>
+      <button id="randomInputBtn">Input Aleatorio</button><br>
+      <label for="numElements">Número de elementos</label>
+      <input type="number" id="numElements" value="10"><br>
+      <label for="lowerLimit">Límite inferior</label>
+      <input type="number" id="lowerLimit" value="0">
+      <label for="upperLimit">Límite superior</label>
+      <input type="number" id="upperLimit" value="100">
+    </div>
+    
+    <div class="output">
+      <label for="outputLabel">Output</label><br>
+      <div id="outputLabel"></div>
+    </div>
+    
+    <div class="output">
+      <label for="performanceLabel">Rendimiento</label><br>
+      <div id="performanceLabel"></div>
+    </div>
+    <button id="cleanBtn">Clean</button>
   </div>
-  
-  <div class="output">
-    <label for="outputLabel">Output</label><br>
-    <div id="outputLabel"></div>
-  </div>
-  
-  <div class="output">
-    <label for="performanceLabel">Rendimiento</label><br>
-    <div id="performanceLabel"></div>
-  </div>
-  <button id="cleanBtn">Clean</button>
 </div>
 
 <div class="visualization">
