@@ -223,7 +223,25 @@ function pintarMejorCamino(mejorCamino) {
         nodo.shadow = true;
         nodosDataSet.update(nodo); 
       }
+
+      mostrarSolucion();
 }
+
+function mostrarSolucion() {
+  const contenedor= document.getElementById('solucion');
+  let html = '<h2>Solucion con el Algoritmo de Johnson</h2>';
+  from = nodoOrigen();
+  nodoOrigen = nodosDataSet.get(from);
+  to = nodoDestino();
+  nodoDestino= nodosDataSet.get(to);
+  html += '<table>';
+  html += '<tr><th style = " background: #9E7DD4;">Nodo origen</th><th style = " background: #9E7DD4;">Nodo destino</th></tr>';
+  html += `<td style = " background: #BCB9D8;">${nodoOrigen.label}</td><td style = " background: #BCB9D8;">${nodoDestino.label}</td>`;
+
+  
+  contenedor.innerHTML = html;
+  }
+
 
 
 
