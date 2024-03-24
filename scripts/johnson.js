@@ -195,6 +195,7 @@ function corregirCamino(mejorCamino, holguras) {
 
 
 function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
+  let total = 0;
   const nodoDestinoId = nodoDestino();
   nodosDataSet.forEach(nodo => {
     nodo.color = { background: '#97C2FC' }; 
@@ -238,7 +239,7 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
             aristasFiltradas.forEach(arista => {
                 arista.color = { color: '#FD918F' }; 
                 arista.width = 4;
-                console.log(arista.id);
+                total += parseInt(arista.label);
             });
     
             aristasDataSet.update(aristasFiltradas);
@@ -247,10 +248,10 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
     
     
     
-      mostrarSolucion(distDerecha, disIzq,holguras);
+      mostrarSolucion(distDerecha, disIzq,holguras, total);
 }
 
-function mostrarSolucion(distDerecha, disIzq,holguras) {
+function mostrarSolucion(distDerecha, disIzq,holguras,total) {
   const contenedor = document.getElementById('solucion');
   let html = '<h3>Acumuladas</h3><table>';
   for (let i = 0; i < nodosDataSet.length; i++) {
@@ -267,6 +268,7 @@ function mostrarSolucion(distDerecha, disIzq,holguras) {
     html += `<tr><th colspan="2" style="background: #FBAD41;">${src} ->  ${dest}</th> <td style="background:  #fdd092;"> ${holgura} </td></tr>`
   }
   html += '</table>';
+  html += `<h3>Total : ${total}</h3><table>`;
   contenedor.innerHTML = html;
 }
 
