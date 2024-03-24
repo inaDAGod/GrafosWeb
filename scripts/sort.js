@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const cleanBtn = document.getElementById("cleanBtn"); // Agregamos referencia al botón Clean
   const outputLabel = document.getElementById("outputLabel"); // Referencia al elemento de salida
   const performanceLabel = document.getElementById("performanceLabel"); // Referencia al elemento de rendimiento
-
+  const selectionSortBtn = document.getElementById("selectionSortBtn"); // Agregar referencia al botón de ordenar
+  let listaAleatoria; // Variable para almacenar la lista aleatoria generada
   inputNormal.addEventListener("change", function() {
     if (inputNormal.checked) {
       inputAleatorio.checked = false;
@@ -54,9 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const lowerLimitVal = lowerLimit.value;
     const upperLimitVal = upperLimit.value;
 
-    const listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
+    listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal); // Actualizar la variable listaAleatoria
     listaAleatoriaLabel.textContent = listaAleatoria.join(", ");
-  });
+});
 
   // Función para limpiar los campos y borrar la salida y el rendimiento
   cleanBtn.addEventListener("click", function() {
@@ -104,49 +105,31 @@ document.addEventListener("DOMContentLoaded", function() {
     return arr;
   }
 
-  // Función para visualizar la ordenación de la lista mediante un gráfico de barras
-function visualizarOrdenamiento(listaOrdenada) {
-  const visualizationContainer = document.getElementById("visualizationContainer");
-
-  // Limpiar cualquier contenido anterior en el contenedor
-  visualizationContainer.innerHTML = "";
-
-  // Crear una barra para cada elemento de la lista ordenada
-  listaOrdenada.forEach((elemento, index) => {
-    const barra = document.createElement("div");
-    barra.classList.add("barra");
-    barra.style.height = `${elemento * 5}px`; // Ajustar la altura de la barra (puedes ajustar el factor de escala según tus necesidades)
-    visualizationContainer.appendChild(barra);
-  });
-}
-
-  // Evento para aplicar el algoritmo de Selection Sort y mostrar el resultado
   // Evento para aplicar el algoritmo de Selection Sort y mostrar el resultado y la visualización
   selectionSortBtn.addEventListener("click", function() {
+    let listaOrdenada;
     if (inputNormal.checked) {
-    const input = inputLabel.value.trim();
-    const elementos = input.split(",");
-    if (elementos.length <= 1) {
-      alert("Los elementos deben estar separados por comas.");
-      return;
+        const input = inputLabel.value.trim();
+        const elementos = input.split(",");
+        if (elementos.length <= 1) {
+            alert("Los elementos deben estar separados por comas.");
+            return;
+        }
+        const lista = elementos.map(elemento => parseInt(elemento.trim()));
+        listaOrdenada = selectionSort(lista);
+    } else if (inputAleatorio.checked) {
+        if (!listaAleatoria) {
+            const numElementsVal = numElements.value;
+            const lowerLimitVal = lowerLimit.value;
+            const upperLimitVal = upperLimit.value;
+            listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
+        }
+        listaOrdenada = selectionSort(listaAleatoria);
     }
-    const lista = elementos.map(elemento => parseInt(elemento.trim()));
-    const listaOrdenada = selectionSort(lista);
+  
     outputLabel.textContent = listaOrdenada.join(", ");
     const rendimiento = (listaOrdenada.length ** 2) / 2;
     performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
-    visualizarOrdenamiento(listaOrdenada); // Llamar a la función para mostrar la visualización
-  } else if (inputAleatorio.checked) {
-    const numElementsVal = numElements.value;
-    const lowerLimitVal = lowerLimit.value;
-    const upperLimitVal = upperLimit.value;
-    const listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
-    const listaOrdenada = selectionSort(listaAleatoria);
-    outputLabel.textContent = listaOrdenada.join(", ");
-    const rendimiento = (listaOrdenada.length ** 2) / 2;
-    performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
-    visualizarOrdenamiento(listaOrdenada); // Llamar a la función para mostrar la visualización
-  }
 });
 
 });
