@@ -42,23 +42,28 @@
   </div>
   
   <div class="form-column">
-    <div>
-      <label for="inputNormal">Input Normal</label>
-      <input type="checkbox" id="inputNormal" checked disabled>
-      <br>
-      <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"><br>
-    </div>
-    <div>
-      <label for="inputAleatorio">Input Aleatorio</label>
-      <input type="checkbox" id="inputAleatorio" disabled>
-      <br>
-      <label for="numElements">Número de elementos</label>
-      <input type="number" id="numElements" value="10"><br>
-      <label for="lowerLimit">Límite inferior</label>
-      <input type="number" id="lowerLimit" value="0">
-      <label for="upperLimit">Límite superior</label>
-      <input type="number" id="upperLimit" value="100">
-    </div>
+  <! --desde aqui -->
+  <div>
+    <label for="inputNormal">Input Normal</label>
+    <input type="checkbox" id="inputNormal" onchange="handleCheckboxChange('inputNormal')" checked>
+    <br>
+    <input type="text" id="inputLabelNormal" placeholder="Introduce elementos (1, 3, 2, 7, etc)">
+  </div>
+  
+  <div>
+    <label for="inputAleatorio">Input Aleatorio</label>
+    <input type="checkbox" id="inputAleatorio" onchange="handleCheckboxChange('inputAleatorio')">
+    <br>
+    <label for="numElements">Número de elementos</label>
+    <input type="number" id="numElements" value="10" disabled>
+    <label for="lowerLimit">Límite inferior</label>
+    <input type="number" id="lowerLimit" value="0" disabled>
+    <label for="upperLimit">Límite superior</label>
+    <input type="number" id="upperLimit" value="100" disabled>
+  </div>
+  
+  <button id="crearListaAleatoriaBtn" onclick="crearListaAleatoria()" disabled>Crear Lista Aleatoria</button>
+  <label id="listaAleatoriaLabel"></label>
     
     <div class="output">
       <label for="outputLabel">Output</label><br>
