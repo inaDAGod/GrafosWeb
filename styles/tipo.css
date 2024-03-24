@@ -168,3 +168,20 @@ h1{
   }
 
 
+  .solucion-container {
+    display: flex;
+  }
+  
+  .solucion-container > table {
+    margin-right: 20px;
+  }
+  #contenedor {
+    display: flex;
+    justify-content: space-between; /* Para colocar los elementos a los lados */
+    align-items: flex-start;
+}
+
+#contenedor-matriz {
+    display: flex;
+    flex-direction: column; /* Para apilar los elementos verticalmente */
+}

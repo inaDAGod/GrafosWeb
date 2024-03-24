@@ -100,7 +100,7 @@ function solveMinimum() {
     console.log('mejor camino', mejorCamino);
     mejorCamino = corregirCamino(mejorCamino,holguras(distDerecha, disIzq));
     console.log('mejor camino corregido', mejorCamino);
-    pintarMejorCamino(mejorCamino);
+    pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras(distDerecha, disIzq));
   }
  
   
@@ -156,7 +156,7 @@ function solveMinimum() {
     }
     mejorCamino = corregirCamino(mejorCamino,holguras(distDerecha, disIzq));
     console.log('mejor camino corregido', mejorCamino);
-    pintarMejorCamino(mejorCamino);
+    pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras(distDerecha, disIzq));
   }
 
   function holguras(distDerecha, disIzq) {
@@ -194,7 +194,7 @@ function corregirCamino(mejorCamino, holguras) {
 }
 
 
-function pintarMejorCamino(mejorCamino) {
+function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
   const nodoDestinoId = nodoDestino();
   nodosDataSet.forEach(nodo => {
     nodo.color = { background: '#97C2FC' }; 
@@ -223,24 +223,29 @@ function pintarMejorCamino(mejorCamino) {
         nodo.shadow = true;
         nodosDataSet.update(nodo); 
       }
-
-      mostrarSolucion();
+      mostrarSolucion(distDerecha, disIzq,holguras);
 }
 
-function mostrarSolucion() {
-  const contenedor= document.getElementById('solucion');
-  let html = '<h2>Solucion con el Algoritmo de Johnson</h2>';
-  from = nodoOrigen();
-  nodoOrigen = nodosDataSet.get(from);
-  to = nodoDestino();
-  nodoDestino= nodosDataSet.get(to);
-  html += '<table>';
-  html += '<tr><th style = " background: #9E7DD4;">Nodo origen</th><th style = " background: #9E7DD4;">Nodo destino</th></tr>';
-  html += `<td style = " background: #BCB9D8;">${nodoOrigen.label}</td><td style = " background: #BCB9D8;">${nodoDestino.label}</td>`;
-
-  
-  contenedor.innerHTML = html;
+function mostrarSolucion(distDerecha, disIzq,holguras) {
+  const contenedor = document.getElementById('solucion');
+  let html = '<h3>Acumuladas</h3><table>';
+  for (let i = 0; i < nodosDataSet.length; i++) {
+    html += `<tr><th colspan="2" style="background: #9E7DD4;">${nodosDataSet.get(i).label}</th></tr><tr><td style="background: #BCB9D8;">${disIzq[i]}</td><td style="background: #BCB9D8;">${distDerecha[i]}</td></tr>`;
+    console.log(i, distDerecha[i], disIzq[i]);
   }
+  html += '</table>';
+  html += '<h3>Holguras</h3><table>';
+
+  for (let i = 0; i < holguras.length; i++) {
+    const src = holguras[i].src;
+    const dest = holguras[i].dest;
+    const holgura = holguras[i].holgura;
+    html += `<tr><th colspan="2" style="background: #FBAD41;">${src} ->  ${dest}</th> <td style="background:  #fdd092;"> ${holgura} </td></tr>`
+  }
+  html += '</table>';
+  contenedor.innerHTML = html;
+}
+
 
 
 
