@@ -4,19 +4,21 @@ document.addEventListener("DOMContentLoaded", function() {
   const crearListaAleatoriaBtn = document.getElementById("crearListaAleatoriaBtn");
   const listaAleatoriaLabel = document.getElementById("listaAleatoriaLabel");
 
- 
+  crearListaAleatoriaBtn.addEventListener("click", function() {
+      const numElements = document.getElementById("numElements").value;
+      const lowerLimit = document.getElementById("lowerLimit").value;
+      const upperLimit = document.getElementById("upperLimit").value;
 
-function crearListaAleatoria() {
-    var numElements = parseInt(document.getElementById('numElements').value);
-    var lowerLimit = parseInt(document.getElementById('lowerLimit').value);
-    var upperLimit = parseInt(document.getElementById('upperLimit').value);
-    var listaAleatoria = [];
+      const listaAleatoria = generarListaAleatoria(numElements, lowerLimit, upperLimit);
+      listaAleatoriaLabel.textContent = listaAleatoria.join(", ");
+  });
 
-    for (var i = 0; i < numElements; i++) {
-        var randomNum = Math.floor(Math.random() * (upperLimit - lowerLimit + 1)) + lowerLimit;
-        listaAleatoria.push(randomNum);
-    }
-
-    document.getElementById('listaAleatoriaLabel').innerText = listaAleatoria.join(', ');
-}
+  function generarListaAleatoria(numElements, lowerLimit, upperLimit) {
+      const lista = [];
+      for (let i = 0; i < numElements; i++) {
+          const randomNumber = Math.floor(Math.random() * (upperLimit - lowerLimit + 1)) + parseInt(lowerLimit);
+          lista.push(randomNumber);
+      }
+      return lista;
+  }
 });
