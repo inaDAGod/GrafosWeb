@@ -150,7 +150,16 @@ function solveMinimum() {
     for (let i = 0; i < nodos.length; i++) {
       console.log(i, distDerecha[i], disIzq[i]);
     }
-    
+    holguras(nodos,distDerecha, disIzq);
+  }
+
+  function holguras(nodos,distDerecha, disIzq){
+    const matrizAristas = generarGrafoAristas();
+    let holgura = 0;
+    for (let i = 0; i <  matrizAristas.length; i++) {
+      holgura = distDerecha[matrizAristas[i].dest] - disIzq[matrizAristas[i].src] - matrizAristas[i].weight;
+      console.log("De "+nodos[matrizAristas[i].src].label +" a " +nodos[matrizAristas[i].dest].label + " holgura: " + holgura );
+    }
   }
  
 
