@@ -28,6 +28,7 @@
     </ul>
 </div>
 <script src="../scripts/menu.js"></script>
+<script src="../scripts/sort.js"></script> <!-- Agregar referencia al archivo sort.js -->
 <h1>Algoritmos de <span style="color: #FBAD41;">Ordenamiento</span></h1>
 
 <div class="content-wrapper">
@@ -42,9 +43,15 @@
   
   <div class="form-column">
     <div>
-      <label for="inputLabel">Input</label><br>
+      <label for="inputNormal">Input Normal</label>
+      <input type="checkbox" id="inputNormal" checked disabled>
+      <br>
       <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"><br>
-      <button id="randomInputBtn">Input Aleatorio</button><br>
+    </div>
+    <div>
+      <label for="inputAleatorio">Input Aleatorio</label>
+      <input type="checkbox" id="inputAleatorio" disabled>
+      <br>
       <label for="numElements">Número de elementos</label>
       <input type="number" id="numElements" value="10"><br>
       <label for="lowerLimit">Límite inferior</label>

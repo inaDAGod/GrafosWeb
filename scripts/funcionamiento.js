@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 
 let nodoSeleccionadoId = null;
 
@@ -228,4 +226,3 @@ function guardarGrafo() {
   btnDescargar.addEventListener('click', guardarGrafo);
 
   
->>>>>>> 17f6f6d21e77370e4cb50fd61627e9886d084588

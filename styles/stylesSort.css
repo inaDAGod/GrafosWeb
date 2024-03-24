@@ -45,7 +45,7 @@ body {
 .boton {
   display: block;
   text-align: center; 
-  width: 100%;
+  width: 150px; /* Ancho ajustado */
   margin-bottom: 10px; /* Espacio entre los botones */
   background-color: #BCB9D8; 
   color: rgb(0, 0, 0);
@@ -62,12 +62,13 @@ body {
 }
 
 .button-column {
-  flex: 1;
+  flex: 0 0 auto; /* Evita que la columna de botones crezca */
+  padding-right: 20px; /* Agrega un espacio a la derecha de la columna de botones */
 }
 
 .form-column {
   flex: 1;
-  padding-left: 20px;
+  padding-left: 10px; /* Ajusta el padding izquierdo */
 }
 
 .output {
