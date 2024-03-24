@@ -14,6 +14,7 @@
             <button class="boton" id="nodeDestinoButton" onclick="agregarNodoDestinoSeleccionado()" onclick= >Nodo demanda</button>
             <button class="boton" id="edgeButton" onclick="agregarAristaSeleccionada()"><img src="assets/edge1.png" alt="Edge1 Icon" width="55px" height="70px"></button>
             <button class="boton" id="matrixButton" onclick="generarMatrizCostos()"><img src="assets/matriz.png" alt="deleteEdge Icon" width="55px" height="70px"></button>
+            <button class="boton" id="matrixButton" onclick="generarMatrizAsignacion()">Matriz de asignacion</button>
             <button class="boton" id="deleteNodeButton" onclick="eliminarNodoSeleccionado()"><img src="assets/borrarNodo.png" alt="deleteNode Icon" width="55px" height="70px"></button>
             <button class="boton" id="deleteEdgeButton" onclick="eliminarAristaSeleccionada()"><img src="assets/borrarEdges.png" alt="deleteEdge Icon" width="55px" height="70px"></button>
             
@@ -21,6 +22,12 @@
             <a id="descargar" download="grafo.json"><button class="botonOtro" onclick="desactivarBotones(); desactivarBotones2() ">Exportar</button></a>
             <input type="file" id="cargarArchivo" accept=".json" style="display: none;">
             <button class="botonOtro" id="importButton" onclick="importarArchivo()">Importar</button>
+        </div>
+        <div class="optimization-options">
+            <select id="optimizationMode" onchange="changeOptimizationMode()">
+                <option value="maximization">Maximización</option>
+                <option value="minimization">Minimización</option>
+            </select>
         </div>
         <div class="help-button" style="margin-right: 20px;">
             <button class="boton" onclick="openHelpPage()">
