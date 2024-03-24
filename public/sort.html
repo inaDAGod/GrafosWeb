@@ -9,75 +9,77 @@
 </head>
 <body>
   <header class="header">
-    <a  class = "logo">
-        <button class="boton" onclick="window.location.href='nodos.html'" >Construir Grafo</button>
+    <a class="logo">
+      <button class="boton" onclick="window.location.href='nodos.html'" >Construir Grafo</button>
     </a>
     <nav class="navbar">
-        <a href="index.html"><b>Inicio </b> | </a> 
-        <a href="nosotros.html"><b>Sobre Nosotros </b> | </a> 
-        <a href="#" onclick="toggleMenu()"><b>Algoritmos</b></a>
+      <a href="index.html"><b>Inicio </b> | </a> 
+      <a href="nosotros.html"><b>Sobre Nosotros </b> | </a> 
+      <a href="#" onclick="toggleMenu()"><b>Algoritmos</b></a>
     </nav>
-</header>
+  </header>
 
-<div id="menu" class="menu">
+  <div id="menu" class="menu">
     <ul>
-        <li><h3>Menú de Algoritmos</h3></li>
-        <li><a href="johnson.html">Algoritmo de Johnson</a></li>
-        <li><a href="johnson.html">Algoritmo de Asignacion</a></li>
-        <li><a href="sort.html">Algoritmos de ordenamiento</a></li>
+      <li><h3>Menú de Algoritmos</h3></li>
+      <li><a href="johnson.html">Algoritmo de Johnson</a></li>
+      <li><a href="johnson.html">Algoritmo de Asignacion</a></li>
+      <li><a href="sort.html">Algoritmos de ordenamiento</a></li>
     </ul>
-</div>
-<script src="../scripts/menu.js"></script>
-<script src="../scripts/sort.js"></script> <!-- Agregar referencia al archivo sort.js -->
-<h1>Algoritmos de <span style="color: #FBAD41;">Ordenamiento</span></h1>
-
-<div class="content-wrapper">
-  <div class="button-column">
-    <div class="container">
-      <button id="selectionSortBtn" class="boton">Selection Sort</button>
-      <button id="insertionSortBtn" class="boton">Insertion Sort</button>
-      <button id="shellSortBtn" class="boton">Shell Sort</button>
-      <button id="bubbleSortBtn" class="boton">Bubble Sort</button>
-    </div>
   </div>
+  <script src="../scripts/menu.js"></script>
+  <script src="../scripts/sort.js"></script> <!-- Agregar referencia al archivo sort.js -->
+  <h1>Algoritmos de <span style="color: #FBAD41;">Ordenamiento</span></h1>
+
+  <div class="content-wrapper">
+    <div class="button-column">
+      <div class="container">
+        <button id="selectionSortBtn" class="boton">Selection Sort</button>
+        <button id="insertionSortBtn" class="boton">Insertion Sort</button>
+        <button id="shellSortBtn" class="boton">Shell Sort</button>
+        <button id="bubbleSortBtn" class="boton">Bubble Sort</button>
+      </div>
+    </div>
   
-  <div class="form-column">
-    <div>
-      <label for="inputNormal">Input Normal</label>
-      <input type="checkbox" id="inputNormal" checked>
-      <br>
-      <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"><br>
-    </div>
-    <div>
-      <label for="inputAleatorio">Input Aleatorio</label>
-      <input type="checkbox" id="inputAleatorio">
-      <br>
-      <label for="numElements">Número de elementos</label>
-      <input type="number" id="numElements" value="10"><br>
-      <label for="lowerLimit">Límite inferior</label>
-      <input type="number" id="lowerLimit" value="0">
-      <label for="upperLimit">Límite superior</label>
-      <input type="number" id="upperLimit" value="100">
-      <br>
-      <button id="crearListaAleatoriaBtn">Crear Lista Aleatoria</button>
-      <label id="listaAleatoriaLabel"></label>
+    <div class="form-column">
+      <div>
+        <label for="inputNormal">Input Normal</label>
+        <input type="checkbox" id="inputNormal" checked>
+        <br>
+        <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"><br>
+      </div>
+      <div>
+        <label for="inputAleatorio">Input Aleatorio</label>
+        <input type="checkbox" id="inputAleatorio">
+        <br>
+        <label for="numElements">Número de elementos</label>
+        <input type="number" id="numElements" value="10"><br>
+        <label for="lowerLimit">Límite inferior</label>
+        <input type="number" id="lowerLimit" value="0">
+        <label for="upperLimit">Límite superior</label>
+        <input type="number" id="upperLimit" value="100">
+        <br>
+        <button id="crearListaAleatoriaBtn">Crear Lista Aleatoria</button>
+        <label id="listaAleatoriaLabel"></label>
+      </div>
+      
+      <div class="output">
+        <label for="outputLabel">Output</label><br>
+        <div id="outputLabel"></div>
+      </div>
+      
+      <div class="output">
+        <div id="performanceLabel"></div>
+      </div>
+      <button id="cleanBtn">Clean</button>
     </div>
     
-    <div class="output">
-      <label for="outputLabel">Output</label><br>
-      <div id="outputLabel"></div>
+    <!-- Agrega el contenedor de visualización después de los elementos anteriores -->
+    <div class="visualization-column">
+      <div class="visualization" id="visualizationContainer">
+        <!-- Aquí se insertará dinámicamente el gráfico de barras -->
+      </div>
     </div>
-    
-    <div class="output">
-      <div id="performanceLabel"></div>
-    </div>
-    <button id="cleanBtn">Clean</button>
-  </div>
-</div>
-
-<div class="visualization">
-  <!-- Aquí deberías insertar el código para la visualización del gráfico -->
-</div>
 
 </body>
 </html>

@@ -45,7 +45,7 @@ body {
 .boton {
   display: block;
   text-align: center; 
-  width: 150px; /* Ancho ajustado */
+  width: 175px; /* Ancho ajustado */
   margin-bottom: 10px; /* Espacio entre los botones */
   background-color: #BCB9D8; 
   color: rgb(0, 0, 0);
@@ -170,4 +170,26 @@ h1{
     padding: 20px;
     background-color: #FBAD41;
     color: #473179;
+}
+
+.visualization-column {
+  flex: 0 0 auto; /* Elimina esto para que la columna pueda crecer */
+}
+
+.visualization-wrapper {
+  flex: 0 0 30%; /* Ajusta el ancho de la nueva columna según tus necesidades */
+  padding-left: 20px; /* Opcional: agrega un poco de espacio entre la columna de formulario y la nueva columna */
+}
+
+.visualization {
+  width: 100%;
+  height: 300px; /* Ajusta la altura del contenedor según tus necesidades */
+  overflow: auto; /* Para permitir el desplazamiento vertical si hay muchas barras */
+}
+
+.barra {
+  width: 20px; /* Ancho de cada barra */
+  background-color: #3498db; /* Color de las barras */
+  display: inline-block;
+  margin-right: 2px; /* Espacio entre las barras */
 }
