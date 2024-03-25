@@ -38,7 +38,7 @@ function inicializarGrafo() {
     grafo.on('doubleClick', dobleClicEnArista);
 }
 
-//PARA LOS BOTONES ACTIVOS 
+//---PARA LOS BOTONES ACTIVOS---
 function toggleButton(buttonId) {
     var button = document.getElementById(buttonId);
     button.classList.toggle('active'); 
@@ -118,12 +118,15 @@ function generarMatrizAsignacion() {
         // Paso 2: Restar el máximo de cada fila utilizando la matriz resultante del paso 1
         const matrizResultantePaso2 = restarMaximoPorFila(matrizResultantePaso1); // Pasar la matriz resultante como argumento
         mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
+        asignarNodos(matrizResultantePaso2, nodosOrigen, nodosDestino);
+
     } else { //optimizacion por minimizacion
         let html = `<h2>MINIMIZACIÓN</h2>`;
         const matrizResultantePaso1 = restarMinimoPorColumna(matrizCostos);
         mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
         const matrizResultantePaso2 = restarMinimoPorFila(matrizResultantePaso1);
         mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
+        asignarNodos(matrizResultantePaso2, nodosOrigen, nodosDestino);
     }
 }
 
@@ -282,6 +285,66 @@ function restarMinimoPorFila(matriz) {
         matrizResultante.push(filaResultante);
     }
     return matrizResultante;
+}
+function asignarNodos(matrizResultante, nodosOrigen, nodosDestino) {
+    const asignaciones = {};
+    // Recorrer la matriz resultante para identificar los ceros óptimos y realizar las asignaciones
+    for (let i = 0; i < nodosOrigen.length; i++) {
+        for (let j = 0; j < nodosDestino.length; j++) {
+            if (matrizResultante[i][j] === 0) {
+                const nodoOrigenId = nodosOrigen[i].id;
+                const nodoOrigenNombre = nodosOrigen[i].label;
+                const nodoDestinoId = nodosDestino[j].id;
+                const nodoDestinoNombre = nodosDestino[j].label;  
+                // Verificar si el nodo de origen ya ha sido asignado
+                if (!asignaciones.hasOwnProperty(nodoOrigenId)) {
+                    // Verificar si el nodo de destino ya ha sido asignado a otro nodo de origen
+                    const asignacionExistente = Object.entries(asignaciones).find(([key, value]) => value === nodoDestinoId);
+                    if (asignacionExistente) {
+                        // Si el nodo de destino ya ha sido asignado, verificar si la nueva asignación tiene un costo menor
+                        const nodoOrigenExistenteId = asignacionExistente[0];
+                        const costoAsignacionExistente = parseInt(aristasDataSet.get({ filter: item => item.from === nodoOrigenExistenteId && item.to === nodoDestinoId })[0].label);
+                        const costoNuevaAsignacion = parseInt(aristasDataSet.get({ filter: item => item.from === nodoOrigenId && item.to === nodoDestinoId })[0].label);
+                        if (costoNuevaAsignacion < costoAsignacionExistente) {
+                            // Si el nuevo nodo de origen es más preferible, reemplazar la asignación existente
+                            delete asignaciones[nodoOrigenExistenteId];
+                            asignaciones[nodoOrigenId] = nodoDestinoId;
+                        }
+                    } else {
+                        // Si el nodo de destino no ha sido asignado previamente, realizar la asignación
+                        asignaciones[nodoOrigenId] = nodoDestinoId;
+                    }
+                    
+                }
+            }
+            
+        }
+    }
+    // Mostrar las asignaciones realizadas
+    console.log('Asignaciones:');
+    for (const nodoOrigenId in asignaciones) {
+        const nodoDestinoId = asignaciones[nodoOrigenId];
+        const nodoOrigenNombre = nodosOrigen.find(nodo => nodo.id === nodoOrigenId).label;
+        const nodoDestinoNombre = nodosDestino.find(nodo => nodo.id === nodoDestinoId).label;
+        console.log(`Nodo de origen ${nodoOrigenNombre} asignado a nodo de destino ${nodoDestinoNombre}`);
+    }
+    mostrarAsignaciones(asignaciones);
+}
+function mostrarAsignaciones(asignaciones) {
+   
+    var divAsignaciones = document.getElementById('asignaciones');
+    divAsignaciones.innerHTML = '';
+    var ul = document.createElement('ul');
+    for (var nodoOrigenId in asignaciones) {
+        if (asignaciones.hasOwnProperty(nodoOrigenId)) {
+            var nodoDestinoId = asignaciones[nodoOrigenId];
+            var li = document.createElement('li');
+            // Construir el texto del li como desees
+            li.textContent = nodoOrigenId + ' -> ' + nodoDestinoId;
+            ul.appendChild(li);
+        }
+    }
+    divAsignaciones.appendChild(ul);
 }
 
 
@@ -471,8 +534,6 @@ function limpiar() {
 document.addEventListener('DOMContentLoaded', () => {
     inicializarGrafo();
 });
-
-
 
 function clicEnNodo(propiedades) {
     console.log('clic en nodo');
