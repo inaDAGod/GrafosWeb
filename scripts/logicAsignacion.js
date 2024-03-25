@@ -19,6 +19,7 @@ let buttonStates = {
     edgeButton: false,
     deleteEdgeButton: false,
     matrixButton: false,
+    matrixAsignacionButton: false,
     saveButton: false,
     deleteNodeButton: false
 };
@@ -68,6 +69,7 @@ function changeOptimizationMode() {
 }
 
 function generarMatrizAsignacion() {
+    console.log("Se está generando la matriz de asignación");
     desactivarBotones();
     desactivarBotones2();
     const nodosOrigen = nodosDataSet.get({ filter: item => item.group === 'origen' });
@@ -85,111 +87,103 @@ function generarMatrizAsignacion() {
         });
     });
 
-    // Determinar la matriz de asignación según el modo de optimización seleccionado
-    const asignacion = maximizationMode ? algoritmoHungaroMaximizacion(matrizCostos) : algoritmoHungaroMinimizacion(matrizCostos);
-    actualizarMatrizAsignacion(matrizAsignacion, asignacion);
+    // Paso 1: Restar el máximo de cada columna
+    const matrizResultantePaso1 = restarMaximoPorColumna(matrizCostos);
+    mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
 
-    mostrarMatrizAsignacion(nodosOrigen, nodosDestino, matrizAsignacion);
+    // Paso 2: Restar el máximo de cada fila utilizando la matriz resultante del paso 1
+    const matrizResultantePaso2 = restarMaximoPorFila(matrizResultantePaso1); // Pasar la matriz resultante como argumento
+    mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
 }
 
-function actualizarMatrizAsignacion(matrizAsignacion, asignacion) {
-    for (let i = 0; i < asignacion.length; i++) {
-        matrizAsignacion[i] = [];
-        matrizAsignacion[i][asignacion[i]] = 1;
-    }
-}
-
-function mostrarMatrizAsignacion(nodosOrigen, nodosDestino, matriz) {
+function mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matriz, paso) {
     desactivarBotones();
     desactivarBotones2();
     const contenedorMatriz = document.getElementById('matriz');
     if (nodosOrigen.length > 0 && nodosDestino.length > 0) {
-        let html = '<h2>Matriz de Asignación</h2>';
+        let html = `<h2>Matriz de Asignación (Paso ${paso})</h2>`;
         html += '<table>';
         html += '<tr><th></th>';
-        nodosDestino.forEach(nodo => {
-            html += `<th>${nodo.label}</th>`;
-        });
+        for (let j = 0; j < nodosDestino.length; j++) {
+            html += `<th>${nodosDestino[j].label}</th>`;
+        }
         html += '</tr>';
-        matriz.forEach((fila, index) => {
-            html += `<tr><th>${nodosOrigen[index].label}</th>`;
-            fila.forEach(valor => {
-                html += `<td>${valor || 0}</td>`;
-            });
+        for (let i = 0; i < matriz.length; i++) {
+            html += `<tr><th>${nodosOrigen[i].label}</th>`;
+            for (let j = 0; j < matriz[i].length; j++) {
+                html += `<td>${matriz[i][j] || 0}</td>`;
+            }
             html += '</tr>';
-        });
+        }
         html += '</table>';
-        contenedorMatriz.innerHTML = html;
+        contenedorMatriz.innerHTML += html; // Cambia esto a '+=' para concatenar las matrices en lugar de reemplazarlas
     }
 }
 
-function algoritmoHungaroMaximizacion(costMatrix) {
-    const n = costMatrix.length;
-    const assign = Array(n).fill(-1);
-    const maxMatched = Array(n).fill(0);
+function restarMaximoPorColumna(matriz) {
+    console.log("Paso 1");
+    const n = matriz.length;
+    const maximosColumna = Array(n); // Inicializar vector
+    for (let i = 0; i < n; i++) {
+        maximosColumna[i] = -Infinity; // Inicializar cada elemento con -Infinity
+    }
 
-    // Paso 1: Restar el mínimo de cada fila
-    for (let i = 0; i < n; i++) {
-        let minRow = Math.min(...costMatrix[i]);
-        for (let j = 0; j < n; j++) {
-            costMatrix[i][j] -= minRow;
-        }
-    }
-    // Paso 2: Restar el mínimo de cada columna
+    // Encontrar el máximo de cada columna y almacenarlo en su posición correspondiente
+    console.log("Maximos");
     for (let j = 0; j < n; j++) {
-        let minCol = Infinity;
         for (let i = 0; i < n; i++) {
-            minCol = Math.min(minCol, costMatrix[i][j]);
-        }
-        for (let i = 0; i < n; i++) {
-            costMatrix[i][j] -= minCol;
+            console.log(Math.max(maximosColumna[j], matriz[i][j]));
+            maximosColumna[j] = Math.max(maximosColumna[j], matriz[i][j]);
         }
     }
-    // Paso 3: Asignar tantos 0's como sea posible
+    // Crear la matriz resultante
+    const matrizResultante = [];
+    console.log("Restas");
     for (let i = 0; i < n; i++) {
+        const filaResultante = [];
         for (let j = 0; j < n; j++) {
-            if (costMatrix[i][j] === 0 && assign[j] === -1 && maxMatched[i] === 0) {
-                assign[j] = i;
-                maxMatched[i] = 1;
-                break;
-            }
+            console.log("nuevo");
+            console.log(matriz[i][j]);
+            console.log("-");
+            console.log(maximosColumna[j]);
+            filaResultante.push(matriz[i][j] - maximosColumna[j]); // Restar el máximo de la columna j a cada elemento de la fila i
         }
+        matrizResultante.push(filaResultante);
     }
-    return assign;
+
+    return matrizResultante;
 }
-function algoritmoHungaroMinimizacion(costMatrix) {
-    const n = costMatrix.length;
-    const assign = Array(n).fill(-1);
-    const minMatched = Array(n).fill(0);
+function restarMaximoPorFila(matriz) {
+    console.log("Paso 1");
+    const n = matriz.length;
+    const maximosFila = Array(n); // Inicializar vector
+    for (let i = 0; i < n; i++) {
+        maximosFila[i] = -Infinity; // Inicializar cada elemento con -Infinity
+    }
 
-    // Paso 1: Restar el máximo de cada fila
-    for (let i = 0; i < n; i++) {
-        let maxRow = Math.max(...costMatrix[i]);
-        for (let j = 0; j < n; j++) {
-            costMatrix[i][j] = maxRow - costMatrix[i][j];
-        }
-    }
-    // Paso 2: Restar el máximo de cada columna
-    for (let j = 0; j < n; j++) {
-        let maxCol = -Infinity;
-        for (let i = 0; i < n; i++) {
-            maxCol = Math.max(maxCol, costMatrix[i][j]);
-        }
-        for (let i = 0; i < n; i++) {
-            costMatrix[i][j] = maxCol - costMatrix[i][j];
-        }
-    }
-    // Paso 3: Asignar tantos 0's como sea posible
+    // Encontrar el máximo de cada fila y almacenarlo en su posición correspondiente
+    console.log("Maximos fila");
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            if (costMatrix[i][j] === 0 && assign[j] === -1 && minMatched[i] === 0) {
-                assign[j] = i;
-                minMatched[i] = 1;
-                break;
-            }
+            console.log(Math.max(maximosFila[i], matriz[i][j]));
+            maximosFila[i] = Math.max(maximosFila[i], matriz[i][j]);
         }
     }
-    return assign;
+    // Crear la matriz resultante
+    const matrizResultante = [];
+    console.log("Restas");
+    for (let i = 0; i < n; i++) {
+        const filaResultante = [];
+        for (let j = 0; j < n; j++) {
+            console.log("nuevo");
+            console.log(matriz[i][j]);
+            console.log("-");
+            console.log(maximosFila[i]);
+            filaResultante.push(matriz[i][j] - maximosFila[i]); // Restar el máximo de la columna j a cada elemento de la fila i
+        }
+        matrizResultante.push(filaResultante);
+    }
+    return matrizResultante;
 }
 
 
