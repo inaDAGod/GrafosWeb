@@ -12,6 +12,11 @@ let dobleClicEnNodoManejado = false;
 let ids = 0;
 let modoCambiarColorNodo = false;
 
+let modoAgregarNodoOrigen = false; 
+let modoAgregarNodoDestino = false; 
+let idsOrigen = 0;
+let idsDestino = 0; 
+let maximizationMode = true;
 
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
@@ -41,6 +46,10 @@ function desactivarBotones(){
     modoAgregarArista2 = false;
     grafo.off('click',agregarNodo);  
     modoAgregarNodo = false; 
+    grafo.off('click', agregarNodoOrigen);
+    modoAgregarNodoOrigen = false; 
+    grafo.off('click', agregarNodoDestino);  
+    modoAgregarNodoDestino = false;
     grafo.off('click', cambiarColorNodo);
     modoCambiarColorNodo = false;
     btnActivos = 0;
@@ -343,6 +352,8 @@ let nodoSeleccionadoId = null;
 
 let buttonStates = {
     nodeButton: false,
+    nodeOrigenButton: false,
+    nodeDestinoButton: false,
     edgeButton: false,
     edge2Button: false,
     deleteEdgeButton: false,

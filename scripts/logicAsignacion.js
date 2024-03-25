@@ -30,28 +30,52 @@ function inicializarGrafo() {
     nodosDataSet = new vis.DataSet();
     aristasDataSet = new vis.DataSet();
     const data = { nodes: nodosDataSet, edges: aristasDataSet };
-    const opciones = {
-        nodes: {
-            shape: 'dot',
-            size: 20,
-            borderWidth: 2,
-            font: {
-                size: 14
-            }
-        },
-        edges: {
-            width: 2,
-            smooth: {
-                type: 'continuous'
-            }
-        }
-    };
+    const opciones = {};
     grafo = new vis.Network(lienzo, data, opciones);
     desactivarBotones();
     desactivarBotones2();
     ids = 0;
     grafo.on('doubleClick', dobleClicEnNodo);
     grafo.on('doubleClick', dobleClicEnArista);
+}
+
+//PARA LOS BOTONES ACTIVOS 
+function toggleButton(buttonId) {
+    var button = document.getElementById(buttonId);
+    button.classList.toggle('active'); 
+}
+function setActiveButton(buttonId) {
+    for (const key in buttonStates) {
+        if (key !== buttonId && buttonStates[key]) {
+            toggleButton(key);
+            buttonStates[key] = false;
+        }
+    }
+    buttonStates[buttonId] = !buttonStates[buttonId];
+}
+
+function desactivarBotones(){
+    grafo.off('click',eliminarArista);
+    modoEliminarArista = false;
+    grafo.off('click', eliminarNodo);
+    modoEliminarNodo = false;
+    grafo.off('click', clicEnNodo);
+    modoAgregarArista = false;
+    grafo.off('click', clicEnNodo2);
+    modoAgregarArista2 = false;
+    grafo.off('click', agregarNodoOrigen);
+    modoAgregarNodoOrigen = false; 
+    grafo.off('click', agregarNodoDestino);  
+    modoAgregarNodoDestino = false;
+    btnActivos = 0;
+}
+function desactivarBotones2() {
+    for (const key in buttonStates) {
+        if (buttonStates[key]) {
+            toggleButton(key);
+            buttonStates[key] = false;
+        }
+    }
 }
 
 // ---PARA LA MATRIZ DE ASIGNACION---
@@ -282,10 +306,8 @@ function agregarAristaSeleccionada(){
     
 }
 function agregarNodoOrigenSeleccionado() {
-    const buttonId = 'nodeOrigenButton';
-    toggleButton(buttonId);
-    setActiveButton(buttonId);
-    toggleActiveState(buttonId);
+    toggleButton('nodeOrigenButton');
+    setActiveButton('nodeOrigenButton');
     if (modoAgregarNodoOrigen) {
         btnActivos--;
         modoAgregarNodoOrigen = false;
@@ -299,12 +321,9 @@ function agregarNodoOrigenSeleccionado() {
         grafo.on('click', agregarNodoOrigen);
     }
 }
-
 function agregarNodoDestinoSeleccionado() {
-    const buttonId = 'nodeDestinoButton';
-    toggleButton(buttonId);
-    setActiveButton(buttonId);
-    toggleActiveState(buttonId);
+    toggleButton('nodeDestinoButton');
+    setActiveButton('nodeDestinoButton');
     if (modoAgregarNodoDestino) {
         btnActivos--;
         modoAgregarNodoDestino = false;
@@ -320,12 +339,12 @@ function agregarNodoDestinoSeleccionado() {
 }
 
 function agregarNodoOrigen(event) {
-    nodosDataSet.add({ id: 'origen_' + idsOrigen, label: 'Nodo Origen ' + (idsOrigen + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'origen', color: '#FFD700' }); // Amarillo
+    nodosDataSet.add({ id: 'origen_' + idsOrigen, label: 'Origen ' + (idsOrigen + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'origen', color: '#FFD700' }); // Amarillo
     idsOrigen++;
 }
 
 function agregarNodoDestino(event) {
-    nodosDataSet.add({ id: 'destino_' + idsDestino, label: 'Nodo Destino ' + (idsDestino + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'destino', color: '#ADD8E6' }); // Celeste
+    nodosDataSet.add({ id: 'destino_' + idsDestino, label: 'Destino ' + (idsDestino + 1), x: event.pointer.canvas.x, y: event.pointer.canvas.y, group: 'destino', color: '#ADD8E6' }); // Celeste
     idsDestino++;
 }
 // ---FUNCIONES DE ELIMINAR NODOS Y ARISTAS---
@@ -445,8 +464,6 @@ function mostrarMatrizCostos(nodosOrigen, nodosDestino, matriz) {
         contenedorMatriz.innerHTML = html;
     }
 }
-
-
 function limpiar() {
     inicializarGrafo();
 }
@@ -455,6 +472,8 @@ function limpiar() {
 document.addEventListener('DOMContentLoaded', () => {
     inicializarGrafo();
 });
+
+
 
 function clicEnNodo(propiedades) {
     console.log('clic en nodo');
@@ -473,8 +492,6 @@ function clicEnNodo(propiedades) {
         }
     }
 }
-
-
 
 function clicEnNodo2(propiedades) {
     console.log('clic en nodo 2');
@@ -526,51 +543,104 @@ function dobleClicEnArista(propiedades) {
     }
 }
 
-//PARA LOS BOTONES ACTIVOS 
-function toggleButton(buttonId) {
-    var button = document.getElementById(buttonId);
-    button.classList.toggle('active');
+
+// COLOR PICKER Y HELP PAGE
+function openColorPicker() {
+    var colorSelector = document.getElementById('colorSelector');
+    colorSelector.click(); 
 }
-function setActiveButton(buttonId) {
-    for (const key in buttonStates) {
-        if (key !== buttonId && buttonStates[key]) {
-            toggleButton(key);
-            buttonStates[key] = false;
-        }
-    }
-    buttonStates[buttonId] = !buttonStates[buttonId];
+function openColorPicker() {
+    desactivarBotones();
+    desactivarBotones2();
+    var colorSelector = document.getElementById('colorSelector');
+    colorSelector.click(); // Simular clic en el input de color
+    const color = document.getElementById('colorSelector').value;
+    const lienzo = document.getElementById('lienzo');
+    lienzo.style.backgroundColor = color;
+}
+function cambiarColorLienzo() {
+    const color = document.getElementById('colorSelector').value;
+    const lienzo = document.getElementById('lienzo');
+    lienzo.style.backgroundColor = color;
+}
+function openHelpPage() {
+    // Especifica la URL de la página de ayuda
+    var helpPageURL = 'help.html';
+    // Abre una nueva ventana emergente
+    window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
 }
 
-function toggleActiveState(buttonId) {
-    buttonStates[buttonId] = !buttonStates[buttonId];
-}
 
-function desactivarBotones(){
-    grafo.off('click',eliminarArista);
-    modoEliminarArista = false;
-    grafo.off('click', eliminarNodo);
-    modoEliminarNodo = false;
-    grafo.off('click', clicEnNodo);
-    modoAgregarArista = false;
-    grafo.off('click', clicEnNodo2);
-    modoAgregarArista2 = false;
-    grafo.off('click', agregarNodoOrigen);
-    modoAgregarNodoOrigen = false; 
-    grafo.off('click', agregarNodoDestino);  
-    modoAgregarNodoDestino = false;
-    btnActivos = 0;
-    for (const key in buttonStates) {
-        if (buttonStates[key]) {
-            toggleButton(key);
-            buttonStates[key] = false;
-        }
+//IMPORTACION Y EXPORTACION
+function guardarGrafo() {
+    let nombreArchivo = prompt("Por favor, ingrese el nombre del archivo:", "grafoNodolandia.json");
+  
+    if (nombreArchivo != null) {
+        let estadoGrafo = {
+            nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
+            aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] })
+        };
+        let estadoJSON = JSON.stringify(estadoGrafo);
+        let blob = new Blob([estadoJSON], { type: 'application/json' });
+        let url = URL.createObjectURL(blob);
+  
+        let enlace = document.createElement('a');
+        enlace.download = nombreArchivo;
+        enlace.href = url;
+        enlace.click();
+        URL.revokeObjectURL(url);
     }
 }
-function desactivarBotones2() {
-    for (const key in buttonStates) {
-        if (buttonStates[key]) {
-            toggleButton(key);
-            buttonStates[key] = false;
-        }
-    }
+function cargarGrafo(event) {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+  
+    const lector = new FileReader();
+    lector.onload = function() {
+      const estadoJSON = lector.result;
+      cargarGrafoDesdeJSON(estadoJSON);
+    };
+    lector.readAsText(archivo);
 }
+  
+function cargarGrafoDesdeJSON(estadoJSON) {
+    limpiar();
+    const estadoGrafo = JSON.parse(estadoJSON);
+    let nodosMayor = 0;
+    estadoGrafo.nodos.forEach(nodo => {
+        nodosDataSet.add({
+            id: nodo.id,
+            label: nodo.label,
+            x: nodo.x,
+            y: nodo.y,
+            group: nodo.id.includes('origen') ? 'origen' : 'destino', // Determinar el grupo del nodo según el prefijo del ID
+            color: nodo.color
+        });
+        const idNumerico = parseInt(nodo.id.split('_')[1]); // Obtener el número del ID para encontrar el mayor
+        if(idNumerico > nodosMayor) {
+            nodosMayor = idNumerico;
+        }
+    });
+
+    estadoGrafo.aristas.forEach(arista => {
+        aristasDataSet.add({
+            id: arista.id,
+            from: arista.from,
+            to: arista.to,
+            label: arista.label || '', // Establecer una cadena vacía si no hay etiqueta definida
+            arrows: arista.arrows
+        });
+    });
+    idsOrigen = nodosMayor + 1; // Incrementar el contador de IDs para nodos de origen
+    idsDestino = nodosMayor + 1; // Incrementar el contador de IDs para nodos de destino
+}
+function importarArchivo() {
+    const inputCargar = document.getElementById('cargarArchivo');
+    inputCargar.value = ''; 
+    inputCargar.click();
+}
+  
+const inputCargar = document.getElementById('cargarArchivo');
+inputCargar.addEventListener('change', cargarGrafo);
+const btnDescargar = document.getElementById('descargar');
+btnDescargar.addEventListener('click', guardarGrafo);
