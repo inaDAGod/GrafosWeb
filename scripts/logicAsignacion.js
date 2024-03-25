@@ -4,15 +4,15 @@ let aristasDataSet;
 let seleccionado;
 let modoEliminarArista = false;
 let modoEliminarNodo = false;
-let modoAgregarNodoOrigen = false; 
-let modoAgregarNodoDestino = false; 
 let modoAgregarArista = false;
 let btnActivos = 0;
 let dobleClicEnNodoManejado = false;
-let idsOrigen = 0;
-let idsDestino = 0; 
 let nodoSeleccionadoId = null;
 
+let modoAgregarNodoOrigen = false; 
+let modoAgregarNodoDestino = false; 
+let idsOrigen = 0;
+let idsDestino = 0; 
 let buttonStates = {
     nodeOrigenButton: false,
     nodeDestinoButton: false,
@@ -23,7 +23,6 @@ let buttonStates = {
     saveButton: false,
     deleteNodeButton: false
 };
-
 let maximizationMode = true;
 function inicializarGrafo() {
     const lienzo = document.getElementById('lienzo');
@@ -486,7 +485,13 @@ function clicEnNodo(propiedades) {
             const grupoActual = nodosDataSet.get(nodes[0]).group;
             if (grupoSeleccionado !== grupoActual && 
                 ((grupoSeleccionado === 'origen' && grupoActual === 'destino'))) {
-                aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
+                // Verificar si se proporcionó un nombre para la arista
+                let nombreArista = prompt('Ingrese el nombre para la arista:', '1');
+                // Si no se proporciona un nombre, asignar el valor predeterminado de 1
+                if (!nombreArista || isNaN(nombreArista.trim())) {
+                    nombreArista = '1';
+                }
+                aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to', label: nombreArista });
             }
             seleccionado = undefined;
         }
@@ -542,7 +547,6 @@ function dobleClicEnArista(propiedades) {
         }
     }
 }
-
 
 // COLOR PICKER Y HELP PAGE
 function openColorPicker() {
