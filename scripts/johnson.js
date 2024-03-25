@@ -1,3 +1,5 @@
+let caminito = [];
+
 function generarGrafoAristas() {
     return aristasDataSet.get().map((arista) => ({
       src: arista.from,
@@ -100,7 +102,8 @@ function solveMinimum() {
     console.log('mejor camino', mejorCamino);
     mejorCamino = corregirCamino(mejorCamino,holguras(distDerecha, disIzq));
     console.log('mejor camino corregido', mejorCamino);
-    pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras(distDerecha, disIzq));
+    
+    pintarMejorCamino(bestPath(holguras(distDerecha, disIzq)),distDerecha, disIzq,holguras(distDerecha, disIzq));
   }
  
   
@@ -156,7 +159,8 @@ function solveMinimum() {
     }
     mejorCamino = corregirCamino(mejorCamino,holguras(distDerecha, disIzq));
     console.log('mejor camino corregido', mejorCamino);
-    pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras(distDerecha, disIzq));
+    
+    pintarMejorCamino(bestPath(holguras(distDerecha, disIzq)),distDerecha, disIzq,holguras(distDerecha, disIzq));
   }
 
   function holguras(distDerecha, disIzq) {
@@ -197,6 +201,7 @@ function corregirCamino(mejorCamino, holguras) {
 function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
   let total = 0;
   const nodoDestinoId = nodoDestino();
+  grafo.setOptions({ physics: false });
   nodosDataSet.forEach(nodo => {
     nodo.color = { background: '#97C2FC' }; 
     nodo.borderWidth= 1;
@@ -235,6 +240,7 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
         if (holgura == 0) { 
             const src = holguras[i].src;
             const dest = holguras[i].dest;
+
             const aristasFiltradas = aristasDataSet.get({ filter: item => item.from == src && item.to === dest });
             aristasFiltradas.forEach(arista => {
                 arista.color = { color: '#FD918F' }; 
@@ -247,7 +253,7 @@ function pintarMejorCamino(mejorCamino,distDerecha, disIzq,holguras) {
     }
     
     
-    
+    grafo.setOptions({ physics: true});
       mostrarSolucion(distDerecha, disIzq,holguras, total);
 }
 
@@ -271,6 +277,99 @@ function mostrarSolucion(distDerecha, disIzq,holguras,total) {
   html += `<h3>Total : ${total}</h3><table>`;
   contenedor.innerHTML = html;
 }
+
+
+async function pintarMejorCamino2( ) {
+  let total = 0;
+  const nodoDestinoId = nodoDestino();
+  const nodoOrigenId = nodoOrigen();
+  grafo.setOptions({
+    physics: {
+      enabled: true,
+      repulsion: {
+        nodeDistance: 100, // Ajusta la distancia de repulsión entre nodos
+      },
+      barnesHut: {
+        gravitationalConstant: -2000, // Ajusta la constante gravitacional de Barnes-Hut
+        centralGravity: 0.3, // Ajusta la gravedad central de Barnes-Hut
+        springLength: 150, // Ajusta la longitud del resorte entre nodos
+        springConstant: 0.03, // Ajusta la constante del resorte entre nodos con un valor menor para reducir el rebote
+      },
+    },
+  });
+  
+  
+  // Volver todo a sus colores originales
+  nodosDataSet.forEach(nodo => {
+      nodo.color = { background: '#97C2FC' };
+      nodo.borderWidth = 1;
+      nodo.shadow = false;
+      nodosDataSet.update(nodo);
+  });
+
+  aristasDataSet.forEach(arista => {
+      arista.color = { color: '#2B7CE9', highlight: '#2B7CE9' };
+      arista.width = 1;
+      aristasDataSet.update(arista);
+  });
+
+  // Pintar el camino crítico con retrasos
+  let i = nodoOrigenId;
+  while (i != nodoDestinoId) {
+      await new Promise(resolve => setTimeout(resolve, 500)); // Retraso de medio segundo
+      const nodo = nodosDataSet.get(i);
+      if (nodo) {
+          nodo.color = { background: '#FBAD41' };
+          nodo.shadow = true;
+          nodosDataSet.update(nodo);
+      }
+
+      const aristasFiltradas = aristasDataSet.get({ filter: item => item.from == i && item.to == caminito[i] });
+      aristasFiltradas.forEach(arista => {
+          arista.color = { color: '#FBAD41' };
+          arista.width = 4;
+          total += parseInt(arista.label);
+      });
+
+      aristasDataSet.update(aristasFiltradas);
+      i = caminito[i];
+
+
+  }
+
+  // Pintar el nodo destino al final
+  await new Promise(resolve => setTimeout(resolve, 500)); // Retraso de medio segundo para el nodo destino
+  const nodo = nodosDataSet.get(nodoDestinoId);
+  if (nodo) {
+      nodo.color = { background: '#FBAD41' };
+      nodo.shadow = true;
+      nodosDataSet.update(nodo);
+  }
+  //grafo.setOptions({ physics: true });
+}
+
+
+function bestPath(holguras){
+  let camino = [];
+  let bestCamino = Array(nodosDataSet.length).fill(-1);
+  for(let i = 0; i < holguras.length; i++){
+    const src = holguras[i].src;
+    const dest = holguras[i].dest;
+    const holgura = holguras[i].holgura;
+    if(holgura == 0){
+      const caminoInfo = {
+        src: src,
+        dest: dest,
+    };
+    camino.push(caminoInfo);
+    bestCamino[src] =  dest;
+    }
+  }
+  //console.log("camino holgura 0", camino);
+  caminito = bestCamino;
+  return bestCamino;
+}
+
 
 
 
