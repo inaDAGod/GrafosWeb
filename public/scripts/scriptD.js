@@ -248,6 +248,11 @@ function eliminarNodo(event) {
 
 
 function limpiar(){  
+
+    document.getElementById('matriz').innerHTML = '';
+    document.getElementById('solucion').innerHTML = '';
+
+
     inicializarGrafo();
     
 }

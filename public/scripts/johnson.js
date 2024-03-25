@@ -271,7 +271,7 @@ function mostrarSolucion(distDerecha, disIzq,holguras,total) {
     const src = holguras[i].src;
     const dest = holguras[i].dest;
     const holgura = holguras[i].holgura;
-    html += `<tr><th colspan="2" style="background: #FBAD41;">${src} ->  ${dest}</th> <td style="background:  #fdd092;"> ${holgura} </td></tr>`
+    html += `<tr><th colspan="2" style="background: #FBAD41;">${nodosDataSet.get(src).label} ->  ${nodosDataSet.get(dest).label}</th> <td style="background:  #fdd092;"> ${holgura} </td></tr>`
   }
   html += '</table>';
   html += `<h3>Total : ${total}</h3><table>`;
