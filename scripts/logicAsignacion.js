@@ -87,13 +87,21 @@ function generarMatrizAsignacion() {
         });
     });
 
-    // Paso 1: Restar el máximo de cada columna
-    const matrizResultantePaso1 = restarMaximoPorColumna(matrizCostos);
-    mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
-
-    // Paso 2: Restar el máximo de cada fila utilizando la matriz resultante del paso 1
-    const matrizResultantePaso2 = restarMaximoPorFila(matrizResultantePaso1); // Pasar la matriz resultante como argumento
-    mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
+    if (maximizationMode) { //optimizacion por maximizacion
+        // Paso 1: Restar el máximo de cada columna
+        let html = `<h2>MAXIMIZACIÓN</h2>`;
+        const matrizResultantePaso1 = restarMaximoPorColumna(matrizCostos);
+        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
+        // Paso 2: Restar el máximo de cada fila utilizando la matriz resultante del paso 1
+        const matrizResultantePaso2 = restarMaximoPorFila(matrizResultantePaso1); // Pasar la matriz resultante como argumento
+        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
+    } else { //optimizacion por minimizacion
+        let html = `<h2>MINIMIZACIÓN</h2>`;
+        const matrizResultantePaso1 = restarMinimoPorColumna(matrizCostos);
+        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
+        const matrizResultantePaso2 = restarMinimoPorFila(matrizResultantePaso1);
+        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
+    }
 }
 
 function mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matriz, paso) {
@@ -154,7 +162,7 @@ function restarMaximoPorColumna(matriz) {
     return matrizResultante;
 }
 function restarMaximoPorFila(matriz) {
-    console.log("Paso 1");
+    console.log("Paso 2");
     const n = matriz.length;
     const maximosFila = Array(n); // Inicializar vector
     for (let i = 0; i < n; i++) {
@@ -180,6 +188,73 @@ function restarMaximoPorFila(matriz) {
             console.log("-");
             console.log(maximosFila[i]);
             filaResultante.push(matriz[i][j] - maximosFila[i]); // Restar el máximo de la columna j a cada elemento de la fila i
+        }
+        matrizResultante.push(filaResultante);
+    }
+    return matrizResultante;
+}
+
+function restarMinimoPorColumna(matriz) {
+    console.log("Paso 1");
+    const n = matriz.length;
+    const minimosColumna = Array(n); // Inicializar vector
+    for (let i = 0; i < n; i++) {
+        minimosColumna[i] = Infinity; // Inicializar cada elemento con Infinity para que cualquier número sea menor
+    }
+
+    // Encontrar el mínimo de cada columna y almacenarlo en su posición correspondiente
+    console.log("Mínimos");
+    for (let j = 0; j < n; j++) {
+        for (let i = 0; i < n; i++) {
+            console.log(Math.min(minimosColumna[j], matriz[i][j]));
+            minimosColumna[j] = Math.min(minimosColumna[j], matriz[i][j]);
+        }
+    }
+    // Crear la matriz resultante
+    const matrizResultante = [];
+    console.log("Restas");
+    for (let i = 0; i < n; i++) {
+        const filaResultante = [];
+        for (let j = 0; j < n; j++) {
+            console.log("nuevo");
+            console.log(matriz[i][j]);
+            console.log("-");
+            console.log(minimosColumna[j]);
+            filaResultante.push(matriz[i][j] - minimosColumna[j]); // Restar el mínimo de la columna j a cada elemento de la fila i
+        }
+        matrizResultante.push(filaResultante);
+    }
+
+    return matrizResultante;
+}
+
+function restarMinimoPorFila(matriz) {
+    console.log("Paso 2");
+    const n = matriz.length;
+    const minimosFila = Array(n); // Inicializar vector
+    for (let i = 0; i < n; i++) {
+        minimosFila[i] = Infinity; // Inicializar cada elemento con Infinity para que cualquier número sea menor
+    }
+
+    // Encontrar el mínimo de cada fila y almacenarlo en su posición correspondiente
+    console.log("Mínimos fila");
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            console.log(Math.min(minimosFila[i], matriz[i][j]));
+            minimosFila[i] = Math.min(minimosFila[i], matriz[i][j]);
+        }
+    }
+    // Crear la matriz resultante
+    const matrizResultante = [];
+    console.log("Restas");
+    for (let i = 0; i < n; i++) {
+        const filaResultante = [];
+        for (let j = 0; j < n; j++) {
+            console.log("nuevo");
+            console.log(matriz[i][j]);
+            console.log("-");
+            console.log(minimosFila[i]);
+            filaResultante.push(matriz[i][j] - minimosFila[i]); // Restar el mínimo de la fila i a cada elemento de la fila i
         }
         matrizResultante.push(filaResultante);
     }
@@ -379,8 +454,6 @@ function limpiar() {
 // ---PARA LOS EVENTOS DE CLICKS EN NODOS Y ARISTAS---
 document.addEventListener('DOMContentLoaded', () => {
     inicializarGrafo();
-    grafo.on('doubleClick', dobleClicEnNodo);
-    grafo.on('doubleClick', dobleClicEnArista);
 });
 
 function clicEnNodo(propiedades) {
