@@ -47,35 +47,34 @@
   
     <div class="form-column">
       <div>
-        <label for="inputNormal">Input Normal</label>
-        <input type="checkbox" id="inputNormal" checked>
+        <label for="inputNormal" class="label-grande-negrita">Input Normal</label>
+        <input type="checkbox" id="inputNormal" checked class="checkbox-grande">
         <br>
-        <input type="text" id="inputLabel" placeholder="Introduce elementos (1, 3, 2, 7, etc)"> <br>
+        <input type="text" id="inputLabel" class="input-grande" placeholder="Introduce elementos (1, 7, 2, etc)"> <br>
       </div>
       <div>
-        <label for="inputAleatorio">Input Aleatorio</label>
-        <input type="checkbox" id="inputAleatorio">
+        <label for="inputAleatorio" class="label-grande-negrita">Input Aleatorio</label>
+        <input type="checkbox" id="inputAleatorio" class="checkbox-grande">
         <br>
-        <label for="numElements">Número de elementos</label>
-        <input type="number" id="numElements" value="10"><br>
-        <label for="lowerLimit">Límite inferior</label>
-        <input type="number" id="lowerLimit" value="0">
-        <label for="upperLimit">Límite superior</label>
-        <input type="number" id="upperLimit" value="100">
-        <br>
-        <button id="crearListaAleatoriaBtn">Crear Lista Aleatoria</button>
-        <label id="listaAleatoriaLabel"></label>
+        <label for="numElements" style="font-size: 20px;">Número de elementos</label>
+        <input type="number" id="numElements" value="10" style="width: 70px; height: 20px;"><br>
+        <label for="lowerLimit"style="font-size: 20px;">Límite inferior</label>
+        <input type="number" id="lowerLimit" value="0" style="width: 70px;height: 20px;"> <br>
+        <label for="upperLimit"style="font-size: 20px;">Límite superior</label>
+        <input type="number" id="upperLimit" value="100" style="width: 70px;height: 20px;  margin-bottom: 5px;"> <br>
+        <button id="crearListaAleatoriaBtn" class="boton" style="padding: 3px 1px;">Crear Lista Aleatoria</button>
+        <label id="listaAleatoriaLabel" style="font-size: 20px;"></label>
       </div>
       
       <div class="output">
-        <label for="outputLabel">Output</label><br>
-        <div id="outputLabel"></div>
+        <label for="outputLabel" class="label-grande-negrita">Output</label><br>
+        <div id="outputLabel" style="font-size: 20px;"></div>
       </div>
       
       <div class="output">
-        <div id="performanceLabel"></div>
+        <div id="performanceLabel" style="font-size: 20px;"></div>
       </div>
-      <button id="cleanBtn">Clean</button>
+      <button id="cleanBtn" class="boton" style="padding: 3px 1px;">Clean</button>
     </div>
     
     <!-- Agrega el contenedor de visualización después de los elementos anteriores -->
