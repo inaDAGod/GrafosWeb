@@ -39,7 +39,6 @@ body {
   min-height: auto;
   padding: 10px; /* Opcional: ajusta el relleno para mejorar el aspecto */
   font-size: 16px; /* Opcional: ajusta el tamaño del texto */
-  resize: vertical;
 }
 .header a{
   color: rgb(255, 255, 255);
@@ -186,42 +185,20 @@ h1{
     color: #473179;
 }
 
-.visualization-column {
-  flex: 0 0 auto;
-}
-
-.visualization {
-  width: 100%;
-  height: 500px;
-  overflow: auto;
-}
-
-.flex-container{
-  margin-top: 20px;
+#containerGrafico {
+  height: 400px; /* Ajusta la altura según tu preferencia */
+  width: 80%; /* Ajusta el ancho según tu preferencia */
   display: flex;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 500px;
-  justify-content: center;
-  transition: 2s all ease;
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  margin: 0 auto; /* Centra horizontalmente en relación al contenedor padre */
+  border: 1px solid black; /* Opcional: Agrega un borde para visualización */
 }
 
-.flex-item{
-  background: cyan;
-  border: 1pt solid black;
-  width: 10px;
-  transition: 0.1s all ease;
-}
-
-.row{
-  display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
-}
-
-#input{
-  display: flex;
-  padding: 10px;
-  justify-content: space-around;
+.bar {
+  width: 10px; /* Ajusta el ancho de las barras según tu preferencia */
+  background-color: black;
+  margin: 1px;
 }
 
 
