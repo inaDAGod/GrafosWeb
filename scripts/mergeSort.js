@@ -1,25 +1,36 @@
-
-// Función para ordenar la lista utilizando Selection Sort
-function selectionSort(arr) {
-  const len = arr.length;
-  for (let i = 0; i < len; i++) {
-    let min = i;
-    for (let j = i + 1; j < len; j++) {
-      if (arr[j] < arr[min]) {
-        min = j;
-      }
-    }
-    if (min !== i) {
-      let temp = arr[i];
-      arr[i] = arr[min];
-      arr[min] = temp;
-    }
+// Función para ordenar la lista utilizando Merge Sort
+function mergeSort(arr) {
+  if (arr.length <= 1) {
+    return arr;
   }
-  return arr;
+
+  const mid = Math.floor(arr.length / 2);
+  const left = arr.slice(0, mid);
+  const right = arr.slice(mid);
+
+  return merge(mergeSort(left), mergeSort(right));
 }
 
-// Función de evento para el botón "Selection Sort"
-function selectionSortEventHandler(listaAleatoria) {
+function merge(left, right) {
+  let result = [];
+  let leftIndex = 0;
+  let rightIndex = 0;
+
+  while (leftIndex < left.length && rightIndex < right.length) {
+    if (left[leftIndex] < right[rightIndex]) {
+      result.push(left[leftIndex]);
+      leftIndex++;
+    } else {
+      result.push(right[rightIndex]);
+      rightIndex++;
+    }
+  }
+
+  return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+}
+
+// Función de evento para el botón "Merge Sort"
+function mergeSortEventHandler(listaAleatoria) {
   let listaOrdenada;
   const inputNormal = document.getElementById("inputNormal");
   const inputLabel = document.getElementById("inputLabel");
@@ -39,7 +50,7 @@ function selectionSortEventHandler(listaAleatoria) {
       return;
     }
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
-    listaOrdenada = selectionSort(lista);
+    listaOrdenada = mergeSort(lista);
   } else if (inputAleatorio.checked) {
     console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
@@ -48,11 +59,10 @@ function selectionSortEventHandler(listaAleatoria) {
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
-    listaOrdenada = selectionSort(listaAleatoria);
+    listaOrdenada = mergeSort(listaAleatoria);
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
-  const rendimiento = (listaOrdenada.length ** 2) / 2;
-  performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
+  const rendimiento = listaOrdenada.length * Math.log2(listaOrdenada.length); // Rendimiento ajustado
+  performanceLabel.textContent = `Rendimiento: ${rendimiento.toFixed(1)}`;
 }
-

@@ -1,25 +1,22 @@
-
-// Función para ordenar la lista utilizando Selection Sort
-function selectionSort(arr) {
+// Función para ordenar la lista utilizando Shell Sort
+function shellSort(arr) {
   const len = arr.length;
-  for (let i = 0; i < len; i++) {
-    let min = i;
-    for (let j = i + 1; j < len; j++) {
-      if (arr[j] < arr[min]) {
-        min = j;
-      }
-    }
-    if (min !== i) {
+  for (let gap = Math.floor(len / 2); gap > 0; gap = Math.floor(gap / 2)) {
+    for (let i = gap; i < len; i++) {
       let temp = arr[i];
-      arr[i] = arr[min];
-      arr[min] = temp;
+      let j = i;
+      while (j >= gap && arr[j - gap] > temp) {
+        arr[j] = arr[j - gap];
+        j -= gap;
+      }
+      arr[j] = temp;
     }
   }
   return arr;
 }
 
-// Función de evento para el botón "Selection Sort"
-function selectionSortEventHandler(listaAleatoria) {
+// Función de evento para el botón "Shell Sort"
+function shellSortEventHandler(listaAleatoria) {
   let listaOrdenada;
   const inputNormal = document.getElementById("inputNormal");
   const inputLabel = document.getElementById("inputLabel");
@@ -39,7 +36,7 @@ function selectionSortEventHandler(listaAleatoria) {
       return;
     }
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
-    listaOrdenada = selectionSort(lista);
+    listaOrdenada = shellSort(lista);
   } else if (inputAleatorio.checked) {
     console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
@@ -48,11 +45,11 @@ function selectionSortEventHandler(listaAleatoria) {
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
-    listaOrdenada = selectionSort(listaAleatoria);
+    listaOrdenada = shellSort(listaAleatoria);
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
-  const rendimiento = (listaOrdenada.length ** 2) / 2;
-  performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
-}
+  const rendimiento = listaOrdenada.length ** (3/2); // Rendimiento ajustado
+performanceLabel.textContent = `Rendimiento: ${rendimiento.toFixed(1)}`;
 
+}

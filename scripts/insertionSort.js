@@ -1,25 +1,20 @@
-
-// Función para ordenar la lista utilizando Selection Sort
-function selectionSort(arr) {
+// Función para ordenar la lista utilizando Insertion Sort
+function insertionSort(arr) {
   const len = arr.length;
-  for (let i = 0; i < len; i++) {
-    let min = i;
-    for (let j = i + 1; j < len; j++) {
-      if (arr[j] < arr[min]) {
-        min = j;
-      }
+  for (let i = 1; i < len; i++) {
+    let key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j = j - 1;
     }
-    if (min !== i) {
-      let temp = arr[i];
-      arr[i] = arr[min];
-      arr[min] = temp;
-    }
+    arr[j + 1] = key;
   }
   return arr;
 }
 
-// Función de evento para el botón "Selection Sort"
-function selectionSortEventHandler(listaAleatoria) {
+// Función de evento para el botón "Insertion Sort"
+function insertionSortEventHandler(listaAleatoria) {
   let listaOrdenada;
   const inputNormal = document.getElementById("inputNormal");
   const inputLabel = document.getElementById("inputLabel");
@@ -39,7 +34,7 @@ function selectionSortEventHandler(listaAleatoria) {
       return;
     }
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
-    listaOrdenada = selectionSort(lista);
+    listaOrdenada = insertionSort(lista);
   } else if (inputAleatorio.checked) {
     console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
@@ -48,11 +43,10 @@ function selectionSortEventHandler(listaAleatoria) {
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
-    listaOrdenada = selectionSort(listaAleatoria);
+    listaOrdenada = insertionSort(listaAleatoria);
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
-  const rendimiento = (listaOrdenada.length ** 2) / 2;
+  const rendimiento = (listaOrdenada.length ** 2) / 4; // Rendimiento ajustado
   performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
 }
-

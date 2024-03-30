@@ -89,4 +89,16 @@ document.addEventListener("DOMContentLoaded", function() {
   selectionSortBtn.addEventListener("click", function() {
     selectionSortEventHandler(listaAleatoria);
   });
+  //Para insertion
+  insertionSortBtn.addEventListener("click", function() {
+    insertionSortEventHandler(listaAleatoria);
+  });
+  
+  shellSortBtn.addEventListener("click",function(){
+    shellSortEventHandler(listaAleatoria);
+  });
+
+  mergeSortBtn.addEventListener("click",function(){
+    mergeSortEventHandler(listaAleatoria);
+  });
 });
