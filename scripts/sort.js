@@ -1,3 +1,11 @@
+function generarListaAleatoria(numElements, lowerLimit, upperLimit) {
+  const lista = [];
+  for (let i = 0; i < numElements; i++) {
+    const randomNumber = Math.floor(Math.random() * (upperLimit - lowerLimit + 1)) + parseInt(lowerLimit);
+    lista.push(randomNumber);
+  }
+  return lista;
+}
 document.addEventListener("DOMContentLoaded", function() {
   const inputNormal = document.getElementById("inputNormal");
   const inputAleatorio = document.getElementById("inputAleatorio");
@@ -76,14 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
     performanceLabel.textContent = "";
   });
 
-  function generarListaAleatoria(numElements, lowerLimit, upperLimit) {
-    const lista = [];
-    for (let i = 0; i < numElements; i++) {
-      const randomNumber = Math.floor(Math.random() * (upperLimit - lowerLimit + 1)) + parseInt(lowerLimit);
-      lista.push(randomNumber);
-    }
-    return lista;
-  }
+  
 
   // Importamos la lógica del Selection Sort desde el archivo selectionSort.js
   selectionSortBtn.addEventListener("click", function() {
