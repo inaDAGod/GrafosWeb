@@ -68,38 +68,41 @@ function selectionSortEventHandler(listaAleatoria) {
 
 
 //Prueba de graficar
-function generarGrafico(lista, move){
+function generarGrafico(lista, move) {
   const maxValue = Math.max(...lista); // Obtener el valor máximo en la lista
   const container = document.getElementById("containerGrafico");
   container.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevas barras
-  
-  for(let i = 0; i < lista.length; i++) {
+
+  for (let i = 0; i < lista.length; i++) {
     const bar = document.createElement("div");
     // Establecer la altura de la barra en relación con el valor de la lista
     const barHeight = (lista[i] / maxValue) * 100 + "%";
     bar.style.height = barHeight;
     bar.classList.add("bar");
-    if(move && move.indices.includes(i)){
-      bar.style.backgroundColor = 
-      move.type=="swap"?"red":"blue";
+    if (move && move.indices.includes(i)) {
+      bar.style.backgroundColor = move.type === "swap" ? "red" : "blue";
     }
-    
     container.appendChild(bar);
   }
 }
 
 function animate(moves, lista) {
-  if (moves.length == 0) {
-    //quitarlo al arreglar todo
-    //generarGrafico(lista);
+  if (moves.length === 0) {
+    // You can remove this comment when everything is working
+    // generarGrafico(lista);
     return;
   }
+
   const move = moves.shift();
-  const[i,j]=move.indices;
-  if(move.type == "swap"){
+  const [i, j] = move.indices;
+
+  // Update the visualization before performing the swap
+  generarGrafico(lista, move);
+
+  if (move.type === "swap") {
     [lista[i], lista[j]] = [lista[j], lista[i]];
   }
-  generarGrafico(lista,move);
+
   setTimeout(function () {
     animate(moves, lista);
   }, 200);
@@ -108,17 +111,20 @@ function animate(moves, lista) {
 function selectionSortGrafico(array) {
   const moves = [];
   const n = array.length;
+  const auxiliarArray = [...array]; // Create a copy of the original array
+
   for (let i = 0; i < n - 1; i++) {
     let minIdx = i;
     for (let j = i + 1; j < n; j++) {
       moves.push({ indices: [i, j], type: "comp" });
-      if (array[j] < array[minIdx]) {
+      if (auxiliarArray[j] < auxiliarArray[minIdx]) {
         moves.push({ indices: [minIdx, j], type: "comp" });
         minIdx = j;
       }
     }
     if (minIdx !== i) {
       moves.push({ indices: [i, minIdx], type: "swap" });
+      [auxiliarArray[i], auxiliarArray[minIdx]] = [auxiliarArray[minIdx], auxiliarArray[i]]; // Swap the actual values
     }
   }
   return moves;
