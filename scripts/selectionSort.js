@@ -42,6 +42,7 @@ function selectionSortEventHandler(listaAleatoria) {
     listaOrdenada = selectionSort(lista);
     generarGrafico(lista);
   } else if (inputAleatorio.checked) {
+    generarGrafico(listaAleatoria);
     console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
       const numElementsVal = parseInt(numElements.value);
@@ -49,7 +50,7 @@ function selectionSortEventHandler(listaAleatoria) {
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
-    generarGrafico(listaAleatoria);
+
     listaOrdenada = selectionSort(listaAleatoria);
     //generarGrafico(listaOrdenada);
   }
@@ -58,6 +59,7 @@ function selectionSortEventHandler(listaAleatoria) {
   const rendimiento = (listaOrdenada.length ** 2) / 2;
   performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
 }
+
 
 //Prueba de graficar
 function generarGrafico(lista){

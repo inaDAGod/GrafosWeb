@@ -82,6 +82,8 @@ document.addEventListener("DOMContentLoaded", function() {
     listaAleatoriaLabel.textContent = "";
     outputLabel.textContent = "";
     performanceLabel.textContent = "";
+    const container = document.getElementById("containerGrafico");
+  container.innerHTML = "";
   });
 
   
