@@ -39,20 +39,25 @@ function selectionSortEventHandler(listaAleatoria) {
       return;
     }
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
+    const copy = [...lista];
+    const moves = selectionSortGrafico(copy);
+    generarGrafico(lista, 0);
+    animate(moves, copy);
     listaOrdenada = selectionSort(lista);
-    generarGrafico(lista);
   } else if (inputAleatorio.checked) {
-    generarGrafico(listaAleatoria);
+    generarGrafico(listaAleatoria, 0);
+    const copy = [...listaAleatoria];
+    const moves = selectionSortGrafico(copy);
+    animate(moves, copy);
     console.log("Input aleatorio activado");
-    if (!listaAleatoria) { // Solo genera la lista si aún no está definida
+    if (!listaAleatoria) {
       const numElementsVal = parseInt(numElements.value);
       const lowerLimitVal = parseInt(lowerLimit.value);
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
-
     listaOrdenada = selectionSort(listaAleatoria);
-    //generarGrafico(listaOrdenada);
+    listaAleatoria = listaOrdenada; // Update listaAleatoria with the sorted array
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
@@ -61,8 +66,9 @@ function selectionSortEventHandler(listaAleatoria) {
 }
 
 
+
 //Prueba de graficar
-function generarGrafico(lista){
+function generarGrafico(lista, move){
   const maxValue = Math.max(...lista); // Obtener el valor máximo en la lista
   const container = document.getElementById("containerGrafico");
   container.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevas barras
@@ -73,6 +79,47 @@ function generarGrafico(lista){
     const barHeight = (lista[i] / maxValue) * 100 + "%";
     bar.style.height = barHeight;
     bar.classList.add("bar");
+    if(move && move.indices.includes(i)){
+      bar.style.backgroundColor = 
+      move.type=="swap"?"red":"blue";
+    }
+    
     container.appendChild(bar);
   }
+}
+
+function animate(moves, lista) {
+  if (moves.length == 0) {
+    //quitarlo al arreglar todo
+    //generarGrafico(lista);
+    return;
+  }
+  const move = moves.shift();
+  const[i,j]=move.indices;
+  if(move.type == "swap"){
+    [lista[i], lista[j]] = [lista[j], lista[i]];
+  }
+  generarGrafico(lista,move);
+  setTimeout(function () {
+    animate(moves, lista);
+  }, 200);
+}
+
+function selectionSortGrafico(array) {
+  const moves = [];
+  const n = array.length;
+  for (let i = 0; i < n - 1; i++) {
+    let minIdx = i;
+    for (let j = i + 1; j < n; j++) {
+      moves.push({ indices: [i, j], type: "comp" });
+      if (array[j] < array[minIdx]) {
+        moves.push({ indices: [minIdx, j], type: "comp" });
+        minIdx = j;
+      }
+    }
+    if (minIdx !== i) {
+      moves.push({ indices: [i, minIdx], type: "swap" });
+    }
+  }
+  return moves;
 }
