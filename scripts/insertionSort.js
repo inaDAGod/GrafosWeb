@@ -45,72 +45,81 @@ function insertionSortEventHandler(listaAleatoria) {
     const moves = insertionSortGrafico(copy);
     animate(moves, copy);
     console.log("Input aleatorio activado");
-    if (!listaAleatoria) { // Solo genera la lista si aún no está definida
+    if (!listaAleatoria) {
       const numElementsVal = parseInt(numElements.value);
       const lowerLimitVal = parseInt(lowerLimit.value);
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
     listaOrdenada = insertionSort(listaAleatoria);
+    listaAleatoria = listaOrdenada; // Update listaAleatoria with the sorted array
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
-  const rendimiento = (listaOrdenada.length ** 2) / 4; // Rendimiento ajustado
+  const rendimiento = (listaOrdenada.length ** 2) / 2;
   performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
 }
 
 //prueba
-function insertionSortGrafico(array) {
-  const moves = [];
-
-  for (let i = 1; i < array.length; i++) {
-      let currentIndex = i;
-
-      while (currentIndex > 0 && array[currentIndex - 1] > array[currentIndex]) {
-          moves.push({ indices: [currentIndex - 1, currentIndex], type: "swap" });
-          [array[currentIndex - 1], array[currentIndex]] = [array[currentIndex], array[currentIndex - 1]];
-          currentIndex--;
-      }
-  }
-
-  return moves;
-}
-
 //Prueba de graficar
-function generarGrafico(lista, move){
+function generarGrafico(lista, move) {
   const maxValue = Math.max(...lista); // Obtener el valor máximo en la lista
   const container = document.getElementById("containerGrafico");
   container.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevas barras
-  
-  for(let i = 0; i < lista.length; i++) {
+
+  for (let i = 0; i < lista.length; i++) {
     const bar = document.createElement("div");
     // Establecer la altura de la barra en relación con el valor de la lista
     const barHeight = (lista[i] / maxValue) * 100 + "%";
     bar.style.height = barHeight;
     bar.classList.add("bar");
-    if(move && move.indices.includes(i)){
-      bar.style.backgroundColor = 
-      move.type=="swap"?"red":"blue";
+    if (move && move.indices.includes(i)) {
+      bar.style.backgroundColor = move.type === "swap" ? "red" : "blue";
     }
-    
     container.appendChild(bar);
   }
 }
 
 function animate(moves, lista) {
-  if (moves.length == 0) {
-    //quitarlo al arreglar todo
-    //generarGrafico(lista);
+  if (moves.length === 0) {
+    // You can remove this comment when everything is working
+    // generarGrafico(lista);
     return;
   }
+
   const move = moves.shift();
-  const[i,j]=move.indices;
-  if(move.type == "swap"){
+  const [i, j] = move.indices;
+
+  // Update the visualization before performing the swap
+  generarGrafico(lista, move);
+
+  if (move.type === "swap") {
     [lista[i], lista[j]] = [lista[j], lista[i]];
   }
-  generarGrafico(lista,move);
+
   setTimeout(function () {
     animate(moves, lista);
   }, 200);
 }
 
+function insertionSortGrafico(array) {
+  const moves = [];
+  const n = array.length;
+  const auxiliarArray = [...array]; // Create a copy of the original array
+
+  for (let i = 1; i < n; i++) {
+    let currentVal = auxiliarArray[i];
+    let j = i - 1;
+
+    while (j >= 0 && auxiliarArray[j] > currentVal) {
+      moves.push({ indices: [j, j + 1], type: "comp" });
+      auxiliarArray[j + 1] = auxiliarArray[j]; // Move the larger value to the right
+      j--;
+    }
+
+    auxiliarArray[j + 1] = currentVal; // Insert the current value at the correct position
+    moves.push({ indices: [j + 1, i], type: "swap" }); // Add a swap move for visualization
+  }
+
+  return moves;
+}

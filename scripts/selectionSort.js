@@ -89,7 +89,7 @@ function generarGrafico(lista, move) {
 function animate(moves, lista) {
   if (moves.length === 0) {
     // You can remove this comment when everything is working
-    // generarGrafico(lista);
+    generarGrafico(lista); // Esta línea ya no es necesaria al descomentarla
     return;
   }
 
@@ -97,7 +97,7 @@ function animate(moves, lista) {
   const [i, j] = move.indices;
 
   // Update the visualization before performing the swap
-  generarGrafico(lista, move);
+  generarGrafico(lista, move); // Descomenta esta línea
 
   if (move.type === "swap") {
     [lista[i], lista[j]] = [lista[j], lista[i]];
@@ -113,7 +113,7 @@ function selectionSortGrafico(array) {
   const n = array.length;
   const auxiliarArray = [...array]; // Create a copy of the original array
 
-  for (let i = 0; i < n - 1; i++) {
+  for (let i = 0; i < n; i++) {
     let minIdx = i;
     for (let j = i + 1; j < n; j++) {
       moves.push({ indices: [i, j], type: "comp" });
@@ -125,6 +125,9 @@ function selectionSortGrafico(array) {
     if (minIdx !== i) {
       moves.push({ indices: [i, minIdx], type: "swap" });
       [auxiliarArray[i], auxiliarArray[minIdx]] = [auxiliarArray[minIdx], auxiliarArray[i]]; // Swap the actual values
+    } else if (i === n - 1) {
+      // Caso especial: si es la última iteración y el elemento está en su posición correcta
+      moves.push({ indices: [i, i], type: "comp" }); // Agregar movimiento de comparación final
     }
   }
   return moves;
