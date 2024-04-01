@@ -82,8 +82,7 @@ function generarGrafico(lista, move) {
 
 function animate(moves, lista) {
   if (moves.length === 0) {
-    // You can remove this comment when everything is working
-    // generarGrafico(lista);
+    generarGrafico(lista); // Render the final sorted array
     return;
   }
 
@@ -105,20 +104,32 @@ function animate(moves, lista) {
 function insertionSortGrafico(array) {
   const moves = [];
   const n = array.length;
-  const auxiliarArray = [...array]; // Create a copy of the original array
+  const auxiliarArray = [...array]; // Crea una copia del arreglo original
 
   for (let i = 1; i < n; i++) {
     let currentVal = auxiliarArray[i];
     let j = i - 1;
 
+    // Resaltar las comparaciones
+    moves.push({ indices: [j, i], type: "comp" });
+
     while (j >= 0 && auxiliarArray[j] > currentVal) {
       moves.push({ indices: [j, j + 1], type: "comp" });
-      auxiliarArray[j + 1] = auxiliarArray[j]; // Move the larger value to the right
+      auxiliarArray[j + 1] = auxiliarArray[j]; // Mover el valor más grande a la derecha
       j--;
     }
 
-    auxiliarArray[j + 1] = currentVal; // Insert the current value at the correct position
-    moves.push({ indices: [j + 1, i], type: "swap" }); // Add a swap move for visualization
+    auxiliarArray[j + 1] = currentVal; // Insertar el valor actual en la posición correcta
+
+    // Agregar movimientos de desplazamiento para la visualización
+    for (let k = i; k > j + 1; k--) {
+      moves.push({ indices: [k - 1, k], type: "swap" });
+    }
+
+    // Caso especial: si es el último elemento y ya está en su posición correcta
+    if (i === n - 1 && j === i - 1) {
+      moves.push({ indices: [j, i], type: "comp" });
+    }
   }
 
   return moves;
