@@ -54,57 +54,61 @@ function nodoDestino(){
 }
 
 function solveMinimum() {
-    const matriz = getMatriz();
-    console.log(matriz);
-    const from = nodoOrigen();
-    const to = nodoDestino();
-    console.log("Nodo origen " +from);
-    console.log("Nodo destino " +to);
-    const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
-    let disIzq = Array(nodos.length).fill(Infinity);
-    let mejorCamino = [];
-  
-    disIzq[from] = 0;
-    let listaActual = [from];
-    while (listaActual.length) {
-      const current = listaActual.shift();
-      for (let i = 0; i < nodos.length; i++) {
-        if (matriz[current][i] !== 0) {
-          console.log('analizando camino de', current, 'a', i);
-          if (disIzq[i] > disIzq[current] + matriz[current][i]) {
-            console.log('encontro mejor camino de', current, 'a', i, '=', disIzq[current] + matriz[current][i]);
-            disIzq[i] = disIzq[current] + matriz[current][i];
-            listaActual.push(i);
-          }
+  const matriz = getMatriz();
+  console.log(matriz);
+  const from = nodoOrigen();
+  const to = nodoDestino();
+  console.log("Nodo origen " +from);
+  console.log("Nodo destino " +to);
+  const nodos = nodosDataSet.get({ fields: ['id', 'label'] });
+  let disIzq = Array(nodos.length).fill(Infinity);
+  let mejorCamino = [];
+
+  disIzq[from] = 0;
+  let listaActual = [from];
+  while (listaActual.length) {
+    const current = listaActual.shift();
+    for (let i = 0; i < nodos.length; i++) {
+      if (matriz[current][i] !== 0) {
+        console.log('analizando camino de', current, 'a', i);
+        if (disIzq[i] > disIzq[current] + matriz[current][i]) {
+          console.log('encontro mejor camino de', current, 'a', i, '=', disIzq[current] + matriz[current][i]);
+          disIzq[i] = disIzq[current] + matriz[current][i];
+          listaActual.push(i);
         }
       }
     }
-    console.log('fin de de ida, los mejores pesos izquierda', disIzq);
-  
-    listaActual = [to];
-    const distDerecha = Array(nodos.length).fill(Infinity);
-    distDerecha[to] = disIzq[to];
-    while (listaActual.length) {
-      const current = listaActual.shift();
-      for (let i = 0; i < nodos.length; i++) {
-        if (matriz[i][current] !== 0) { // al reves
-          console.log('analizando camino de', current, 'a', i);
-          if (distDerecha[i] > disIzq[current] - matriz[i][current]) {
-            console.log('encontro mejor camino de', current, 'a', i, '=', disIzq[current] - matriz[i][current]);
-            distDerecha[i] = disIzq[current] - matriz[i][current];
-            listaActual.push(i);
-            mejorCamino[i] = current;
-          }
-        }
-      }
-    }
-    console.log('fin de de regreso, los mejores pesos derecha', distDerecha);
-    console.log('mejor camino', mejorCamino);
-    mejorCamino = corregirCamino(mejorCamino,holguras(distDerecha, disIzq));
-    console.log('mejor camino corregido', mejorCamino);
-    
-    pintarMejorCamino(bestPath(holguras(distDerecha, disIzq)),distDerecha, disIzq,holguras(distDerecha, disIzq));
   }
+  console.log('fin de de ida, los mejores pesos izquierda', disIzq);
+
+  listaActual = [to];
+  const distDerecha = Array(nodos.length).fill(-Infinity);
+  distDerecha[to] = disIzq[to];
+  while (listaActual.length) {
+    const current = listaActual.shift();
+    for (let i = 0; i < nodos.length; i++) {
+      if (matriz[i][current] !== 0) { 
+        console.log('analizando camino de', current, 'a', i);
+        if (distDerecha[i] < distDerecha[current] - matriz[i][current]) {
+          console.log('encontro mejor camino de', current, 'a', i, '=',  distDerecha[current] - matriz[i][current]);
+          distDerecha[i] = distDerecha[current] - matriz[i][current];
+          listaActual.push(i);
+          mejorCamino[i] = current;
+        }
+      }
+    }
+  }
+  console.log('fin de de regreso, los mejores pesos derecha', distDerecha);
+  console.log('mejor camino', mejorCamino);
+  for (let i = 0; i < nodos.length; i++) {
+    console.log(i, distDerecha[i], disIzq[i]);
+  }
+  mejorCamino = corregirCamino(mejorCamino,holguras(distDerecha, disIzq));
+  console.log('mejor camino corregido', mejorCamino);
+  
+  pintarMejorCamino(bestPath(holguras(distDerecha, disIzq)),distDerecha, disIzq,holguras(distDerecha, disIzq));
+}
+
  
   
   function solveMaximum() {
