@@ -27,20 +27,29 @@ document.getElementById('matrizForm').addEventListener('submit', function(event)
         }
         matrizInputsHTML += `<td contenteditable="true">Col ${j + 1}</td>`; // Encabezado de columna editable
     }
+    matrizInputsHTML += `<td contenteditable="false">Disponibilidad</td>`; 
     matrizInputsHTML += '<td></td></tr>';
 
     for (let i = 0; i < numFilas; i++) {
         matrizInputsHTML += '<tr>';
         // Encabezado de fila
         matrizInputsHTML += `<td contenteditable="true">Fila ${i + 1}</td>`;
-        for (let j = 0; j < numColumnas; j++) {
-            const inputId = `valor-${i}-${j}`;
+        for (let j = 0; j < numColumnas+1; j++) {
+            let inputId = `valor-${i}-${j}`;
+            if(j==numColumnas){
+                inputId = `demanda-${i}`;
+            }
             matrizInputsHTML += `<td><input type="number" id="${inputId}" name="${inputId}" min="0" value="0"></td>`;
         }
         // Botón para eliminar la fila
         matrizInputsHTML += `<td><button class="eliminarFila"  onclick="eliminarFila(this)">Eliminar Fila</button></td>`;
         matrizInputsHTML += '</tr>';
     }
+    matrizInputsHTML += `<td contenteditable="true">Demanda</td>`;
+    for (let j = 0; j < numColumnas; j++) {
+            const inputId = `demanda-${j}`;
+            matrizInputsHTML += `<td><input type="number" id="${inputId}" name="${inputId}" min="0" value="0"></td>`;
+        }
 
     // Agregar una fila adicional al final con botones para agregar y eliminar columnas
     matrizInputsHTML += '<tr>';
@@ -65,12 +74,12 @@ document.getElementById('matrizForm').addEventListener('submit', function(event)
     // Agregar event listeners para los botones de agregar fila y columna
     document.getElementById('addFila').addEventListener('click', function() {
         const tabla = document.querySelector('#matrizInputs table');
-        agregarFila( tabla.rows.length -1, tabla.rows[0].cells.length-2 );
+        agregarFila( tabla.rows.length -2, tabla.rows[0].cells.length-2 );
     });
 
     document.getElementById('addColumna').addEventListener('click', function() {
         const tabla = document.querySelector('#matrizInputs table');
-        agregarColumna(tabla.rows[0].cells.length-1,  tabla.rows.length-2);
+        agregarColumna(tabla.rows[0].cells.length-2,  tabla.rows.length-2);
     });
 
 });
@@ -134,44 +143,54 @@ function crearMatriz(){
     let matriz=[];
     let columnasNombres=[];
     let filasNombres=[];
+    let demanda=[];
+    let disponibilidad=[];
     const tabla = document.querySelector('#matrizInputs table');
-    for(let i = 1; i < tabla.rows[0].cells.length-1; i++ ){
+    for(let i = 1; i < tabla.rows[0].cells.length-2; i++ ){
         //console.log(tabla.rows[0].cells[i].textContent);
         columnasNombres.push(tabla.rows[0].cells[i].textContent);
     }
     console.log(columnasNombres);
 
-    for(let i = 1; i < tabla.rows.length-1;i++){
+    for(let i = 1; i < tabla.rows.length-2;i++){
         //console.log(tabla.rows[i].cells[0].textContent);
         filasNombres.push(tabla.rows[i].cells[0].textContent);
     }
     console.log(filasNombres);
-    for(let i = 1; i < tabla.rows.length-1;i++){
+    for(let i = 1; i < tabla.rows.length-2;i++){
         let fila = [];
-        for(let j = 1; j < tabla.rows[i].cells.length-1; j++ ){
+        for(let j = 1; j < tabla.rows[i].cells.length-2; j++ ){
             //console.log(tabla.rows[i].cells[j].querySelector('input[type="number"]').value);
             fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
         }
         matriz.push(fila);
     }
-    console.log(matriz);
-    mostrarMatrizNW(filasNombres, columnasNombres, matriz);
+    console.log( tabla.rows[tabla.rows.length-2].cells.length);
+    for(let i = 1; i < tabla.rows[tabla.rows.length-2].cells.length; i++ ){
+        //console.log(tabla.rows[0].cells[i].textContent);
+        demanda.push(parseInt(tabla.rows[tabla.rows.length-2].cells[i].querySelector('input[type="number"]').value));
+    }
+    for(let i = 1; i < tabla.rows.length-2;i++){
+        //console.log(tabla.rows[i].cells[0].textContent);
+        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
+    }
+    console.log("matriz",matriz);
+    console.log("demanda",demanda);
+    console.log("disponibilidad",disponibilidad);
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
 }
 
 
-function mostrarMatrizNW(fNom, cNom, matriz) {
+function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
 
     const contenedorMatriz = document.getElementById('matriz');
     
-    let html = '<h2>Matriz de Disponibilidad vs Demanda</h2>';
-    let entradas2=[];
+    let html = '<h2>Disponibilidad vs Demanda</h2>';
     html += '<table>';
     html += '<tr><th style = " background: #473179;"></th>';
-    let columna = 0;
     cNom.forEach((valor, index) => {
       html += `<th style = " background: #9E7DD4;">${valor}</th>`;
-      entradas2[columna] = 0;
-      columna++;
+
     });
     html += '<th style = " background: #FBAD41;">Disponibilidad</th>';
     html += '</tr>';
@@ -182,28 +201,94 @@ function mostrarMatrizNW(fNom, cNom, matriz) {
       columna = 0;
       fila.forEach(valor => {
         html += `<td style = " background: #BCB9D8;">${valor}</td>`;
-        if(valor != 0){
-          salida+=valor;
-          entradas2[columna]+=valor;
-        }
-        columna++;
       });
       
-      html += `<th style = " background: #f8b3b2;">${salida}</th>`;
+      html += `<th style = " background: #f8b3b2;">${disponibilidad[index]}</th>`;
     });
     
     html += '</tr><th style = " background: #FBAD41;">Demanda</th>';
     columna = 0;
-    entradas2.forEach(element => {
+    demanda.forEach(element => {
       html += `<th style = " background: #f8b3b2;">${element}</th>`;
       if(element > 0){
         columna += element;
       }
     });
-    html += `<th style = " background: #fd9a98;">${columna}</th>`;
+    columna2 = 0;
+    disponibilidad.forEach(element => {
+      if(element > 0){
+        columna2 += element;
+      }
+    });
+    html += `<th style = " background: #fd9a98;">${columna}/${columna2}</th>`;
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
-    
   }
 
+  
+// Función para maximizar el total
+function maximizarTotal(costos, disponibilidad, demanda) {
+    // Crear un objeto de problema de optimización
+    const problem = new SimplexJS();
+
+    // Crear variables de decisión para cada celda de la matriz
+    const numFilas = costos.length;
+    const numColumnas = costos[0].length;
+    for (let i = 0; i < numFilas; i++) {
+        for (let j = 0; j < numColumnas; j++) {
+            problem.addVariable(`x${i}${j}`, costos[i][j]);
+        }
+    }
+
+    // Restricciones de disponibilidad
+    for (let i = 0; i < numFilas; i++) {
+        const constraint = {};
+        for (let j = 0; j < numColumnas; j++) {
+            constraint[`x${i}${j}`] = 1;
+        }
+        problem.addConstraint(constraint, '==', disponibilidad[i]);
+    }
+
+    // Restricciones de demanda
+    for (let j = 0; j < numColumnas; j++) {
+        const constraint = {};
+        for (let i = 0; i < numFilas; i++) {
+            constraint[`x${i}${j}`] = 1;
+        }
+        problem.addConstraint(constraint, '<=', demanda[j]);
+    }
+
+    // Función objetivo: maximizar el total
+    const objective = {};
+    for (let i = 0; i < numFilas; i++) {
+        for (let j = 0; j < numColumnas; j++) {
+            objective[`x${i}${j}`] = -1; // Negativo porque SimplexJS minimiza por defecto
+        }
+    }
+    problem.addObjective(objective);
+
+    // Resolver el problema de optimización
+    const solution = problem.solve();
+
+    // Crear y retornar la matriz de solución
+    const solucionMatriz = [];
+    for (let i = 0; i < numFilas; i++) {
+        const fila = [];
+        for (let j = 0; j < numColumnas; j++) {
+            fila.push(solution[`x${i}${j}`]);
+        }
+        solucionMatriz.push(fila);
+        
+    }
+    console.log("Resultado al maximizar el total:");
+    console.log(solucionMatriz);
+    return solucionMatriz;
+}
+
+
+
+
+
+
+  
