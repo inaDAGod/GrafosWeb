@@ -61,8 +61,9 @@ h1{
     top: 0;
     right: -270px; 
     width: 270px;
-    height: 100%;
+    max-height: calc(100vh - 100px); /* Altura máxima igual al 100% de la altura de la ventana menos el margen superior del menú */
     background: #FBAD41;
+    overflow-y: auto; 
     transition: 0.3s; 
     padding-top: 60px;
 }
@@ -70,6 +71,7 @@ h1{
 .menu ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .menu ul li {
@@ -77,18 +79,24 @@ h1{
     border-bottom: 1px solid #ccc;
 }
 
-.menu ul li a {
+.menu a {
+    display: block; /* Para que el enlace ocupe todo el espacio del contenedor */
+    text-align: center;
     text-decoration: none;
     color: #333;
 }
 
-.menu ul li a:hover {
+.menu a:hover {
     background: #FD918F;
 }
-.menu h3{
+
+.menu h3 {
     text-align: center;
-    padding-bottom: 20px;
+    padding: 20px;
+    margin: 0; /* Eliminamos el margen superior e inferior para que se vea mejor */
 }
+
+
 .contenido{
     text-align: center;
     padding-left: 270px;

@@ -154,6 +154,13 @@ function findAssignment(nodosOrigen, nodosDestino, matrizCostos) {
     console.log("Suma total de costos asignados:", sumaTotalCostos);
 }
 
+
+
+
+
+
+
+
 //---FUNCIONES DE AGREGAR NODOS Y ARISTAS---
 function agregarAristaSeleccionada(){
     toggleButton('edgeButton');

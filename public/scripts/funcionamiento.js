@@ -1,4 +1,5 @@
 
+
 let nodoSeleccionadoId = null;
 
 let buttonStates = {
@@ -12,9 +13,6 @@ let buttonStates = {
     importButton: false,
     exportButton: false,
     saveButton: false,
-    cargarArchivo: false,
-    descargar: false,
-    cleanAllButton: false,
     deleteNodeButton: false
 };
 function toggleButton(buttonId) {
@@ -39,6 +37,12 @@ function desactivarBotones2() {
     }
 }
 
+function openHelpPage() {
+  desactivarBotones();
+  desactivarBotones2();
+  var helpPageURL = 'help.html';
+  window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+}
 /*
 function dobleClicEnNodo(propiedades) {
     const { nodes } = propiedades;
@@ -68,9 +72,11 @@ function dobleClicEnArista(propiedades) {
 
 
 function cambiarColorLienzo() {
-   const color = document.getElementById('colorSelector').value;
-   const lienzo = document.getElementById('lienzo');
-   lienzo.style.backgroundColor = color;
+  desactivarBotones();
+  desactivarBotones2();
+  const color = document.getElementById('colorSelector').value;
+  const lienzo = document.getElementById('lienzo');
+  lienzo.style.backgroundColor = color;
 }
 
 function cambiarColorNodo(event) {
@@ -118,59 +124,63 @@ function cambiarColorNodoSeleccionado() {
 
 
 function exportarAJSON() {
-    desactivarBotones2();
-    const nodos = nodosDataSet.get({ returnType: "Object" });
-    const aristas = aristasDataSet.get({ returnType: "Object" });
-    const aristasConFlechas = aristas.map(arista => {
-        return {
-            id: arista.id,
-            from: arista.from,
-            to: arista.to,
-            label: arista.label,
-            arrows: arista.arrows  
-        };
-    });
+  const nodos = nodosDataSet.get({ returnType: "Object" });
+  const aristas = aristasDataSet.get({ returnType: "Object" });
+  const aristasConFlechas = aristas.map(arista => {
+      return {
+          id: arista.id,
+          from: arista.from,
+          to: arista.to,
+          label: arista.label,
+          arrows: arista.arrows  
+      };
+  });
 
-    const informacion = {
-        nodos: nodos,
-        aristas: aristasConFlechas  
-    };
+  const informacion = {
+      nodos: nodos,
+      aristas: aristasConFlechas  
+  };
+  const informacionJSON = JSON.stringify(informacion, null, 2);
+  const blob = new Blob([informacionJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
 
-    const informacionJSON = JSON.stringify(informacion, null, 2);
-    const blob = new Blob([informacionJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement('a');
-    enlace.href = url;
-    enlace.download = 'informacion.json';
-    document.body.appendChild(enlace);
-    enlace.click();
-    URL.revokeObjectURL(url);
+  const enlace = document.createElement('a');
+  enlace.download = 'informacion.json';
+  enlace.href = url;
+  enlace.click();
+  URL.revokeObjectURL(url);
 }
+
+
 function openColorPicker() {
     var colorSelector = document.getElementById('colorSelector');
-    colorSelector.click(); // Simular clic en el input de color
+    colorSelector.click(); 
 }
 
 
 function guardarGrafo() {
-    desactivarBotones();
-    desactivarBotones2();
-    const estadoGrafo = {
-      nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
-      aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] }) 
-    };
-    const estadoJSON = JSON.stringify(estadoGrafo);
-    
-    const blob = new Blob([estadoJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const enlaceDescargar = document.getElementById('descargar');
-    enlaceDescargar.href = url;
+  let nombreArchivo = prompt("Por favor, ingrese el nombre del archivo:", "grafoNodolandia.json");
+
+  if (nombreArchivo != null) {
+      let estadoGrafo = {
+          nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
+          aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] })
+      };
+      let estadoJSON = JSON.stringify(estadoGrafo);
+      let blob = new Blob([estadoJSON], { type: 'application/json' });
+      let url = URL.createObjectURL(blob);
+
+      let enlace = document.createElement('a');
+      enlace.download = nombreArchivo;
+      enlace.href = url;
+      enlace.click();
+      URL.revokeObjectURL(url);
+  }
 }
+
   
   
   function cargarGrafo(event) {
-    desactivarBotones();
-  desactivarBotones2();
     const archivo = event.target.files[0];
     if (!archivo) return;
   
@@ -183,11 +193,9 @@ function guardarGrafo() {
   }
   
   function cargarGrafoDesdeJSON(estadoJSON) {
-    desactivarBotones();
-    desactivarBotones2();
     limpiar();
     const estadoGrafo = JSON.parse(estadoJSON);
-    let nodosIngresados = 0;
+    let nodosMayor = 0;
     estadoGrafo.nodos.forEach(nodo => {
         nodosDataSet.add({
             id: nodo.id,
@@ -196,7 +204,9 @@ function guardarGrafo() {
             y: nodo.y,
             color: nodo.color
         });
-        nodosIngresados++;
+        if(nodo.id > nodosMayor){
+          nodosMayor = nodo.id;
+        }
     });
 
     estadoGrafo.aristas.forEach(arista => {
@@ -208,13 +218,11 @@ function guardarGrafo() {
             arrows: arista.arrows
         });
     });
-    
+    ids = nodosMayor + 1;
 }
 
   
   function importarArchivo() {
-    desactivarBotones();
-    desactivarBotones2();
     const inputCargar = document.getElementById('cargarArchivo');
     inputCargar.value = ''; 
     inputCargar.click();
