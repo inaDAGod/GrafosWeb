@@ -95,13 +95,10 @@ function generarMatrizAsignacion() {
     console.log("Se está generando la matriz de asignación");
     desactivarBotones();
     desactivarBotones2();
+    
     const nodosOrigen = nodosDataSet.get({ filter: item => item.group === 'origen' });
     const nodosDestino = nodosDataSet.get({ filter: item => item.group === 'destino' });
-
     const matrizCostos = [];
-    const matrizAsignacion = [];
-
-    // Llenar la matriz de costos
     nodosOrigen.forEach((origen, i) => {
         matrizCostos[i] = [];
         nodosDestino.forEach((destino, j) => {
@@ -110,242 +107,58 @@ function generarMatrizAsignacion() {
         });
     });
 
-    if (maximizationMode) { //optimizacion por maximizacion
-        // Paso 1: Restar el máximo de cada columna
-        let html = `<h2>MAXIMIZACIÓN</h2>`;
-        const matrizResultantePaso1 = restarMaximoPorColumna(matrizCostos);
-        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
-        // Paso 2: Restar el máximo de cada fila utilizando la matriz resultante del paso 1
-        const matrizResultantePaso2 = restarMaximoPorFila(matrizResultantePaso1); // Pasar la matriz resultante como argumento
-        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
-        asignarNodos(matrizResultantePaso2, nodosOrigen, nodosDestino);
-
-    } else { //optimizacion por minimizacion
-        let html = `<h2>MINIMIZACIÓN</h2>`;
-        const matrizResultantePaso1 = restarMinimoPorColumna(matrizCostos);
-        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso1, 1);
-        const matrizResultantePaso2 = restarMinimoPorFila(matrizResultantePaso1);
-        mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matrizResultantePaso2, 2);
-        asignarNodos(matrizResultantePaso2, nodosOrigen, nodosDestino);
-    }
+    findAssignment(nodosOrigen, nodosDestino, matrizCostos);
 }
+function findAssignment(nodosOrigen, nodosDestino, matrizCostos) {
+    const numNodosOrigen = nodosOrigen.length;
+    const numNodosDestino = nodosDestino.length;
 
-function mostrarMatrizAsignacionPaso(nodosOrigen, nodosDestino, matriz, paso) {
-    desactivarBotones();
-    desactivarBotones2();
-    const contenedorMatriz = document.getElementById('matriz');
-    if (nodosOrigen.length > 0 && nodosDestino.length > 0) {
-        let html = `<h2>Matriz de Asignación (Paso ${paso})</h2>`;
-        html += '<table>';
-        html += '<tr><th></th>';
-        for (let j = 0; j < nodosDestino.length; j++) {
-            html += `<th>${nodosDestino[j].label}</th>`;
-        }
-        html += '</tr>';
-        for (let i = 0; i < matriz.length; i++) {
-            html += `<tr><th>${nodosOrigen[i].label}</th>`;
-            for (let j = 0; j < matriz[i].length; j++) {
-                html += `<td>${matriz[i][j] || 0}</td>`;
+    // Paso 1: Aplicar el algoritmo de asignación de menor costo (Hungarian)
+    const asignaciones = new Array(numNodosOrigen).fill(-1);
+    const asignacionesDestino = new Array(numNodosDestino).fill(false);
+
+    for (let i = 0; i < numNodosOrigen; i++) {
+        let minCosto = Infinity;
+        let minIndex = -1;
+        for (let j = 0; j < numNodosDestino; j++) {
+            if (matrizCostos[i][j] < minCosto && !asignacionesDestino[j]) {
+                minCosto = matrizCostos[i][j];
+                minIndex = j;
             }
-            html += '</tr>';
         }
-        html += '</table>';
-        contenedorMatriz.innerHTML += html; // Cambia esto a '+=' para concatenar las matrices en lugar de reemplazarlas
+        if (minIndex !== -1) {
+            asignaciones[i] = minIndex;
+            asignacionesDestino[minIndex] = true;
+        }
     }
+
+    // Paso 2: Mostrar las asignaciones encontradas en la consola
+    console.log("Asignaciones encontradas:");
+    for (let i = 0; i < numNodosOrigen; i++) {
+        if (asignaciones[i] !== -1) {
+            const nodoOrigenNombre = nodosOrigen[i].label;
+            const nodoDestinoNombre = nodosDestino[asignaciones[i]].label;
+            console.log(`Nodo de origen ${nodoOrigenNombre} asignado a nodo de destino ${nodoDestinoNombre}`);
+        }
+    }
+
+    // Paso 3: Calcular la suma total de costos asignados
+    let sumaTotalCostos = 0;
+    for (let i = 0; i < numNodosOrigen; i++) {
+        if (asignaciones[i] !== -1) {
+            sumaTotalCostos += matrizCostos[i][asignaciones[i]];
+        }
+    }
+
+    // Mostrar la suma total de costos asignados
+    console.log("Suma total de costos asignados:", sumaTotalCostos);
 }
 
-function restarMaximoPorColumna(matriz) {
-    console.log("Paso 1");
-    const n = matriz.length;
-    const maximosColumna = Array(n); // Inicializar vector
-    for (let i = 0; i < n; i++) {
-        maximosColumna[i] = -Infinity; // Inicializar cada elemento con -Infinity
-    }
 
-    // Encontrar el máximo de cada columna y almacenarlo en su posición correspondiente
-    console.log("Maximos");
-    for (let j = 0; j < n; j++) {
-        for (let i = 0; i < n; i++) {
-            console.log(Math.max(maximosColumna[j], matriz[i][j]));
-            maximosColumna[j] = Math.max(maximosColumna[j], matriz[i][j]);
-        }
-    }
-    // Crear la matriz resultante
-    const matrizResultante = [];
-    console.log("Restas");
-    for (let i = 0; i < n; i++) {
-        const filaResultante = [];
-        for (let j = 0; j < n; j++) {
-            console.log("nuevo");
-            console.log(matriz[i][j]);
-            console.log("-");
-            console.log(maximosColumna[j]);
-            filaResultante.push(matriz[i][j] - maximosColumna[j]); // Restar el máximo de la columna j a cada elemento de la fila i
-        }
-        matrizResultante.push(filaResultante);
-    }
 
-    return matrizResultante;
-}
-function restarMaximoPorFila(matriz) {
-    console.log("Paso 2");
-    const n = matriz.length;
-    const maximosFila = Array(n); // Inicializar vector
-    for (let i = 0; i < n; i++) {
-        maximosFila[i] = -Infinity; // Inicializar cada elemento con -Infinity
-    }
 
-    // Encontrar el máximo de cada fila y almacenarlo en su posición correspondiente
-    console.log("Maximos fila");
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            console.log(Math.max(maximosFila[i], matriz[i][j]));
-            maximosFila[i] = Math.max(maximosFila[i], matriz[i][j]);
-        }
-    }
-    // Crear la matriz resultante
-    const matrizResultante = [];
-    console.log("Restas");
-    for (let i = 0; i < n; i++) {
-        const filaResultante = [];
-        for (let j = 0; j < n; j++) {
-            console.log("nuevo");
-            console.log(matriz[i][j]);
-            console.log("-");
-            console.log(maximosFila[i]);
-            filaResultante.push(matriz[i][j] - maximosFila[i]); // Restar el máximo de la columna j a cada elemento de la fila i
-        }
-        matrizResultante.push(filaResultante);
-    }
-    return matrizResultante;
-}
 
-function restarMinimoPorColumna(matriz) {
-    console.log("Paso 1");
-    const n = matriz.length;
-    const minimosColumna = Array(n); // Inicializar vector
-    for (let i = 0; i < n; i++) {
-        minimosColumna[i] = Infinity; // Inicializar cada elemento con Infinity para que cualquier número sea menor
-    }
 
-    // Encontrar el mínimo de cada columna y almacenarlo en su posición correspondiente
-    console.log("Mínimos");
-    for (let j = 0; j < n; j++) {
-        for (let i = 0; i < n; i++) {
-            console.log(Math.min(minimosColumna[j], matriz[i][j]));
-            minimosColumna[j] = Math.min(minimosColumna[j], matriz[i][j]);
-        }
-    }
-    // Crear la matriz resultante
-    const matrizResultante = [];
-    console.log("Restas");
-    for (let i = 0; i < n; i++) {
-        const filaResultante = [];
-        for (let j = 0; j < n; j++) {
-            console.log("nuevo");
-            console.log(matriz[i][j]);
-            console.log("-");
-            console.log(minimosColumna[j]);
-            filaResultante.push(matriz[i][j] - minimosColumna[j]); // Restar el mínimo de la columna j a cada elemento de la fila i
-        }
-        matrizResultante.push(filaResultante);
-    }
-
-    return matrizResultante;
-}
-
-function restarMinimoPorFila(matriz) {
-    console.log("Paso 2");
-    const n = matriz.length;
-    const minimosFila = Array(n); // Inicializar vector
-    for (let i = 0; i < n; i++) {
-        minimosFila[i] = Infinity; // Inicializar cada elemento con Infinity para que cualquier número sea menor
-    }
-
-    // Encontrar el mínimo de cada fila y almacenarlo en su posición correspondiente
-    console.log("Mínimos fila");
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            console.log(Math.min(minimosFila[i], matriz[i][j]));
-            minimosFila[i] = Math.min(minimosFila[i], matriz[i][j]);
-        }
-    }
-    // Crear la matriz resultante
-    const matrizResultante = [];
-    console.log("Restas");
-    for (let i = 0; i < n; i++) {
-        const filaResultante = [];
-        for (let j = 0; j < n; j++) {
-            console.log("nuevo");
-            console.log(matriz[i][j]);
-            console.log("-");
-            console.log(minimosFila[i]);
-            filaResultante.push(matriz[i][j] - minimosFila[i]); // Restar el mínimo de la fila i a cada elemento de la fila i
-        }
-        matrizResultante.push(filaResultante);
-    }
-    return matrizResultante;
-}
-function asignarNodos(matrizResultante, nodosOrigen, nodosDestino) {
-    const asignaciones = {};
-    // Recorrer la matriz resultante para identificar los ceros óptimos y realizar las asignaciones
-    for (let i = 0; i < nodosOrigen.length; i++) {
-        for (let j = 0; j < nodosDestino.length; j++) {
-            if (matrizResultante[i][j] === 0) {
-                const nodoOrigenId = nodosOrigen[i].id;
-                const nodoOrigenNombre = nodosOrigen[i].label;
-                const nodoDestinoId = nodosDestino[j].id;
-                const nodoDestinoNombre = nodosDestino[j].label;  
-                // Verificar si el nodo de origen ya ha sido asignado
-                if (!asignaciones.hasOwnProperty(nodoOrigenId)) {
-                    // Verificar si el nodo de destino ya ha sido asignado a otro nodo de origen
-                    const asignacionExistente = Object.entries(asignaciones).find(([key, value]) => value === nodoDestinoId);
-                    if (asignacionExistente) {
-                        // Si el nodo de destino ya ha sido asignado, verificar si la nueva asignación tiene un costo menor
-                        const nodoOrigenExistenteId = asignacionExistente[0];
-                        const costoAsignacionExistente = parseInt(aristasDataSet.get({ filter: item => item.from === nodoOrigenExistenteId && item.to === nodoDestinoId })[0].label);
-                        const costoNuevaAsignacion = parseInt(aristasDataSet.get({ filter: item => item.from === nodoOrigenId && item.to === nodoDestinoId })[0].label);
-                        if (costoNuevaAsignacion < costoAsignacionExistente) {
-                            // Si el nuevo nodo de origen es más preferible, reemplazar la asignación existente
-                            delete asignaciones[nodoOrigenExistenteId];
-                            asignaciones[nodoOrigenId] = nodoDestinoId;
-                        }
-                    } else {
-                        // Si el nodo de destino no ha sido asignado previamente, realizar la asignación
-                        asignaciones[nodoOrigenId] = nodoDestinoId;
-                    }
-                    
-                }
-            }
-            
-        }
-    }
-    // Mostrar las asignaciones realizadas
-    console.log('Asignaciones:');
-    for (const nodoOrigenId in asignaciones) {
-        const nodoDestinoId = asignaciones[nodoOrigenId];
-        const nodoOrigenNombre = nodosOrigen.find(nodo => nodo.id === nodoOrigenId).label;
-        const nodoDestinoNombre = nodosDestino.find(nodo => nodo.id === nodoDestinoId).label;
-        console.log(`Nodo de origen ${nodoOrigenNombre} asignado a nodo de destino ${nodoDestinoNombre}`);
-    }
-    mostrarAsignaciones(asignaciones);
-}
-function mostrarAsignaciones(asignaciones) {
-   
-    var divAsignaciones = document.getElementById('asignaciones');
-    divAsignaciones.innerHTML = '';
-    var ul = document.createElement('ul');
-    for (var nodoOrigenId in asignaciones) {
-        if (asignaciones.hasOwnProperty(nodoOrigenId)) {
-            var nodoDestinoId = asignaciones[nodoOrigenId];
-            var li = document.createElement('li');
-            // Construir el texto del li como desees
-            li.textContent = nodoOrigenId + ' -> ' + nodoDestinoId;
-            ul.appendChild(li);
-        }
-    }
-    divAsignaciones.appendChild(ul);
-}
 
 
 //---FUNCIONES DE AGREGAR NODOS Y ARISTAS---
