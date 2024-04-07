@@ -56,7 +56,7 @@ function insertionSortEventHandler(listaAleatoria) {
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
-  const rendimiento = (listaOrdenada.length ** 2) / 2;
+  const rendimiento = (listaOrdenada.length ** 2) /4;
   performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
 }
 
