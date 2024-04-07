@@ -136,14 +136,74 @@ function crearMatriz(){
     let filasNombres=[];
     const tabla = document.querySelector('#matrizInputs table');
     for(let i = 1; i < tabla.rows[0].cells.length-1; i++ ){
-        console.log(tabla.rows[0].cells[i].textContent);
+        //console.log(tabla.rows[0].cells[i].textContent);
         columnasNombres.push(tabla.rows[0].cells[i].textContent);
     }
     console.log(columnasNombres);
 
     for(let i = 1; i < tabla.rows.length-1;i++){
-        console.log(tabla.rows[i].cells[0].textContent);
+        //console.log(tabla.rows[i].cells[0].textContent);
         filasNombres.push(tabla.rows[i].cells[0].textContent);
     }
     console.log(filasNombres);
+    for(let i = 1; i < tabla.rows.length-1;i++){
+        let fila = [];
+        for(let j = 1; j < tabla.rows[i].cells.length-1; j++ ){
+            //console.log(tabla.rows[i].cells[j].querySelector('input[type="number"]').value);
+            fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
+        }
+        matriz.push(fila);
+    }
+    console.log(matriz);
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz);
 }
+
+
+function mostrarMatrizNW(fNom, cNom, matriz) {
+
+    const contenedorMatriz = document.getElementById('matriz');
+    
+    let html = '<h2>Matriz de Disponibilidad vs Demanda</h2>';
+    let entradas2=[];
+    html += '<table>';
+    html += '<tr><th style = " background: #473179;"></th>';
+    let columna = 0;
+    cNom.forEach((valor, index) => {
+      html += `<th style = " background: #9E7DD4;">${valor}</th>`;
+      entradas2[columna] = 0;
+      columna++;
+    });
+    html += '<th style = " background: #FBAD41;">Disponibilidad</th>';
+    html += '</tr>';
+   
+    matriz.forEach((fila, index) => {
+      html += `<tr><th style = " background: #9E7DD4;">${fNom[index]}</th>`;
+      let salida = 0;
+      columna = 0;
+      fila.forEach(valor => {
+        html += `<td style = " background: #BCB9D8;">${valor}</td>`;
+        if(valor != 0){
+          salida+=valor;
+          entradas2[columna]+=valor;
+        }
+        columna++;
+      });
+      
+      html += `<th style = " background: #f8b3b2;">${salida}</th>`;
+    });
+    
+    html += '</tr><th style = " background: #FBAD41;">Demanda</th>';
+    columna = 0;
+    entradas2.forEach(element => {
+      html += `<th style = " background: #f8b3b2;">${element}</th>`;
+      if(element > 0){
+        columna += element;
+      }
+    });
+    html += `<th style = " background: #fd9a98;">${columna}</th>`;
+    html += '<tr>'
+    html += '</table>';
+    contenedorMatriz.innerHTML = html;
+    
+  }
+
