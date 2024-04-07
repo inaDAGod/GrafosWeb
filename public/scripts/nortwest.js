@@ -224,68 +224,83 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
+    maximizarMatrizDeCostos(matriz, demanda, disponibilidad);
+    maximizarMatrizDeCostos2(matriz, demanda, disponibilidad);
   }
-
-  
-// Función para maximizar el total
-function maximizarTotal(costos, disponibilidad, demanda) {
-    // Crear un objeto de problema de optimización
-    const problem = new SimplexJS();
-
-    // Crear variables de decisión para cada celda de la matriz
-    const numFilas = costos.length;
-    const numColumnas = costos[0].length;
-    for (let i = 0; i < numFilas; i++) {
-        for (let j = 0; j < numColumnas; j++) {
-            problem.addVariable(`x${i}${j}`, costos[i][j]);
-        }
+  function maximizarMatrizDeCostos(costos, demanda, disponibilidad) {
+    // Verificar que la suma de demanda y disponibilidad sea igual
+    const sumaDemanda = demanda.reduce((acc, val) => acc + val, 0);
+    const sumaDisponibilidad = disponibilidad.reduce((acc, val) => acc + val, 0);
+    if (sumaDemanda !== sumaDisponibilidad) {
+        throw new Error('La suma de la demanda no coincide con la disponibilidad.');
     }
 
-    // Restricciones de disponibilidad
-    for (let i = 0; i < numFilas; i++) {
-        const constraint = {};
-        for (let j = 0; j < numColumnas; j++) {
-            constraint[`x${i}${j}`] = 1;
-        }
-        problem.addConstraint(constraint, '==', disponibilidad[i]);
-    }
+    // Crear matriz de solución inicial con ceros
+    const solucion = Array.from({ length: costos.length }, () => Array.from({ length: costos[0].length }, () => 0));
 
-    // Restricciones de demanda
-    for (let j = 0; j < numColumnas; j++) {
-        const constraint = {};
-        for (let i = 0; i < numFilas; i++) {
-            constraint[`x${i}${j}`] = 1;
-        }
-        problem.addConstraint(constraint, '<=', demanda[j]);
-    }
-
-    // Función objetivo: maximizar el total
-    const objective = {};
-    for (let i = 0; i < numFilas; i++) {
-        for (let j = 0; j < numColumnas; j++) {
-            objective[`x${i}${j}`] = -1; // Negativo porque SimplexJS minimiza por defecto
+    // Iterar sobre la matriz de costos para asignar valores a la solución
+    for (let i = 0; i < costos.length; i++) {
+        for (let j = 0; j < costos[i].length; j++) {
+            const asignacion = Math.min(demanda[j], disponibilidad[i]);
+            solucion[i][j] = asignacion;
+            demanda[j] -= asignacion;
+            disponibilidad[i] -= asignacion;
         }
     }
-    problem.addObjective(objective);
-
-    // Resolver el problema de optimización
-    const solution = problem.solve();
-
-    // Crear y retornar la matriz de solución
-    const solucionMatriz = [];
-    for (let i = 0; i < numFilas; i++) {
-        const fila = [];
-        for (let j = 0; j < numColumnas; j++) {
-            fila.push(solution[`x${i}${j}`]);
-        }
-        solucionMatriz.push(fila);
-        
-    }
-    console.log("Resultado al maximizar el total:");
-    console.log(solucionMatriz);
-    return solucionMatriz;
+    console.log(solucion);
+    return solucion;
 }
 
+function maximizarMatrizDeCostos2(costos, demanda, disponibilidad) {
+    // Crear el problema de maximización
+    const problem = {
+        optimize: 'max',
+        opType: 'max',
+        constraints: {},
+        variables: {}
+    };
+
+    // Agregar las variables al problema
+    for (let i = 0; i < costos.length; i++) {
+        for (let j = 0; j < costos[i].length; j++) {
+            const variableName = `x${i}${j}`;
+            problem.variables[variableName] = {
+                [variableName]: 1
+            };
+        }
+    }
+
+    // Agregar las restricciones de disponibilidad al problema
+    for (let i = 0; i < disponibilidad.length; i++) {
+        const constraintName = `disponibilidad_${i}`;
+        problem.constraints[constraintName] = {
+            equal: disponibilidad[i]
+        };
+        for (let j = 0; j < costos[i].length; j++) {
+            const variableName = `x${i}${j}`;
+            problem.variables[variableName][constraintName] = 1;
+        }
+    }
+
+    // Agregar las restricciones de demanda al problema
+    for (let j = 0; j < demanda.length; j++) {
+        const constraintName = `demanda_${j}`;
+        problem.constraints[constraintName] = {
+            equal: demanda[j]
+        };
+        for (let i = 0; i < costos.length; i++) {
+            const variableName = `x${i}${j}`;
+            problem.variables[variableName][constraintName] = 1;
+        }
+    }
+
+    // Resolver el problema
+    const solution = solver.Solve(problem);
+
+    // Devolver la solución
+    console.log(solution);
+    return solution;
+}
 
 
 
