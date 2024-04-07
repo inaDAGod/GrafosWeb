@@ -125,5 +125,19 @@ function eliminarColumna(button) {
     for (let i = 0; i < filas; i++) {
         tabla.rows[i].deleteCell(columnaIndex);
     }
+    
 
+}
+
+
+function crearMatriz(){
+    let matriz=[];
+    let columnasNombres=[];
+    let filasNombres=[];
+    const tabla = document.querySelector('#matrizInputs table');
+    for(let i = 1; i < tabla.rows[0].cells.length-1; i++ ){
+        console.log(tabla.rows[0].cells[i].textContent);
+        columnasNombres.push(tabla.rows[0].cells[i].textContent);
+    }
+    console.log(columnasNombres);
 }
