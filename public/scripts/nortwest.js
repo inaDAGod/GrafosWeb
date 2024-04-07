@@ -206,3 +206,54 @@ function mostrarMatrizNW(fNom, cNom, matriz) {
     contenedorMatriz.innerHTML = html;
     
   }
+  //PRUEBA
+function generarGrafoDesdeMatriz(filas, columnas, matriz) {
+  const dataNodes = [];
+  const dataEdges = [];
+  ids =0;
+  // Agregar nodos correspondientes a las filas
+  filas.forEach((filaNombre) => {
+    dataNodes.push({ id: ids, label: filaNombre, color: { background: 'lightgreen', border: 'green' } }); // Establecer el color verde
+    ids++;
+  });
+
+  // Obtener el valor máximo de los IDs de los nodos de las filas
+  const ultimoIdFila = ids - 1;
+
+  // Agregar nodos correspondientes a las columnas
+  columnas.forEach((columnaNombre) => {
+    dataNodes.push({ id: ids, label: columnaNombre }); // Establecer el nombre como etiqueta
+    ids++;
+  });
+
+  // Agregar aristas con valores desde la matriz
+  filas.forEach((filaNombre, filaIndex) => {
+    columnas.forEach((columnaNombre, columnaIndex) => {
+      const valor = matriz[filaIndex][columnaIndex];
+      if (valor !== 0) {
+        const fromId = filaIndex;
+        const toId = ultimoIdFila + columnaIndex + 1;
+        dataEdges.push({ from: fromId, to: toId, label: String(valor), arrows: 'to' });
+      }
+    });
+  });
+
+  const contenedorGrafo = document.getElementById('lienzo');
+  const nodosDataSet = new vis.DataSet(dataNodes);
+  const aristasDataSet = new vis.DataSet(dataEdges);
+  const data = { nodes: nodosDataSet, edges: aristasDataSet };
+  const opciones = {};
+  const grafo = new vis.Network(contenedorGrafo, data, opciones);
+}
+// Ejemplo de uso
+function generarGrafo() {
+  const filas = ["Judas", "Nabaretes", "Piolin"];
+  const columnas = ["El Alto", "Obrajes", "Calacoto", "Chasquipampa"];
+  const matriz = [
+      [10, 10, 40, 50],
+      [30, 5, 30, 60],
+      [40, 30, 50, 10]
+  ];
+
+  generarGrafoDesdeMatriz(filas, columnas, matriz);
+}
