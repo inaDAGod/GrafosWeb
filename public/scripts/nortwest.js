@@ -178,6 +178,8 @@ function crearMatriz(){
     console.log("demanda",demanda);
     console.log("disponibilidad",disponibilidad);
     mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
+ 
+
 }
 
 
@@ -224,36 +226,47 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
-    maximizarMatrizDeCostos(matriz, demanda, disponibilidad);
-    maximizarMatrizDeCostos2(matriz, demanda, disponibilidad);
+    
+    const { solucion, totalOptimo } = metodoMODI(matriz, demanda, disponibilidad);
+    console.log("Solución óptima:");
+    console.log(solucion);
+    console.log("Valor total máximo:");
+    console.log(totalOptimo);
+
+       //ACA ESTOY LLAMANDO PARA VER SOLUCIONES
+       nortWest(matriz, demanda, disponibilidad); 
+       maximizarCostos2(matriz, demanda, disponibilidad); //da si comentas la linea de arriba
   }
-  function maximizarMatrizDeCostos(costos, demanda, disponibilidad) {
-    // Verificar que la suma de demanda y disponibilidad sea igual
-    const sumaDemanda = demanda.reduce((acc, val) => acc + val, 0);
-    const sumaDisponibilidad = disponibilidad.reduce((acc, val) => acc + val, 0);
-    if (sumaDemanda !== sumaDisponibilidad) {
-        throw new Error('La suma de la demanda no coincide con la disponibilidad.');
-    }
 
-    // Crear matriz de solución inicial con ceros
-    const solucion = Array.from({ length: costos.length }, () => Array.from({ length: costos[0].length }, () => 0));
+//SACA CORRECTAMENTE LA PRIMERA SOLUCION
+function nortWest(costos, demanda, disponibilidad) { // saca correctamente la primera solucion
+    const filas = disponibilidad.length;
+    const columnas = demanda.length;
+    let solucion = Array.from({ length: filas }, () => Array.from({ length: columnas }, () => 0));
 
-    // Iterar sobre la matriz de costos para asignar valores a la solución
-    for (let i = 0; i < costos.length; i++) {
-        for (let j = 0; j < costos[i].length; j++) {
-            const asignacion = Math.min(demanda[j], disponibilidad[i]);
-            solucion[i][j] = asignacion;
-            demanda[j] -= asignacion;
-            disponibilidad[i] -= asignacion;
+    let i = 0;
+    let j = 0;
+    while (i < filas && j < columnas) {
+        const asignacion = Math.min(disponibilidad[i], demanda[j]);
+        solucion[i][j] = asignacion;
+        disponibilidad[i] -= asignacion;
+        demanda[j] -= asignacion;
+
+        if (disponibilidad[i] === 0) {
+            i++;
+        }
+        if (demanda[j] === 0) {
+            j++;
         }
     }
     console.log(solucion);
     return solucion;
 }
 
-function maximizarMatrizDeCostos2(costos, demanda, disponibilidad) {
+//USA UNA LIBRERIA EXTERNA Y ME DA UN RESULTADO VALIDO PERO NO SE SIENTO QUE AUN SE PUEDE MEJORAR
+function maximizarCostos2(costos, demanda, disponibilidad) {  //usa una 
     // Crear el problema de maximización
-    const problem = {
+    let problem = {
         optimize: 'max',
         opType: 'max',
         constraints: {},
@@ -301,9 +314,4 @@ function maximizarMatrizDeCostos2(costos, demanda, disponibilidad) {
     console.log(solution);
     return solution;
 }
-
-
-
-
-
-  
+f
