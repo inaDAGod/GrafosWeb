@@ -156,6 +156,7 @@ function crearMatriz(){
     }
     console.log(matriz);
     mostrarMatrizNW(filasNombres, columnasNombres, matriz);
+    generarGrafoDesdeMatriz(filasNombres, columnasNombres,matriz);
 }
 
 
@@ -246,6 +247,7 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
   const grafo = new vis.Network(contenedorGrafo, data, opciones);
 }
 // Ejemplo de uso
+/*
 function generarGrafo() {
   const filas = ["Judas", "Nabaretes", "Piolin"];
   const columnas = ["El Alto", "Obrajes", "Calacoto", "Chasquipampa"];
@@ -256,4 +258,4 @@ function generarGrafo() {
   ];
 
   generarGrafoDesdeMatriz(filas, columnas, matriz);
-}
+}*/
