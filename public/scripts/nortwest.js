@@ -140,4 +140,10 @@ function crearMatriz(){
         columnasNombres.push(tabla.rows[0].cells[i].textContent);
     }
     console.log(columnasNombres);
+
+    for(let i = 1; i < tabla.rows.length-1;i++){
+        console.log(tabla.rows[i].cells[0].textContent);
+        filasNombres.push(tabla.rows[i].cells[0].textContent);
+    }
+    console.log(filasNombres);
 }
