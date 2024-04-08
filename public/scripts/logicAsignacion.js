@@ -90,15 +90,88 @@ function changeOptimizationMode() {
         console.log("Optimización por minimización activada");
     }
 }
+function asignacionMaximizacion(matrizCostos) {
+    const asignaciones = [];
+    const nodosOrigen = matrizCostos.length;
+    const nodosDestino = matrizCostos[0].length;
+    // Inicializar matrices de asignaciones y valores seleccionados
+    const asignadosOrigen = new Array(nodosOrigen).fill(false);
+    const asignadosDestino = new Array(nodosDestino).fill(false);
+    let sumaOptima = 0;
 
+    while (asignaciones.length < Math.min(nodosOrigen, nodosDestino)) {
+        let maxValor = -Infinity;
+        let maxOrigen = -1;
+        let maxDestino = -1;
+        // Encontrar el máximo valor no asignado en la matriz
+        for (let i = 0; i < nodosOrigen; i++) {
+            if (!asignadosOrigen[i]) {
+                for (let j = 0; j < nodosDestino; j++) {
+                    if (!asignadosDestino[j] && matrizCostos[i][j] > maxValor) {
+                        maxValor = matrizCostos[i][j];
+                        maxOrigen = i;
+                        maxDestino = j;
+                    }
+                }
+            }
+        }
+
+        // Marcar nodos como asignados y agregar asignación
+        asignadosOrigen[maxOrigen] = true;
+        asignadosDestino[maxDestino] = true;
+        asignaciones.push({ origen: maxOrigen, destino: maxDestino, valor: maxValor });
+        sumaOptima += maxValor;
+    }
+
+    return { asignaciones, sumaOptima };
+}
+function asignacionMinimizacion(matrizCostos) {
+    const asignaciones = [];
+    const nodosOrigen = matrizCostos.length;
+    const nodosDestino = matrizCostos[0].length;
+
+    // Inicializar matrices de asignaciones y valores seleccionados
+    const asignadosOrigen = new Array(nodosOrigen).fill(false);
+    const asignadosDestino = new Array(nodosDestino).fill(false);
+
+    let sumaOptima = 0;
+
+    // Realizar asignaciones mientras haya nodos disponibles
+    while (asignaciones.length < Math.min(nodosOrigen, nodosDestino)) {
+        let minValor = Infinity;
+        let minOrigen = -1;
+        let minDestino = -1;
+
+        // Encontrar el mínimo valor no asignado en la matriz
+        for (let i = 0; i < nodosOrigen; i++) {
+            if (!asignadosOrigen[i]) {
+                for (let j = 0; j < nodosDestino; j++) {
+                    if (!asignadosDestino[j] && matrizCostos[i][j] < minValor) {
+                        minValor = matrizCostos[i][j];
+                        minOrigen = i;
+                        minDestino = j;
+                    }
+                }
+            }
+        }
+
+        // Marcar nodos como asignados y agregar asignación
+        asignadosOrigen[minOrigen] = true;
+        asignadosDestino[minDestino] = true;
+        asignaciones.push({ origen: minOrigen, destino: minDestino, valor: minValor });
+        sumaOptima += minValor;
+    }
+
+    return { asignaciones, sumaOptima };
+}
 function generarMatrizAsignacion() {
     console.log("Se está generando la matriz de asignación");
     desactivarBotones();
     desactivarBotones2();
-    
     const nodosOrigen = nodosDataSet.get({ filter: item => item.group === 'origen' });
     const nodosDestino = nodosDataSet.get({ filter: item => item.group === 'destino' });
     const matrizCostos = [];
+    // Llenar la matriz de costos
     nodosOrigen.forEach((origen, i) => {
         matrizCostos[i] = [];
         nodosDestino.forEach((destino, j) => {
@@ -107,52 +180,46 @@ function generarMatrizAsignacion() {
         });
     });
 
-    findAssignment(nodosOrigen, nodosDestino, matrizCostos);
+    // Seleccionar el algoritmo de asignación según el modo
+    let { asignaciones, sumaOptima } = maximizationMode ? asignacionMaximizacion(matrizCostos) : asignacionMinimizacion(matrizCostos);
+
+    // Mostrar la matriz y asignaciones en la interfaz
+    mostrarMatrizAsignacion(nodosOrigen, nodosDestino, matrizCostos, asignaciones, sumaOptima);
 }
-function findAssignment(nodosOrigen, nodosDestino, matrizCostos) {
-    const numNodosOrigen = nodosOrigen.length;
-    const numNodosDestino = nodosDestino.length;
+function mostrarMatrizAsignacion(nodosOrigen, nodosDestino, matrizCostos, asignaciones, sumaOptima) {
+    const contenedorMatriz = document.getElementById('matriz');
+    if (nodosOrigen.length > 0 && nodosDestino.length > 0) {
+        let html = '<h2>Matriz de Asignación</h2>';
+        html += '<table>';
+        html += '<tr><th></th>';
+        nodosDestino.forEach(nodo => {
+            html += `<th>${nodo.label}</th>`;
+        });
+        html += '</tr>';
+        matrizCostos.forEach((fila, index) => {
+            html += `<tr><th>${nodosOrigen[index].label}</th>`;
+            fila.forEach(valor => {
+                html += `<td>${valor}</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</table>';
 
-    // Paso 1: Aplicar el algoritmo de asignación de menor costo (Hungarian)
-    const asignaciones = new Array(numNodosOrigen).fill(-1);
-    const asignacionesDestino = new Array(numNodosDestino).fill(false);
+        html += `<h2>Asignaciones Óptimas</h2>`;
+        html += `<p>Suma Óptima: ${sumaOptima}</p>`;
+        html += `<table>`;
+        html += `<tr><th>Origen</th><th>Destino</th><th>Valor</th></tr>`;
+        asignaciones.forEach(asignacion => {
+            const origenLabel = nodosOrigen[asignacion.origen].label;
+            const destinoLabel = nodosDestino[asignacion.destino].label;
+            html += `<tr><td>${origenLabel}</td><td>${destinoLabel}</td><td>${asignacion.valor}</td></tr>`;
+        });
+        html += `</table>`;
 
-    for (let i = 0; i < numNodosOrigen; i++) {
-        let minCosto = Infinity;
-        let minIndex = -1;
-        for (let j = 0; j < numNodosDestino; j++) {
-            if (matrizCostos[i][j] < minCosto && !asignacionesDestino[j]) {
-                minCosto = matrizCostos[i][j];
-                minIndex = j;
-            }
-        }
-        if (minIndex !== -1) {
-            asignaciones[i] = minIndex;
-            asignacionesDestino[minIndex] = true;
-        }
+        contenedorMatriz.innerHTML = html;
     }
-
-    // Paso 2: Mostrar las asignaciones encontradas en la consola
-    console.log("Asignaciones encontradas:");
-    for (let i = 0; i < numNodosOrigen; i++) {
-        if (asignaciones[i] !== -1) {
-            const nodoOrigenNombre = nodosOrigen[i].label;
-            const nodoDestinoNombre = nodosDestino[asignaciones[i]].label;
-            console.log(`Nodo de origen ${nodoOrigenNombre} asignado a nodo de destino ${nodoDestinoNombre}`);
-        }
-    }
-
-    // Paso 3: Calcular la suma total de costos asignados
-    let sumaTotalCostos = 0;
-    for (let i = 0; i < numNodosOrigen; i++) {
-        if (asignaciones[i] !== -1) {
-            sumaTotalCostos += matrizCostos[i][asignaciones[i]];
-        }
-    }
-
-    // Mostrar la suma total de costos asignados
-    console.log("Suma total de costos asignados:", sumaTotalCostos);
 }
+
 
 //---FUNCIONES DE AGREGAR NODOS Y ARISTAS---
 function agregarAristaSeleccionada(){
