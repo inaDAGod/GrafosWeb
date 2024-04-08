@@ -297,7 +297,6 @@ function crearMatrizNortwest(fNom, cNom, demanda, disponibilidad) {
     for (let i = 0; i < numFilas; i++) {
         nortwest.push(new Array(numColumnas).fill(0));
     }
-   
     let i = 0; 
     let j = 0; 
     while (i < numFilas && j < numColumnas) {
@@ -319,6 +318,12 @@ function crearMatrizNortwest(fNom, cNom, demanda, disponibilidad) {
     const resultado = multiplicacionYSuma(nortwest, obtenerMatrizInicial());
     const contenedorResultado = document.getElementById('resultado');
     contenedorResultado.textContent = `Resultado: ${resultado}`;
+
+    // Obtener la matriz resultante
+    const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, obtenerMatrizInicial());
+
+    // Mostrar la matriz resultante
+    mostrarMatrizResultante(matrizResultante, demanda, disponibilidad);
 }
 function obtenerMatrizInicial() {
     let matriz = [];
@@ -336,7 +341,79 @@ function obtenerMatrizInicial() {
     return matriz;
 }
 
+function crearMatrizResultante(matrizNortwest, matrizInicial) {
+    // Encontrar las posiciones relevantes en la matriz inicial
+    const posicionesRelevantes = [];
+    matrizNortwest.forEach((filaNortwest, i) => {
+        filaNortwest.forEach((asignacion, j) => {
+            if (asignacion !== 0) {
+                posicionesRelevantes.push({ fila: i, columna: j });
+            }
+        });
+    });
 
+    // Crear la matriz resultante con ceros en todas las posiciones
+    const matrizResultante = new Array(matrizNortwest.length).fill().map(() => new Array(matrizInicial[0].length).fill(0));
+
+    // Llenar la matriz resultante con los costos relevantes
+    posicionesRelevantes.forEach(({ fila, columna }) => {
+        matrizResultante[fila][columna] = matrizInicial[fila][columna];
+    });
+
+    // Ajustar la demanda y la disponibilidad
+    const demandaResultante = [...matrizNortwest.map(fila => fila.reduce((acc, asignacion) => acc - asignacion, 0))];
+    const disponibilidadResultante = [...matrizNortwest.reduce((acc, fila) => {
+        fila.forEach((asignacion, j) => {
+            acc[j] -= asignacion;
+        });
+        return acc;
+    }, [...matrizInicial.map(fila => fila.reduce((acc, costo) => acc + costo, 0))])];
+
+    return { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante };
+}
+function mostrarMatrizResultante(matriz, demanda, disponibilidad) {
+    const contenedorMatriz = document.getElementById('matrizResultante');
+    let html = '<h2>Matriz Resultante</h2>';
+    html += '<table>';
+
+    // Encabezado de columnas
+    html += '<tr><th style="background: #473179;"></th>';
+    for (let i = 0; i < matriz[0].length; i++) {
+        html += `<th style="background: #9E7DD4;">${i + 1}</th>`;
+    }
+    html += '<th style="background: #FBAD41;">Disponibilidad</th>';
+    html += '</tr>';
+
+    // Contenido de la matriz
+    for (let i = 0; i < matriz.length; i++) {
+        html += `<tr><th style="background: #9E7DD4;">${i + 1}</th>`;
+        for (let j = 0; j < matriz[i].length; j++) {
+            html += `<td style="background: #BCB9D8;">${matriz[i][j]}</td>`;
+        }
+        html += `<th style="background: #f8b3b2;">${disponibilidad[i]}</th>`;
+        html += '</tr>';
+    }
+
+    // Demandas
+    html += '<tr><th style="background: #FBAD41;">Demanda</th>';
+    for (let i = 0; i < demanda.length; i++) {
+        html += `<th style="background: #f8b3b2;">${demanda[i]}</th>`;
+    }
+    html += '<th style="background: #fd9a98;">---</th>'; // Placeholder para la suma de la fila de disponibilidad
+    html += '</tr>';
+
+    // Suma de disponibilidad
+    const sumaDisponibilidad = disponibilidad.reduce((acc, curr) => acc + curr, 0);
+    html += `<tr><th style="background: #FBAD41;">Suma</th>`;
+    for (let i = 0; i < matriz[0].length; i++) {
+        html += `<th style="background: #f8b3b2;">---</th>`;
+    }
+    html += `<th style="background: #fd9a98;">${sumaDisponibilidad}</th>`;
+    html += '</tr>';
+
+    html += '</table>';
+    contenedorMatriz.innerHTML = html;
+}
 
 
 
