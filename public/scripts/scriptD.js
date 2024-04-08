@@ -25,9 +25,6 @@ function inicializarGrafo() {
   ids = 0;
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
-
-
-
 }
 
 function desactivarBotones(){
