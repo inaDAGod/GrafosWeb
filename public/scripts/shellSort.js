@@ -25,6 +25,7 @@ function shellSortEventHandler(listaAleatoria) {
   const upperLimit = document.getElementById("upperLimit");
   const outputLabel = document.getElementById("outputLabel");
   const performanceLabel = document.getElementById("performanceLabel");
+  const heightFactor = 1.5; // Factor de altura para la visualización
 
   if (inputNormal.checked) {
     console.log("Input normal activado");
@@ -36,15 +37,10 @@ function shellSortEventHandler(listaAleatoria) {
     }
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
     const copy = [...lista];
-    const moves = shellSortGrafico(copy);
-    generarGrafico(lista, 0);
-    animate(moves, copy);
-    listaOrdenada = shellSort(lista);
+    generarGrafico(lista, heightFactor); // Crear el gráfico inicial
+    shellSortGrafico(copy, heightFactor); // Ordenar y visualizar
+    listaOrdenada = [...copy]; // Crear una nueva copia del arreglo ordenado
   } else if (inputAleatorio.checked) {
-    generarGrafico(listaAleatoria, 0);
-    const copy = [...listaAleatoria];
-    const moves = shellSortGrafico(copy);
-    animate(moves, copy);
     console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
       const numElementsVal = parseInt(numElements.value);
@@ -52,81 +48,71 @@ function shellSortEventHandler(listaAleatoria) {
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
+    generarGrafico(listaAleatoria, heightFactor); // Crear el gráfico inicial
+    const copy = [...listaAleatoria];
+    shellSortGrafico(copy, heightFactor); // Ordenar y visualizar
     listaOrdenada = shellSort(listaAleatoria);
-    listaAleatoria = listaOrdenada; // Update listaAleatoria with the sorted array
+    listaAleatoria = listaOrdenada;
+ // Crear una nueva copia del arreglo ordenado
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
   const rendimiento = listaOrdenada.length ** (3/2); // Rendimiento ajustado
-performanceLabel.textContent = `Rendimiento: ${rendimiento.toFixed(1)}`;
-
+  performanceLabel.textContent = `Rendimiento: ${rendimiento.toFixed(1)}`;
 }
-//prueba
-//Prueba de graficar
-function generarGrafico(lista, move) {
+
+// Función auxiliar para pausar la ejecución por un tiempo determinado
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Función para visualizar el proceso de Shell Sort
+async function shellSortGrafico(arr, heightFactor) {
+  let bars = document.getElementsByClassName("bar");
+  let n = arr.length;
+
+  // Inicio del intervalo de valores
+  for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+    // Hacer inserciones de acuerdo al intervalo
+    for (let i = gap; i < n; i++) {
+      let temp = arr[i];
+      let j;
+
+      // Insertar arr[i] en la secuencia ordenada arr[gap..i-1]
+      for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+        arr[j] = arr[j - gap];
+        bars[j].style.height = arr[j] * heightFactor + 'px';
+        bars[j].style.backgroundColor = "orange";
+        bars[j - gap].style.backgroundColor = "white";
+        await sleep(30);
+      }
+
+      // Colocar el elemento temporal en su posición correcta
+      arr[j] = temp;
+      bars[j].style.height = arr[j] * heightFactor + 'px';
+      bars[j].style.backgroundColor = "orange";
+      await sleep(30);
+    }
+  }
+
+  // Cambiar el color de las barras a verde después de ordenar
+  for (let k = 0; k < bars.length; k++) {
+    bars[k].style.backgroundColor = "#A2F314";
+  }
+
+  return arr;
+}
+
+function generarGrafico(lista, heightFactor) {
   const maxValue = Math.max(...lista); // Obtener el valor máximo en la lista
   const container = document.getElementById("containerGrafico");
   container.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevas barras
 
   for (let i = 0; i < lista.length; i++) {
     const bar = document.createElement("div");
-    // Establecer la altura de la barra en relación con el valor de la lista
     const barHeight = (lista[i] / maxValue) * 100 + "%";
     bar.style.height = barHeight;
     bar.classList.add("bar");
-    if (move && move.indices.includes(i)) {
-      bar.style.backgroundColor = move.type === "swap" ? "red" : "blue";
-    }
     container.appendChild(bar);
   }
-}
-
-function animate(moves, lista) {
-  if (moves.length === 0) {
-    generarGrafico(lista); // Render the final sorted array
-    return;
-  }
-
-  const move = moves.shift();
-  const [i, j] = move.indices;
-
-  // Update the visualization before performing the action
-  generarGrafico(lista, move);
-
-  setTimeout(function () {
-    if (move.type === "swap") {
-      // Perform swap
-      [lista[i], lista[j]] = [lista[j], lista[i]];
-    } else if (move.type === "comp") {
-      // No operation needed, but update the visualization
-      generarGrafico(lista, move);
-    }
-
-    // Continue animation
-    animate(moves, lista);
-  }, 20);
-}
-function shellSortGrafico(array) {
-  const moves = [];
-  const n = array.length;
-  const auxiliarArray = [...array]; // Crea una copia del arreglo original
-
-  for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
-    for (let i = gap; i < n; i++) {
-      const temp = auxiliarArray[i];
-      let j;
-      for (j = i; j >= gap && auxiliarArray[j - gap] > temp; j -= gap) {
-        auxiliarArray[j] = auxiliarArray[j - gap];
-        // Mueve esta línea después del intercambio
-      }
-      if (j !== i) {
-        auxiliarArray[j] = temp;
-        moves.push({ indices: [j, i], type: "swap" });
-      }
-      // Mueve esta línea aquí, después del intercambio
-      moves.push({ indices: [j, j - gap], type: "comp" });
-    }
-  }
-
-  return moves;
 }

@@ -27,6 +27,7 @@
               <button class="boton2" id="PreOrder" onclick="manejarBotonOrden('preorden')">PreOrder</button>
             </div>
             <button class="boton2" id="PostOrder" onclick="manejarBotonOrden('postorden')">PostOrder</button>
+            <button class="boton2" id="GenerarArbol" onclick="generarArbol()">Generar Árbol</button>
             <div class="botones">
                 <a id="descargar" download="grafo.json"><button class="botonOtro" onclick="desactivarBotones(); desactivarBotones2() ">Exportar</button></a>
                 <input type="file" id="cargarArchivo" accept=".json" style="display: none;">
@@ -42,7 +43,11 @@
     </header>
     </form>
     <br><br>
-    <div id="matrizInputs" align="center"></div>
+    <div id="matrizInputs" align="center">
+      <input type="text" id="preordenInput" placeholder="Preorden (separado por comas)">
+<input type="text" id="inordenInput" placeholder="Inorden (separado por comas)">
+<input type="text" id="postordenInput" placeholder="Postorden (separado por comas)">
+    </div>
     
 
     <div id="contenedor">

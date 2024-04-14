@@ -1,34 +1,3 @@
-// Función para ordenar la lista utilizando Merge Sort
-function mergeSort(arr) {
-  if (arr.length <= 1) {
-    return arr;
-  }
-
-  const mid = Math.floor(arr.length / 2);
-  const left = arr.slice(0, mid);
-  const right = arr.slice(mid);
-
-  return merge(mergeSort(left), mergeSort(right));
-}
-
-function merge(left, right) {
-  let result = [];
-  let leftIndex = 0;
-  let rightIndex = 0;
-
-  while (leftIndex < left.length && rightIndex < right.length) {
-    if (left[leftIndex] < right[rightIndex]) {
-      result.push(left[leftIndex]);
-      leftIndex++;
-    } else {
-      result.push(right[rightIndex]);
-      rightIndex++;
-    }
-  }
-
-  return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-}
-
 function mergeSortEventHandler(listaAleatoria) {
   let listaOriginal;
   let listaOrdenada;
@@ -40,6 +9,7 @@ function mergeSortEventHandler(listaAleatoria) {
   const upperLimit = document.getElementById("upperLimit");
   const outputLabel = document.getElementById("outputLabel");
   const performanceLabel = document.getElementById("performanceLabel");
+  const heightFactor = 1.5; // Declarar heightFactor como variable local
 
   if (inputNormal.checked) {
     console.log("Input normal activado");
@@ -51,26 +21,20 @@ function mergeSortEventHandler(listaAleatoria) {
     }
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
     listaOriginal = [...lista]; // Guardar una copia del arreglo original
-    const copy = [...lista];
-    const moves = mergeSortGrafico(copy);
-    generarGrafico(lista, 0);
-    animate(moves, listaOriginal); // Pasar la copia del arreglo original
-    listaOrdenada = mergeSort(lista);
+    generarGrafico(lista, heightFactor); // Crear el gráfico inicial
+    mergeSort(lista, heightFactor); // Ordenar y visualizar
+    listaOrdenada = lista;
   } else if (inputAleatorio.checked) {
-    generarGrafico(listaAleatoria, 0);
-    listaOriginal = [...listaAleatoria]; // Guardar una copia del arreglo original
-    const copy = [...listaAleatoria];
-    const moves = mergeSortGrafico(copy);
-    animate(moves, listaOriginal); // Pasar la copia del arreglo original
-    console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
       const numElementsVal = parseInt(numElements.value);
       const lowerLimitVal = parseInt(lowerLimit.value);
       const upperLimitVal = parseInt(upperLimit.value);
       listaAleatoria = generarListaAleatoria(numElementsVal, lowerLimitVal, upperLimitVal);
     }
-    listaOrdenada = mergeSort(listaAleatoria);
-    listaAleatoria = listaOrdenada;
+    listaOriginal = [...listaAleatoria]; // Guardar una copia del arreglo original
+    generarGrafico(listaAleatoria, heightFactor); // Crear el gráfico inicial
+    mergeSort(listaAleatoria, heightFactor); // Ordenar y visualizar
+    listaOrdenada = listaAleatoria;
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
@@ -78,110 +42,89 @@ function mergeSortEventHandler(listaAleatoria) {
   performanceLabel.textContent = `Rendimiento: ${rendimiento.toFixed(1)}`;
 }
 
+async function mergeSort(arr, heightFactor) {
+  let bars = document.getElementsByClassName("bar");
+  n = arr.length
+  var curr_size;
+  var left_start;
+  for (curr_size = 1; curr_size <= n - 1; curr_size = 2 * curr_size) {
+    for (left_start = 0; left_start < n - 1; left_start += 2 * curr_size) {
+      var mid = Math.min(left_start + curr_size - 1, n - 1);
+      var right_end = Math.min(left_start + 2 * curr_size - 1, n - 1);
+      await mergeSortHelper(arr, left_start, mid, right_end, heightFactor);
+    }
+    await sleep(200);
+  }
+  for (let k = 0; k < bars.length; k++) {
+    bars[k].style.backgroundColor = "#A2F314";
+  }
+}
 
-//prueba
-//Prueba de graficar
-function generarGrafico(lista, move) {
+async function mergeSortHelper(arr, l, m, r, heightFactor) {
+  let bars = document.getElementsByClassName("bar");
+  var i, j, k;
+  var n1 = m - l + 1;
+  var n2 = r - m;
+  var L = Array(n1).fill(0);
+  var R = Array(n2).fill(0);
+
+  for (i = 0; i < n1; i++)
+    L[i] = arr[l + i];
+  for (j = 0; j < n2; j++)
+    R[j] = arr[m + 1 + j];
+
+  i = 0;
+  j = 0;
+  k = l;
+  while (i < n1 && j < n2) {
+    bars[i].style.height = arr[i] * heightFactor + "px";
+    bars[i].style.backgroundColor = "red";
+    await sleep(30);
+    if (L[i] <= R[j]) {
+      arr[k] = L[i];
+      bars[k].style.height = arr[k] * heightFactor + "px";
+      bars[k].style.backgroundColor = "red";
+      i++;
+    } else {
+      arr[k] = R[j];
+      bars[k].style.height = arr[k] * heightFactor + "px";
+      bars[k].style.backgroundColor = "red";
+      j++;
+    }
+    k++;
+  }
+
+  while (i < n1) {
+    arr[k] = L[i];
+    bars[k].style.height = arr[k] * heightFactor + "px";
+    bars[k].style.backgroundColor = "red";
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    arr[k] = R[j];
+    bars[k].style.height = arr[k] * heightFactor + "px";
+    bars[k].style.backgroundColor = "red";
+    j++;
+    k++;
+  }
+}
+
+function generarGrafico(lista, heightFactor) {
   const maxValue = Math.max(...lista); // Obtener el valor máximo en la lista
   const container = document.getElementById("containerGrafico");
+  container.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevas barras
 
-  // Obtener las barras existentes
-  const barsContainer = container.getElementsByClassName("bar");
-  const bars = Array.from(barsContainer);
-
-  // Actualizar las barras existentes
-  bars.forEach((bar, index) => {
-    const barHeight = (lista[index] / maxValue) * 100 + "%";
+  for (let i = 0; i < lista.length; i++) {
+    const bar = document.createElement("div");
+    const barHeight = (lista[i] / maxValue) * 100 + "%";
     bar.style.height = barHeight;
-    if (move && move.indices.includes(index)) {
-      bar.style.backgroundColor = move.type === "swap" ? "red" : "blue";
-    } else {
-      bar.style.backgroundColor = ""; // Restablecer el color de la barra
-    }
-  });
-
-  // Agregar barras faltantes si la longitud de la lista ha cambiado
-  if (bars.length !== lista.length) {
-    for (let i = bars.length; i < lista.length; i++) {
-      const bar = document.createElement("div");
-      const barHeight = (lista[i] / maxValue) * 100 + "%";
-      bar.style.height = barHeight;
-      bar.classList.add("bar");
-      container.appendChild(bar);
-    }
+    bar.classList.add("bar");
+    container.appendChild(bar);
   }
 }
-
-function animate(moves, originalArray) {
-  let currentArray = [...originalArray];
-  generarGrafico(originalArray); // Mostrar el estado inicial del arreglo antes de la animación
-
-  const animateStep = () => {
-    if (moves.length === 0) {
-      return; // Finalizar la animación cuando no haya más movimientos
-    }
-
-    const move = moves.shift(); // Obtener el próximo movimiento
-    const [i, j] = move.indices;
-
-    // Aplicar el movimiento al arreglo actual
-    if (move.type === "swap") {
-      [currentArray[i], currentArray[j]] = [currentArray[j], currentArray[i]];
-    }
-
-    // Renderizar el estado actual del arreglo durante la animación
-    generarGrafico(currentArray, move);
-
-    // Esperar un breve período antes de aplicar el próximo movimiento
-    setTimeout(animateStep, 200);
-  };
-
-  // Comenzar la animación
-  animateStep();
-}
-
-
-function mergeSortGrafico(arr) {
-  const moves = [];
-  mergeSortHelper(arr, 0, arr.length - 1, moves);
-  return moves;
-}
-
-function mergeSortHelper(arr, left, right, moves) {
-  if (left >= right) return;
-
-  const mid = Math.floor((left + right) / 2);
-  mergeSortHelper(arr, left, mid, moves);
-  mergeSortHelper(arr, mid + 1, right, moves);
-  mergeGrafico(arr, left, mid, right, moves);
-}
-
-function mergeGrafico(arr, left, mid, right, moves) {
-  let i = left, j = mid + 1;
-  const merged = [];
-  let k = left; // Índice para el arreglo original
-
-  while (i <= mid && j <= right) {
-    if (arr[i] <= arr[j]) {
-      merged.push(arr[i]);
-      moves.push({ indices: [k, i], type: "comp" });
-      arr[k++] = arr[i++]; // Copiar elemento y avanzar índices
-    } else {
-      merged.push(arr[j]);
-      moves.push({ indices: [k, j], type: "comp" });
-      arr[k++] = arr[j++]; // Copiar elemento y avanzar índices
-    }
-  }
-
-  while (i <= mid) {
-    merged.push(arr[i]);
-    moves.push({ indices: [k, i], type: "comp" });
-    arr[k++] = arr[i++]; // Copiar elemento y avanzar índices
-  }
-
-  while (j <= right) {
-    merged.push(arr[j]);
-    moves.push({ indices: [k, j], type: "comp" });
-    arr[k++] = arr[j++]; // Copiar elemento y avanzar índices
-  }
+// Función auxiliar para pausar la ejecución por un tiempo determinado
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

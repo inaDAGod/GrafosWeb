@@ -1,4 +1,3 @@
-
 // Función para ordenar la lista utilizando Selection Sort
 function selectionSort(arr) {
   const len = arr.length;
@@ -41,14 +40,14 @@ function selectionSortEventHandler(listaAleatoria) {
     const lista = elementos.map(elemento => parseInt(elemento.trim()));
     const copy = [...lista];
     const moves = selectionSortGrafico(copy);
-    generarGrafico(lista, 0);
-    animate(moves, copy);
+    generarGraficoSelection(lista, 0);
+    animate(moves, copy, generarGraficoSelection);
     listaOrdenada = selectionSort(lista);
   } else if (inputAleatorio.checked) {
-    generarGrafico(listaAleatoria, 0);
+    generarGraficoSelection(listaAleatoria, 0);
     const copy = [...listaAleatoria];
     const moves = selectionSortGrafico(copy);
-    animate(moves, copy);
+    animate(moves, copy, generarGraficoSelection);
     console.log("Input aleatorio activado");
     if (!listaAleatoria) {
       const numElementsVal = parseInt(numElements.value);
@@ -65,46 +64,42 @@ function selectionSortEventHandler(listaAleatoria) {
   performanceLabel.textContent = `Rendimiento: ${rendimiento}`;
 }
 
-
-
-//Prueba de graficar
-function generarGrafico(lista, move) {
-  const maxValue = Math.max(...lista); // Obtener el valor máximo en la lista
+function generarGraficoSelection(lista, move) {
+  const maxValue = Math.max(...lista);
   const container = document.getElementById("containerGrafico");
-  container.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevas barras
+  container.innerHTML = "";
 
   for (let i = 0; i < lista.length; i++) {
     const bar = document.createElement("div");
-    // Establecer la altura de la barra en relación con el valor de la lista
     const barHeight = (lista[i] / maxValue) * 100 + "%";
     bar.style.height = barHeight;
     bar.classList.add("bar");
     if (move && move.indices.includes(i)) {
       bar.style.backgroundColor = move.type === "swap" ? "red" : "blue";
+    } else {
+      bar.style.backgroundColor = "#000000";
     }
     container.appendChild(bar);
   }
 }
 
-function animate(moves, lista) {
+function animate(moves, lista, graficarFuncion) {
   if (moves.length === 0) {
-    // You can remove this comment when everything is working
-    generarGrafico(lista); // Esta línea ya no es necesaria al descomentarla
+    graficarFuncion(lista);
     return;
   }
 
   const move = moves.shift();
   const [i, j] = move.indices;
 
-  // Update the visualization before performing the swap
-  generarGrafico(lista, move); // Descomenta esta línea
+  graficarFuncion(lista, { indices: move.indices, type: move.type });
 
   if (move.type === "swap") {
     [lista[i], lista[j]] = [lista[j], lista[i]];
   }
 
   setTimeout(function () {
-    animate(moves, lista);
+    animate(moves, lista, graficarFuncion);
   }, 200);
 }
 
