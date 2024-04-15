@@ -174,11 +174,11 @@ function crearMatriz(){
         //console.log(tabla.rows[i].cells[0].textContent);
         disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
     }
+    console.log("Maximizar");
     console.log("matriz",matriz);
     console.log("demanda",demanda);
     console.log("disponibilidad",disponibilidad);
     mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
-   
 }
 function crearMatriz2(){
     let matriz=[];
@@ -215,6 +215,7 @@ function crearMatriz2(){
         //console.log(tabla.rows[i].cells[0].textContent);
         disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
     }
+    console.log("Minimizar");
     console.log("matriz",matriz);
     console.log("demanda",demanda);
     console.log("disponibilidad",disponibilidad);
@@ -264,11 +265,10 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
-    imprimirCostos(fNom, cNom,matriz, demanda, disponibilidad,  maximizarCostos2(matriz, demanda, disponibilidad)); 
- 
-       
-  }
 
+       //da si comentas la linea de arriba
+       imprimirCostos(fNom, cNom,matriz, demanda, disponibilidad,  maximizarCostos2(matriz, demanda, disponibilidad));
+  }
   function mostrarMatrizNW2(fNom, cNom, matriz,demanda,disponibilidad) {
     const contenedorMatriz = document.getElementById('matriz');
     
@@ -311,9 +311,9 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
-    imprimirCostos(fNom, cNom,matriz, demanda, disponibilidad,  minimizarCostos2(matriz, demanda, disponibilidad)); 
- 
-       
+     //da si comentas la linea de arriba
+    imprimirCostos(fNom, cNom,matriz, demanda, disponibilidad,  minimizarCostos2(matriz, demanda, disponibilidad));
+  
   }
 //SACA CORRECTAMENTE LA PRIMERA SOLUCION
 function nortWest(costos, demanda, disponibilidad) { // saca correctamente la primera solucion
@@ -344,7 +344,7 @@ function nortWest(costos, demanda, disponibilidad) { // saca correctamente la pr
 function maximizarCostos2(costos, demanda, disponibilidad) {  //usa una 
     // Crear el problema de maximización
     let problem = {
-        optimize: 'min',
+        optimize: 'max',
         opType: 'max',
         constraints: {},
         variables: {}
@@ -390,7 +390,9 @@ function maximizarCostos2(costos, demanda, disponibilidad) {  //usa una
     // Devolver la solución
     console.log(solution);
     return solution;
+    
 }
+
 function minimizarCostos2(costos, demanda, disponibilidad) {
     let problem2 = {
         optimize: 'min', // Cambiar 'max' por 'min' para indicar minimización
