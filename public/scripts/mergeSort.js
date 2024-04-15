@@ -34,12 +34,46 @@ function mergeSortEventHandler(listaAleatoria) {
     listaOriginal = [...listaAleatoria]; // Guardar una copia del arreglo original
     generarGrafico(listaAleatoria, heightFactor); // Crear el gráfico inicial
     mergeSort(listaAleatoria, heightFactor); // Ordenar y visualizar
-    listaOrdenada = listaAleatoria;
+    listaOrdenada = mergeSortSync(listaAleatoria);
+    listaAleatoria = listaOrdenada; // Update listaAleatoria with the sorted array
   }
 
   outputLabel.textContent = listaOrdenada.join(", ");
   const rendimiento = listaOrdenada.length * Math.log2(listaOrdenada.length); // Rendimiento ajustado
   performanceLabel.textContent = `Rendimiento: ${rendimiento.toFixed(1)}`;
+}
+
+function mergeSortSync(arr) {
+  if (arr.length <= 1) {
+    return arr;
+  }
+
+  const middle = Math.floor(arr.length / 2);
+  const left = arr.slice(0, middle);
+  const right = arr.slice(middle);
+
+  return mergeSync(
+    mergeSortSync(left),
+    mergeSortSync(right)
+  );
+}
+
+function mergeSync(left, right) {
+  let result = [];
+  let leftIndex = 0;
+  let rightIndex = 0;
+
+  while (leftIndex < left.length && rightIndex < right.length) {
+    if (left[leftIndex] < right[rightIndex]) {
+      result.push(left[leftIndex]);
+      leftIndex++;
+    } else {
+      result.push(right[rightIndex]);
+      rightIndex++;
+    }
+  }
+
+  return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
 }
 
 async function mergeSort(arr, heightFactor) {
