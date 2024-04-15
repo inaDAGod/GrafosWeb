@@ -39,7 +39,7 @@ function shellSortEventHandler(listaAleatoria) {
     const copy = [...lista];
     generarGrafico(lista, heightFactor); // Crear el gráfico inicial
     shellSortGrafico(copy, heightFactor); // Ordenar y visualizar
-    listaOrdenada = [...copy]; // Crear una nueva copia del arreglo ordenado
+    listaOrdenada = shellSort(lista); // Crear una nueva copia del arreglo ordenado
   } else if (inputAleatorio.checked) {
     console.log("Input aleatorio activado");
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida

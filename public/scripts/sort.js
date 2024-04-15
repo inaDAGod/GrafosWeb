@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const cleanBtn = document.getElementById("cleanBtn"); 
   const outputLabel = document.getElementById("outputLabel"); 
   const performanceLabel = document.getElementById("performanceLabel"); 
-  const selectionSortBtn = document.getElementById("selectionSortBtn"); 
+  const selectionSortBtn = document.getElementById("selectionSortBtn");
+  const cargarBtn = document.getElementById("cargarBtn"); 
 
   inputNormal.addEventListener("change", function() {
     if (inputNormal.checked) {
@@ -101,11 +102,30 @@ document.addEventListener("DOMContentLoaded", function() {
       window.URL.revokeObjectURL(link.href);
     }
   }
-  const descargarBtn = document.getElementById("descargarBtn");
-
-descargarBtn.addEventListener("click", function() {
-  descargarOutput();
-});
+  document.getElementById("descargarBtn").addEventListener("click", function() {
+    console.log("Botón descargar presionado");
+    descargarOutput();
+  });
+  cargarBtn.addEventListener("click", function() {
+    const inputLabel = document.getElementById("inputLabel");
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".txt";
+    
+    fileInput.onchange = function(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = function() {
+        const contents = reader.result;
+        inputLabel.value = contents;
+      };
+      
+      reader.readAsText(file);
+    };
+    
+    fileInput.click();
+  });
 
   // Importamos la lógica del Selection Sort desde el archivo selectionSort.js
   selectionSortBtn.addEventListener("click", function() {

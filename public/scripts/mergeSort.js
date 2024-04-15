@@ -23,7 +23,7 @@ function mergeSortEventHandler(listaAleatoria) {
     listaOriginal = [...lista]; // Guardar una copia del arreglo original
     generarGrafico(lista, heightFactor); // Crear el gráfico inicial
     mergeSort(lista, heightFactor); // Ordenar y visualizar
-    listaOrdenada = lista;
+    listaOrdenada = mergeSortSync(lista);
   } else if (inputAleatorio.checked) {
     if (!listaAleatoria) { // Solo genera la lista si aún no está definida
       const numElementsVal = parseInt(numElements.value);
