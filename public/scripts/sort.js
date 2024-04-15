@@ -85,8 +85,27 @@ document.addEventListener("DOMContentLoaded", function() {
     const container = document.getElementById("containerGrafico");
   container.innerHTML = "";
   });
-
+  function descargarOutput() {
+    var nombreArchivo = prompt("Por favor, ingresa el nombre del archivo:");
   
+    if (nombreArchivo) { // Si el usuario no cancela la entrada del nombre
+      var contenido = document.getElementById("outputLabel").textContent;
+      var blob = new Blob([contenido], { type: "text/plain;charset=utf-8" });
+      var link = document.createElement("a");
+      link.download = nombreArchivo + ".txt";
+      link.href = window.URL.createObjectURL(blob);
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    }
+  }
+  const descargarBtn = document.getElementById("descargarBtn");
+
+descargarBtn.addEventListener("click", function() {
+  descargarOutput();
+});
 
   // Importamos la lógica del Selection Sort desde el archivo selectionSort.js
   selectionSortBtn.addEventListener("click", function() {
