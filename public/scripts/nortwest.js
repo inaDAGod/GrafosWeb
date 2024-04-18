@@ -179,6 +179,8 @@ function crearMatriz(){
     console.log("demanda",demanda);
     console.log("disponibilidad",disponibilidad);
     mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
+    imprimirCostos(filasNombres, columnasNombres,matriz, demanda, disponibilidad,  maximizarCostos2(matriz, demanda, disponibilidad));
+
 }
 
 
@@ -224,10 +226,7 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
-
-       //da si comentas la linea de arriba
-       imprimirCostos(fNom, cNom,matriz, demanda, disponibilidad,  maximizarCostos2(matriz, demanda, disponibilidad));
-  }
+}
 function maximizarCostos2(costos, demanda, disponibilidad) { 
 
     let problem = {
@@ -373,6 +372,7 @@ function crearMatriz2(){
         //console.log(tabla.rows[i].cells[0].textContent);
         disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
     }
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
     crearMatrizNortwestMinima(filasNombres, columnasNombres, demanda, disponibilidad);
 
 }
