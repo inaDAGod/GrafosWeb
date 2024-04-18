@@ -155,10 +155,7 @@ h1{
 }
 .contenido{
     text-align: center;
-    padding-left: 270px;
-    padding-right: 270px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+
     
 }
 
@@ -166,18 +163,16 @@ h1{
 #contenedor {
     display: flex;
     justify-content: center; /* Centra los elementos horizontalmente */
-    align-items: flex-start; /* Alinea los elementos al inicio verticalmente */
+
 }
 
 #lienzo {
-    width: 50%; /* Ancho del lienzo */
+    width: 700px; 
     height: 1000px;
     border: 1px solid #ccc;
-    margin-right: 20px;
-    margin-left: 25%;
+    margin-left: 100px;
 }
 #matriz {
-    width: 25%; /* Ancho de la matriz */
     font-family: Arial, sans-serif;
 }
 
@@ -193,20 +188,14 @@ h1{
     padding: 8px;
     text-align: center;
   }
-
-
   
   #matriz th {
     background-color: #f2f2f2;
   }
 
 
-
-  
- 
   #contenedor {
     display: flex;
-    justify-content: space-between; /* Para colocar los elementos a los lados */
     align-items: flex-start;
 }
 
@@ -214,3 +203,8 @@ h1{
     display: flex;
     flex-direction: column; /* Para apilar los elementos verticalmente */
 }
+#solucion th, #solucion td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
