@@ -282,7 +282,7 @@ function maximizarCostos2(costos, demanda, disponibilidad) {
 
 function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
     const contenedorMatriz = document.getElementById('solucion');
-    
+    let matrizSol = [];
     let html = '<h2>Solucion</h2><br>';
     html += '<table>';
     html += '<tr><th style = " background: #473179;"></th>';
@@ -297,6 +297,7 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
       html += `<tr><th style = " background: #9E7DD4;">${fNom[i]}</th>`;
       let salida = 0;
       columna = 0;
+      let fila = [];
       for(let j = 0;j < cNom.length; j++) {
         let valor='x'+i+j;
        valor= solucion[valor];
@@ -305,12 +306,17 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
             
             html += `<td style = " background: #BCB9D8;">${valor}</td>`;
             total += valor*costos[i][j];
+            
         }
         else{
             html += `<td style = " background: #BCB9D8;">0</td>`;
+            valor = 0;
         }
+        fila.push(parseInt(valor));
+
         
       }
+      matrizSol.push(fila);
       
       html += `<th style = " background: #f8b3b2;">${disponibilidad[i]}</th>`;
     }
@@ -333,8 +339,8 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
     html += '<tr>'
     html += `</table> <br><h3>Total maximo: ${total} </h3>`;
     contenedorMatriz.innerHTML = html;
-    
-
+    console.log("solucion",solucion);
+    generarGrafoDesdeMatriz(fNom, cNom, matrizSol);
 }
 
 function crearMatriz2(){
@@ -572,4 +578,42 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
         }
     }
     return suma;
-}s
+}
+
+function generarGrafoDesdeMatriz(filas, columnas, matriz) {
+    ids = 0;
+    // Actualizar nodos correspondientes a las filas
+    filas.forEach((filaNombre, filaIndex) => {
+      nodosDataSet.update({ id: filaIndex, label: filaNombre, color: { background: 'lightgreen', border: 'green' } }); // Establecer el color verde
+      ids++;
+    });
+  
+    // Obtener el valor máximo de los IDs de los nodos de las filas
+    const ultimoIdFila = ids - 1;
+  
+    // Actualizar nodos correspondientes a las columnas
+    columnas.forEach((columnaNombre, columnaIndex) => {
+      nodosDataSet.update({ id: ultimoIdFila + columnaIndex + 1, label: columnaNombre }); // Establecer el nombre como etiqueta
+      ids++;
+    });
+  
+    // Limpiar aristas existentes
+    aristasDataSet.clear();
+  
+    // Agregar aristas con valores desde la matriz
+    filas.forEach((filaNombre, filaIndex) => {
+      columnas.forEach((columnaNombre, columnaIndex) => {
+        const valor = matriz[filaIndex][columnaIndex];
+        if (valor !== 0) {
+          const fromId = filaIndex;
+          const toId = ultimoIdFila + columnaIndex + 1;
+          // Agregar arista con ID y valor
+          const edgeId = `edge_${fromId}_${toId}`;
+          aristasDataSet.add({ id: edgeId, from: fromId, to: toId, label: String(valor), arrows: 'to' });
+        }
+      });
+    });
+  
+    // Actualizar la red con los nuevos datos
+    grafo.setData({ nodes: nodosDataSet, edges: aristasDataSet });
+  }
