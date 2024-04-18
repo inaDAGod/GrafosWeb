@@ -182,9 +182,10 @@ function crearMatriz() {
         alert(`La suma de la demanda (${sumaDemanda}) no coincide con la suma de la disponibilidad (${sumaDisponibilidad}). No se puede continuar.`);
         return; // Salir de la función si las sumas son diferentes
     }
-    // Si las sumas son iguales, mostrar la matriz
+    // Si las sumas son iguales, mostrar la matrizs
     mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
-    crearMatrizNortwest(filasNombres, columnasNombres, demanda, disponibilidad);
+    crearMatrizNortwestMinima(filasNombres, columnasNombres, demanda, disponibilidad);
+    generarGrafoDesdeMatriz(filasNombres, columnasNombres, matriz);
 }
 function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     const contenedorMatriz = document.getElementById('matriz');
@@ -217,6 +218,8 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
         columna += element;
       }
     });
+
+    
     columna2 = 0;
     disponibilidad.forEach(element => {
       if(element > 0){
@@ -322,8 +325,107 @@ function crearMatrizNortwest(fNom, cNom, demanda, disponibilidad) {
     // Obtener la matriz resultante
     const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, obtenerMatrizInicial());
 
-    // Mostrar la matriz resultante
-    mostrarMatrizResultante(matrizResultante, demanda, disponibilidad);
+    // Mostrar la matriz resultante   mostrarMatrizResultante(matrizResultante, demanda, disponibilidad);
+    
+}
+function mostrarNortWestMinimo(fNom, cNom, matriz,demanda,disponibilidad) {
+    console.log('se muestra la matriz');
+    const contenedorMatriz = document.getElementById('matrizNortWestMinima');
+    console.log('se muestra la matriz despues del document');
+    let html = '<h2>Costos Minimos</h2>';
+    html += '<table>';
+    html += '<tr><th style = " background: #473179;"></th>';
+    cNom.forEach((valor, index) => {
+      html += `<th style = " background: #9E7DD4;">${valor}</th>`;
+
+    });
+    html += '<th style = " background: #FBAD41;">Disponibilidad</th>';
+    html += '</tr>';
+   
+    matriz.forEach((fila, index) => {
+      html += `<tr><th style = " background: #9E7DD4;">${fNom[index]}</th>`;
+      let salida = 0;
+      columna = 0;
+      fila.forEach(valor => {
+        html += `<td style = " background: #BCB9D8;">${valor}</td>`;
+      });
+      
+      html += `<th style = " background: #f8b3b2;">${disponibilidad[index]}</th>`;
+    });
+    
+    html += '</tr><th style = " background: #FBAD41;">Demanda</th>';
+    columna = 0;
+    demanda.forEach(element => {
+      html += `<th style = " background: #f8b3b2;">${element}</th>`;
+      if(element > 0){
+        columna += element;
+      }
+    });
+    columna2 = 0;
+    disponibilidad.forEach(element => {
+      if(element > 0){
+        columna2 += element;
+      }
+    });
+    html += `<th style = " background: #fd9a98;">${columna}/${columna2}</th>`;
+    html += '<tr>'
+    html += '</table>';
+    contenedorMatriz.innerHTML = html;
+}
+function crearMatrizNortwestMinima(fNom, cNom, demanda, disponibilidad) {
+    console.log('crear matriz minima');
+    const numFilas = disponibilidad.length;
+    const numColumnas = demanda.length;
+    let nortwest = []; // Matriz nortwest
+    let demandaRestante = [...demanda]; // Copia de la demanda original para realizar las reducciones
+    let disponibilidadRestante = [...disponibilidad]; // Copia de la disponibilidad original para realizar las reducciones
+    let matrizInicial = obtenerMatrizInicial(); // Obtener la matriz de costos inicial
+
+    // Inicializar la matriz nortwest con ceros
+    for (let i = 0; i < numFilas; i++) {
+        nortwest.push(new Array(numColumnas).fill(0));
+    }
+
+    while (true) {
+        // Encontrar la menor demanda o disponibilidad restante
+        let asignacion = Math.min(...demandaRestante.filter(val => val > 0), ...disponibilidadRestante.filter(val => val > 0));
+
+        // Encontrar el costo mínimo en la matriz inicial
+        let costoMinimo = Number.MAX_SAFE_INTEGER;
+        let posicionMinima = { fila: -1, columna: -1 };
+        for (let i = 0; i < numFilas; i++) {
+            for (let j = 0; j < numColumnas; j++) {
+                if (matrizInicial[i][j] < costoMinimo && disponibilidadRestante[i] >= asignacion && demandaRestante[j] >= asignacion) {
+                    costoMinimo = matrizInicial[i][j];
+                    posicionMinima.fila = i;
+                    posicionMinima.columna = j;
+                }
+            }
+        }
+
+        // Si no se encuentra una posición válida, salir del bucle
+        if (posicionMinima.fila === -1 || posicionMinima.columna === -1) {
+            break;
+        }
+
+        // Asignar la asignación en la posición de costo mínimo encontrada
+        nortwest[posicionMinima.fila][posicionMinima.columna] = asignacion;
+        demandaRestante[posicionMinima.columna] -= asignacion;
+        disponibilidadRestante[posicionMinima.fila] -= asignacion;
+    }
+
+    mostrarNortWestMinimo(fNom, cNom, nortwest, demandaRestante, disponibilidadRestante);
+    const resultadoMinimo = multiplicacionYSuma(nortwest, matrizInicial);
+    const contenedorResultadoMinimo = document.getElementById('resultadoMinimo');
+    contenedorResultadoMinimo.textContent = `Resultado: ${resultadoMinimo}`;
+
+    // Obtener la matriz resultante
+    const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, matrizInicial);
+}
+
+function obtenerValorMinimo(i, j) {
+    const tabla = document.querySelector('#matrizInputs table');
+    return parseInt(tabla.rows[i + 1].cells[j + 1].querySelector('input[type="number"]').value);
 }
 function obtenerMatrizInicial() {
     let matriz = [];
@@ -414,8 +516,41 @@ function mostrarMatrizResultante(matriz, demanda, disponibilidad) {
     html += '</table>';
     contenedorMatriz.innerHTML = html;
 }
-
-
-
-
-
+//PRUEBA
+function generarGrafoDesdeMatriz(filas, columnas, matriz) {
+    ids = 0;
+    // Actualizar nodos correspondientes a las filas
+    filas.forEach((filaNombre, filaIndex) => {
+      nodosDataSet.update({ id: filaIndex, label: filaNombre, color: { background: 'lightgreen', border: 'green' } }); // Establecer el color verde
+      ids++;
+    });
+  
+    // Obtener el valor máximo de los IDs de los nodos de las filas
+    const ultimoIdFila = ids - 1;
+  
+    // Actualizar nodos correspondientes a las columnas
+    columnas.forEach((columnaNombre, columnaIndex) => {
+      nodosDataSet.update({ id: ultimoIdFila + columnaIndex + 1, label: columnaNombre }); // Establecer el nombre como etiqueta
+      ids++;
+    });
+  
+    // Limpiar aristas existentes
+    aristasDataSet.clear();
+  
+    // Agregar aristas con valores desde la matriz
+    filas.forEach((filaNombre, filaIndex) => {
+      columnas.forEach((columnaNombre, columnaIndex) => {
+        const valor = matriz[filaIndex][columnaIndex];
+        if (valor !== 0) {
+          const fromId = filaIndex;
+          const toId = ultimoIdFila + columnaIndex + 1;
+          // Agregar arista con ID y valor
+          const edgeId = `edge_${fromId}_${toId}`;
+          aristasDataSet.add({ id: edgeId, from: fromId, to: toId, label: String(valor), arrows: 'to' });
+        }
+      });
+    });
+  
+    // Actualizar la red con los nuevos datos
+    grafo.setData({ nodes: nodosDataSet, edges: aristasDataSet });
+}
