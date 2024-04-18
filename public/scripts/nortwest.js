@@ -134,60 +134,108 @@ function eliminarColumna(button) {
     for (let i = 0; i < filas; i++) {
         tabla.rows[i].deleteCell(columnaIndex);
     }
-    
-
 }
-
-
-function crearMatriz(){
-    let matriz=[];
-    let columnasNombres=[];
-    let filasNombres=[];
-    let demanda=[];
-    let disponibilidad=[];
+//PARA LA MATRIZ
+function crearMatriz() {
+    let matriz = [];
+    let columnasNombres = [];
+    let filasNombres = [];
+    let demanda = [];
+    let disponibilidad = [];
     const tabla = document.querySelector('#matrizInputs table');
-    for(let i = 1; i < tabla.rows[0].cells.length-2; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
+
+    // Obtener nombres de columnas
+    for (let i = 1; i < tabla.rows[0].cells.length - 2; i++) {
         columnasNombres.push(tabla.rows[0].cells[i].textContent);
     }
-    console.log(columnasNombres);
 
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
+    // Obtener nombres de filas
+    for (let i = 1; i < tabla.rows.length - 2; i++) {
         filasNombres.push(tabla.rows[i].cells[0].textContent);
     }
-    console.log(filasNombres);
-    for(let i = 1; i < tabla.rows.length-2;i++){
+
+    // Obtener valores de la matriz
+    for (let i = 1; i < tabla.rows.length - 2; i++) {
         let fila = [];
-        for(let j = 1; j < tabla.rows[i].cells.length-2; j++ ){
-            //console.log(tabla.rows[i].cells[j].querySelector('input[type="number"]').value);
+        for (let j = 1; j < tabla.rows[i].cells.length - 2; j++) {
             fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
         }
         matriz.push(fila);
     }
-    console.log( tabla.rows[tabla.rows.length-2].cells.length);
-    for(let i = 1; i < tabla.rows[tabla.rows.length-2].cells.length; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
-        demanda.push(parseInt(tabla.rows[tabla.rows.length-2].cells[i].querySelector('input[type="number"]').value));
+
+    // Obtener valores de demanda
+    for (let i = 1; i < tabla.rows[tabla.rows.length - 2].cells.length; i++) {
+        demanda.push(parseInt(tabla.rows[tabla.rows.length - 2].cells[i].querySelector('input[type="number"]').value));
     }
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
-        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
+
+    // Obtener valores de disponibilidad
+    for (let i = 1; i < tabla.rows.length - 2; i++) {
+        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length - 2].querySelector('input[type="number"]').value));
     }
-    console.log("matriz",matriz);
-    console.log("demanda",demanda);
-    console.log("disponibilidad",disponibilidad);
-    mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
+
+    // Verificar suma de demanda y disponibilidad
+    let sumaDemanda = demanda.reduce((acc, curr) => acc + curr, 0);
+    let sumaDisponibilidad = disponibilidad.reduce((acc, curr) => acc + curr, 0);
+
+    if (sumaDemanda !== sumaDisponibilidad) {
+        // Mostrar notificación si las sumas son diferentes
+        alert(`La suma de la demanda (${sumaDemanda}) no coincide con la suma de la disponibilidad (${sumaDisponibilidad}). No se puede continuar.`);
+        return; // Salir de la función si las sumas son diferentes
+    }
+    // Si las sumas son iguales, mostrar la matrizs
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
+    crearMatrizNortwestMinima(filasNombres, columnasNombres, demanda, disponibilidad);
     generarGrafoDesdeMatriz(filasNombres, columnasNombres, matriz);
-
 }
-
-
 function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
-
     const contenedorMatriz = document.getElementById('matriz');
-    
     let html = '<h2>Disponibilidad vs Demanda</h2>';
+    html += '<table>';
+    html += '<tr><th style = " background: #473179;"></th>';
+    cNom.forEach((valor, index) => {
+      html += `<th style = " background: #9E7DD4;">${valor}</th>`;
+
+    });
+    html += '<th style = " background: #FBAD41;">Disponibilidad</th>';
+    html += '</tr>';
+   
+    matriz.forEach((fila, index) => {
+      html += `<tr><th style = " background: #9E7DD4;">${fNom[index]}</th>`;
+      let salida = 0;
+      columna = 0;
+      fila.forEach(valor => {
+        html += `<td style = " background: #BCB9D8;">${valor}</td>`;
+      });
+      
+      html += `<th style = " background: #f8b3b2;">${disponibilidad[index]}</th>`;
+    });
+    
+    html += '</tr><th style = " background: #FBAD41;">Demanda</th>';
+    columna = 0;
+    demanda.forEach(element => {
+      html += `<th style = " background: #f8b3b2;">${element}</th>`;
+      if(element > 0){
+        columna += element;
+      }
+    });
+
+    
+    columna2 = 0;
+    disponibilidad.forEach(element => {
+      if(element > 0){
+        columna2 += element;
+      }
+    });
+    html += `<th style = " background: #fd9a98;">${columna}/${columna2}</th>`;
+    html += '<tr>'
+    html += '</table>';
+    contenedorMatriz.innerHTML = html;
+}
+function mostrarNortWest(fNom, cNom, matriz,demanda,disponibilidad) {
+    console.log('se muestra la matriz');
+    const contenedorMatriz = document.getElementById('matrizNortWest');
+    console.log('se muestra la matriz despues del document');
+    let html = '<h2>Costos</h2>';
     html += '<table>';
     html += '<tr><th style = " background: #473179;"></th>';
     cNom.forEach((valor, index) => {
@@ -226,9 +274,250 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '<tr>'
     html += '</table>';
     contenedorMatriz.innerHTML = html;
-  }
-   //PRUEBA
-  function generarGrafoDesdeMatriz(filas, columnas, matriz) {
+}
+function multiplicacionYSuma(matriz1, matriz2) {
+    if (matriz1.length === 0 || matriz2.length === 0 || matriz1.length !== matriz2.length || matriz1[0].length !== matriz2[0].length) {
+        console.error('Las matrices no tienen dimensiones válidas para la operación.');
+        return null;
+    }
+    let suma= 0;
+    for (let i = 0; i < matriz1.length; i++) {
+        for (let j = 0; j < matriz1[i].length; j++) {
+            suma+= matriz1[i][j] * matriz2[i][j];
+        }
+    }
+    return suma;
+}
+function crearMatrizNortwest(fNom, cNom, demanda, disponibilidad) {
+
+    console.log('se esta creando la matriz nortwest');
+    const numFilas = disponibilidad.length;
+    const numColumnas = demanda.length;
+    let nortwest = []; // Matriz nortwest
+    let demandaRestante = [...demanda]; // Copia de la demanda original para realizar las reducciones
+    let disponibilidadRestante = [...disponibilidad]; // Copia de la disponibilidad original para realizar las reducciones
+    // Inicializar la matriz nortwest con ceros
+    for (let i = 0; i < numFilas; i++) {
+        nortwest.push(new Array(numColumnas).fill(0));
+    }
+    let i = 0; 
+    let j = 0; 
+    while (i < numFilas && j < numColumnas) {
+        // Calcular el valor para la celda actual de la matriz nortwest
+        let asignacion = Math.min(demandaRestante[j], disponibilidadRestante[i]);
+        nortwest[i][j] = asignacion;
+        demandaRestante[j] -= asignacion;
+        disponibilidadRestante[i] -= asignacion;
+
+        if (demandaRestante[j] === 0) {
+            j++; // Avanzar a la siguiente columna
+        }
+        if (disponibilidadRestante[i] === 0) {
+            i++; // Avanzar a la siguiente fila
+        }
+    }
+    console.log('creacion hecha');
+    mostrarNortWest(fNom, cNom, nortwest, demandaRestante, disponibilidadRestante);
+    const resultado = multiplicacionYSuma(nortwest, obtenerMatrizInicial());
+    const contenedorResultado = document.getElementById('resultado');
+    contenedorResultado.textContent = `Resultado: ${resultado}`;
+
+    // Obtener la matriz resultante
+    const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, obtenerMatrizInicial());
+
+    // Mostrar la matriz resultante   mostrarMatrizResultante(matrizResultante, demanda, disponibilidad);
+    
+}
+function mostrarNortWestMinimo(fNom, cNom, matriz,demanda,disponibilidad) {
+    console.log('se muestra la matriz');
+    const contenedorMatriz = document.getElementById('matrizNortWestMinima');
+    console.log('se muestra la matriz despues del document');
+    let html = '<h2>Costos Minimos</h2>';
+    html += '<table>';
+    html += '<tr><th style = " background: #473179;"></th>';
+    cNom.forEach((valor, index) => {
+      html += `<th style = " background: #9E7DD4;">${valor}</th>`;
+
+    });
+    html += '<th style = " background: #FBAD41;">Disponibilidad</th>';
+    html += '</tr>';
+   
+    matriz.forEach((fila, index) => {
+      html += `<tr><th style = " background: #9E7DD4;">${fNom[index]}</th>`;
+      let salida = 0;
+      columna = 0;
+      fila.forEach(valor => {
+        html += `<td style = " background: #BCB9D8;">${valor}</td>`;
+      });
+      
+      html += `<th style = " background: #f8b3b2;">${disponibilidad[index]}</th>`;
+    });
+    
+    html += '</tr><th style = " background: #FBAD41;">Demanda</th>';
+    columna = 0;
+    demanda.forEach(element => {
+      html += `<th style = " background: #f8b3b2;">${element}</th>`;
+      if(element > 0){
+        columna += element;
+      }
+    });
+    columna2 = 0;
+    disponibilidad.forEach(element => {
+      if(element > 0){
+        columna2 += element;
+      }
+    });
+    html += `<th style = " background: #fd9a98;">${columna}/${columna2}</th>`;
+    html += '<tr>'
+    html += '</table>';
+    contenedorMatriz.innerHTML = html;
+}
+function crearMatrizNortwestMinima(fNom, cNom, demanda, disponibilidad) {
+    console.log('crear matriz minima');
+    const numFilas = disponibilidad.length;
+    const numColumnas = demanda.length;
+    let nortwest = []; // Matriz nortwest
+    let demandaRestante = [...demanda]; // Copia de la demanda original para realizar las reducciones
+    let disponibilidadRestante = [...disponibilidad]; // Copia de la disponibilidad original para realizar las reducciones
+    let matrizInicial = obtenerMatrizInicial(); // Obtener la matriz de costos inicial
+
+    // Inicializar la matriz nortwest con ceros
+    for (let i = 0; i < numFilas; i++) {
+        nortwest.push(new Array(numColumnas).fill(0));
+    }
+
+    while (true) {
+        // Encontrar la menor demanda o disponibilidad restante
+        let asignacion = Math.min(...demandaRestante.filter(val => val > 0), ...disponibilidadRestante.filter(val => val > 0));
+
+        // Encontrar el costo mínimo en la matriz inicial
+        let costoMinimo = Number.MAX_SAFE_INTEGER;
+        let posicionMinima = { fila: -1, columna: -1 };
+        for (let i = 0; i < numFilas; i++) {
+            for (let j = 0; j < numColumnas; j++) {
+                if (matrizInicial[i][j] < costoMinimo && disponibilidadRestante[i] >= asignacion && demandaRestante[j] >= asignacion) {
+                    costoMinimo = matrizInicial[i][j];
+                    posicionMinima.fila = i;
+                    posicionMinima.columna = j;
+                }
+            }
+        }
+
+        // Si no se encuentra una posición válida, salir del bucle
+        if (posicionMinima.fila === -1 || posicionMinima.columna === -1) {
+            break;
+        }
+
+        // Asignar la asignación en la posición de costo mínimo encontrada
+        nortwest[posicionMinima.fila][posicionMinima.columna] = asignacion;
+        demandaRestante[posicionMinima.columna] -= asignacion;
+        disponibilidadRestante[posicionMinima.fila] -= asignacion;
+    }
+
+    mostrarNortWestMinimo(fNom, cNom, nortwest, demandaRestante, disponibilidadRestante);
+    const resultadoMinimo = multiplicacionYSuma(nortwest, matrizInicial);
+    const contenedorResultadoMinimo = document.getElementById('resultadoMinimo');
+    contenedorResultadoMinimo.textContent = `Resultado: ${resultadoMinimo}`;
+
+    // Obtener la matriz resultante
+    const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, matrizInicial);
+}
+
+function obtenerValorMinimo(i, j) {
+    const tabla = document.querySelector('#matrizInputs table');
+    return parseInt(tabla.rows[i + 1].cells[j + 1].querySelector('input[type="number"]').value);
+}
+function obtenerMatrizInicial() {
+    let matriz = [];
+    const tabla = document.querySelector('#matrizInputs table');
+
+    // Obtener valores de la matriz
+    for (let i = 1; i < tabla.rows.length - 2; i++) {
+        let fila = [];
+        for (let j = 1; j < tabla.rows[i].cells.length - 2; j++) {
+            fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
+        }
+        matriz.push(fila);
+    }
+
+    return matriz;
+}
+
+function crearMatrizResultante(matrizNortwest, matrizInicial) {
+    // Encontrar las posiciones relevantes en la matriz inicial
+    const posicionesRelevantes = [];
+    matrizNortwest.forEach((filaNortwest, i) => {
+        filaNortwest.forEach((asignacion, j) => {
+            if (asignacion !== 0) {
+                posicionesRelevantes.push({ fila: i, columna: j });
+            }
+        });
+    });
+
+    // Crear la matriz resultante con ceros en todas las posiciones
+    const matrizResultante = new Array(matrizNortwest.length).fill().map(() => new Array(matrizInicial[0].length).fill(0));
+
+    // Llenar la matriz resultante con los costos relevantes
+    posicionesRelevantes.forEach(({ fila, columna }) => {
+        matrizResultante[fila][columna] = matrizInicial[fila][columna];
+    });
+
+    // Ajustar la demanda y la disponibilidad
+    const demandaResultante = [...matrizNortwest.map(fila => fila.reduce((acc, asignacion) => acc - asignacion, 0))];
+    const disponibilidadResultante = [...matrizNortwest.reduce((acc, fila) => {
+        fila.forEach((asignacion, j) => {
+            acc[j] -= asignacion;
+        });
+        return acc;
+    }, [...matrizInicial.map(fila => fila.reduce((acc, costo) => acc + costo, 0))])];
+
+    return { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante };
+}
+function mostrarMatrizResultante(matriz, demanda, disponibilidad) {
+    const contenedorMatriz = document.getElementById('matrizResultante');
+    let html = '<h2>Matriz Resultante</h2>';
+    html += '<table>';
+
+    // Encabezado de columnas
+    html += '<tr><th style="background: #473179;"></th>';
+    for (let i = 0; i < matriz[0].length; i++) {
+        html += `<th style="background: #9E7DD4;">${i + 1}</th>`;
+    }
+    html += '<th style="background: #FBAD41;">Disponibilidad</th>';
+    html += '</tr>';
+
+    // Contenido de la matriz
+    for (let i = 0; i < matriz.length; i++) {
+        html += `<tr><th style="background: #9E7DD4;">${i + 1}</th>`;
+        for (let j = 0; j < matriz[i].length; j++) {
+            html += `<td style="background: #BCB9D8;">${matriz[i][j]}</td>`;
+        }
+        html += `<th style="background: #f8b3b2;">${disponibilidad[i]}</th>`;
+        html += '</tr>';
+    }
+
+    // Demandas
+    html += '<tr><th style="background: #FBAD41;">Demanda</th>';
+    for (let i = 0; i < demanda.length; i++) {
+        html += `<th style="background: #f8b3b2;">${demanda[i]}</th>`;
+    }
+    html += '<th style="background: #fd9a98;">---</th>'; // Placeholder para la suma de la fila de disponibilidad
+    html += '</tr>';
+
+    // Suma de disponibilidad
+    const sumaDisponibilidad = disponibilidad.reduce((acc, curr) => acc + curr, 0);
+    html += `<tr><th style="background: #FBAD41;">Suma</th>`;
+    for (let i = 0; i < matriz[0].length; i++) {
+        html += `<th style="background: #f8b3b2;">---</th>`;
+    }
+    html += `<th style="background: #fd9a98;">${sumaDisponibilidad}</th>`;
+    html += '</tr>';
+
+    html += '</table>';
+    contenedorMatriz.innerHTML = html;
+}
+//PRUEBA
+function generarGrafoDesdeMatriz(filas, columnas, matriz) {
     ids = 0;
     // Actualizar nodos correspondientes a las filas
     filas.forEach((filaNombre, filaIndex) => {
@@ -265,3 +554,7 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     // Actualizar la red con los nuevos datos
     grafo.setData({ nodes: nodosDataSet, edges: aristasDataSet });
   }
+
+
+
+

@@ -4,6 +4,8 @@ let nodoSeleccionadoId = null;
 
 let buttonStates = {
     nodeButton: false,
+    nodeOfertaButton:false,
+    nodeDemandaButton:false,
     edgeButton: false,
     edge2Button: false,
     deleteEdgeButton: false,
