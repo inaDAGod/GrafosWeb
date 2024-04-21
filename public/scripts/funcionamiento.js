@@ -43,6 +43,12 @@ function openHelpPage() {
   var helpPageURL = 'help.html';
   window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
 }
+function openHelpPageSort() {
+    desactivarBotones();
+    desactivarBotones2();
+    var helpPageURL = 'helpSort.html';
+    window.open(helpPageURL, 'helpSortPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+  }
 /*
 function dobleClicEnNodo(propiedades) {
     const { nodes } = propiedades;
