@@ -337,7 +337,6 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
     
 
 }
-
 function crearMatriz2(){
     let matriz=[];
     let columnasNombres=[];
@@ -425,51 +424,71 @@ function mostrarNortWestMinimo(fNom, cNom, matriz,demanda,disponibilidad, minimo
 }
 function crearMatrizNortwestMinima(fNom, cNom, demanda, disponibilidad) {
     console.log('crear matriz minima');
-    const numFilas = disponibilidad.length;
-    const numColumnas = demanda.length;
-    let nortwest = []; // Matriz nortwest
-    let demandaRestante = [...demanda]; // Copia de la demanda original para realizar las reducciones
-    let disponibilidadRestante = [...disponibilidad]; // Copia de la disponibilidad original para realizar las reducciones
-    let matrizInicial = obtenerMatrizInicial(); // Obtener la matriz de costos inicial
+const numFilas = disponibilidad.length;
+const numColumnas = demanda.length;
+let nortwest = []; // Matriz nortwest
+let demandaRestante = [...demanda]; // Copia de la demanda original para realizar las reducciones
+let disponibilidadRestante = [...disponibilidad]; // Copia de la disponibilidad original para realizar las reducciones
+let matrizInicial = obtenerMatrizInicial(); // Obtener la matriz de costos inicial
 
-    // Inicializar la matriz nortwest con ceros
-    for (let i = 0; i < numFilas; i++) {
-        nortwest.push(new Array(numColumnas).fill(0));
+// Inicializar la matriz nortwest con ceros
+for (let i = 0; i < numFilas; i++) {
+    nortwest.push(new Array(numColumnas).fill(0));
+}
+
+// Encontrar la posición del costo mínimo en la matriz inicial
+let costoMinimo = Number.MAX_SAFE_INTEGER;
+let posicionMinima = { fila: -1, columna: -1 };
+for (let i = 0; i < numFilas; i++) {
+    for (let j = 0; j < numColumnas; j++) {
+        if (matrizInicial[i][j] < costoMinimo) {
+            costoMinimo = matrizInicial[i][j];
+            posicionMinima.fila = i;
+            posicionMinima.columna = j;
+        }
+    }
+}
+
+let mejorResultado = null;
+
+while (true) {
+    let asignacion = Math.min(demandaRestante[posicionMinima.columna], disponibilidadRestante[posicionMinima.fila]);
+
+    if (asignacion === 0) {
+        break;
     }
 
-    while (true) {
-        // Encontrar la menor demanda o disponibilidad restante
-        let asignacion = Math.min(...demandaRestante.filter(val => val > 0), ...disponibilidadRestante.filter(val => val > 0));
+    nortwest[posicionMinima.fila][posicionMinima.columna] += asignacion;
+    demandaRestante[posicionMinima.columna] -= asignacion;
+    disponibilidadRestante[posicionMinima.fila] -= asignacion;
 
-        // Encontrar el costo mínimo en la matriz inicial
-        let costoMinimo = Number.MAX_SAFE_INTEGER;
-        let posicionMinima = { fila: -1, columna: -1 };
-        for (let i = 0; i < numFilas; i++) {
-            for (let j = 0; j < numColumnas; j++) {
-                if (matrizInicial[i][j] < costoMinimo && disponibilidadRestante[i] >= asignacion && demandaRestante[j] >= asignacion) {
-                    costoMinimo = matrizInicial[i][j];
-                    posicionMinima.fila = i;
-                    posicionMinima.columna = j;
-                }
+    // Buscar la siguiente posición con el costo mínimo en la matriz
+    costoMinimo = Number.MAX_SAFE_INTEGER;
+    for (let i = 0; i < numFilas; i++) {
+        for (let j = 0; j < numColumnas; j++) {
+            if (matrizInicial[i][j] < costoMinimo && demandaRestante[j] > 0 && disponibilidadRestante[i] > 0) {
+                costoMinimo = matrizInicial[i][j];
+                posicionMinima.fila = i;
+                posicionMinima.columna = j;
             }
         }
-
-        // Si no se encuentra una posición válida, salir del bucle
-        if (posicionMinima.fila === -1 || posicionMinima.columna === -1) {
-            break;
-        }
-
-        // Asignar la asignación en la posición de costo mínimo encontrada
-        nortwest[posicionMinima.fila][posicionMinima.columna] = asignacion;
-        demandaRestante[posicionMinima.columna] -= asignacion;
-        disponibilidadRestante[posicionMinima.fila] -= asignacion;
     }
-    const resultado = multiplicacionYSuma(nortwest, obtenerMatrizInicial());
-    mostrarNortWestMinimo(fNom, cNom, nortwest, demandaRestante, disponibilidadRestante,  resultado);
 
+    let sumaDemandaRestante = demandaRestante.reduce((acc, val) => acc + val, 0);
+    let sumaDisponibilidadRestante = disponibilidadRestante.reduce((acc, val) => acc + val, 0);
 
-    // Obtener la matriz resultante
-    const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, matrizInicial);
+    // Salir del bucle si todas las demandas y disponibilidades han sido asignadas
+    if (sumaDemandaRestante === 0 && sumaDisponibilidadRestante === 0) {
+        break;
+    }
+}
+
+const resultado = multiplicacionYSuma(nortwest, obtenerMatrizInicial());
+mostrarNortWestMinimo(fNom, cNom, nortwest, demandaRestante, disponibilidadRestante, resultado);
+
+// Obtener la matriz resultante
+const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, matrizInicial);
+
 }
 
 function obtenerValorMinimo(i, j) {
@@ -479,7 +498,6 @@ function obtenerValorMinimo(i, j) {
 function obtenerMatrizInicial() {
     let matriz = [];
     const tabla = document.querySelector('#matrizInputs table');
-
     // Obtener valores de la matriz
     for (let i = 1; i < tabla.rows.length - 2; i++) {
         let fila = [];
@@ -488,7 +506,6 @@ function obtenerMatrizInicial() {
         }
         matriz.push(fila);
     }
-
     return matriz;
 }
 
@@ -530,7 +547,6 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
       nodosDataSet.update({ id: filaIndex, label: filaNombre, color: { background: 'lightgreen', border: 'green' } }); // Establecer el color verde
       ids++;
     });
-  
     // Obtener el valor máximo de los IDs de los nodos de las filas
     const ultimoIdFila = ids - 1;
   
@@ -539,7 +555,7 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
       nodosDataSet.update({ id: ultimoIdFila + columnaIndex + 1, label: columnaNombre }); // Establecer el nombre como etiqueta
       ids++;
     });
-  
+
     // Limpiar aristas existentes
     aristasDataSet.clear();
   
@@ -556,11 +572,11 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
         }
       });
     });
-  
+
     // Actualizar la red con los nuevos datos
     grafo.setData({ nodes: nodosDataSet, edges: aristasDataSet });
-  }
-  function multiplicacionYSuma(matriz1, matriz2) {
+}
+function multiplicacionYSuma(matriz1, matriz2) {
     if (matriz1.length === 0 || matriz2.length === 0 || matriz1.length !== matriz2.length || matriz1[0].length !== matriz2[0].length) {
         console.error('Las matrices no tienen dimensiones válidas para la operación.');
         return null;
