@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/tipo.css">
+    <link rel="stylesheet" href="styles/tipo2.css">
     <title>Nodolandia</title>
 </head>
 <body>
@@ -23,8 +23,8 @@
             
             <button class="boton" onclick="limpiar()"><img src="assets/clean1.png" alt="Clean Icon" width="55px" height="70px"></button>
             <div class="botones">
-                <button class="boton2" id="minimizar" onclick="crearMatriz();">Minimizar</button>
-                <button class="boton2" id="maximizar" onclick="crearMatrizz();">Maximizar</button>
+                <button class="boton2" id="minimizar" onclick="crearMatriz2();">Minimizar</button>
+                <button class="boton2" id="maximizar" onclick="crearMatriz();">Maximizar</button>
             </div>
             <div class="botones">
                 <a id="descargar" download="grafo.json"><button class="botonOtro" onclick="desactivarBotones(); desactivarBotones2() ">Exportar</button></a>
@@ -52,21 +52,20 @@
     </form>
     <br><br>
     <div id="matrizInputs" align="center"></div>
+    
 
     <div id="contenedor">
         <div id="lienzo"></div>
         <div id="contenedor-matriz">
-            <div id="matrizNortWest"></div>
-            <div id="resultado"></div>
-            <div id="matrizNortWestMinima"></div>
-            <div id="resultadoMinimo"></div>
-            <div id="matrizResultante"></div>
             <div id="matriz"></div>
+            <br><br><br>
             <div id="solucion" class="solucion-container"></div>
         </div>
     </div>
-
     
+    
+    
+
 
     <div id="menu" class="menu">
         <ul>
@@ -77,13 +76,13 @@
         </ul>
     </div>
 
+
     <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
     <script src="scripts/scriptD.js" defer></script>
     <script src="scripts/nortwest.js" defer></script>
     <script src="scripts/funcionamiento.js" defer></script>
     <script src="scripts/matriz.js" defer></script>
     <script src="scripts/herramientas.js" defer></script>
-    <script src="scripts/maximizarNortwest.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
    
 
