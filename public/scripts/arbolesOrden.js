@@ -100,33 +100,25 @@ function generarArbol() {
   });
 
   let nodeIdCounter = { value: 1 };
-  const preordenInput = document.getElementById("preordenInput").value.split(",").map(x => x.trim());
-  const inordenInput = document.getElementById("inordenInput").value.split(",").map(x => x.trim());
-  const postordenInput = document.getElementById("postordenInput").value.split(",").map(x => x.trim());
+  const preordenInput = document.getElementById("preordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
+  const inordenInput = document.getElementById("inordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
+  const postordenInput = document.getElementById("postordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
 
-  let treeBuilt = false;
-  let son3=true;
-
-  if (preordenInput.length > 0 && inordenInput.length > 0 ) {
-    buildTreeFromPreIn([...preordenInput], [...inordenInput], nodeIdCounter);
-    treeBuilt = true;
-    son3=false;
-}
-if (inordenInput.length > 0 && postordenInput.length > 0) {
-  buildTreeFromInPost([...inordenInput], [...postordenInput], nodeIdCounter);
-  treeBuilt = true;
-}
-  if (preordenInput.length > 0 && postordenInput.length > 0 && !treeBuilt) {
-      // La reconstrucción usando preorden y postorden se puede manejar si se proporciona el supuesto de que el árbol es completo
-      buildTreeFromPrePost([...preordenInput], [...postordenInput], nodeIdCounter);
-      treeBuilt = true;
-  }
-  if (preordenInput.length > 0 && inordenInput.length > 0 && postordenInput.length > 0 && !treeBuilt) {
-      // Si se proporcionan todos, utilizamos preorden e inorden por ser la combinación más común para reconstrucción exacta
-      buildTreeFromPreIn([...preordenInput], [...inordenInput], nodeIdCounter);
-      treeBuilt = true;
+  if (preordenInput.length > 0 && inordenInput.length > 0 && postordenInput.length > 0) {
+      buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+  } else if (preordenInput.length > 0 && inordenInput.length > 0) {
+      buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+  } else if (inordenInput.length > 0 && postordenInput.length > 0) {
+      buildTreeFromInPost(inordenInput, postordenInput, nodeIdCounter);
+  } else if (preordenInput.length > 0 && postordenInput.length > 0) {
+      buildTreeFromPrePost(preordenInput, postordenInput, nodeIdCounter);
+  } else {
+      console.log("Datos insuficientes para construir un árbol.");
   }
 }
+
+
+
 
 function obtenerNodoRaiz() {
   const nodos = nodosDataSet.get({ returnType: "Object" });
