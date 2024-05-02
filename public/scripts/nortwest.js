@@ -180,7 +180,7 @@ function crearMatriz(){
 
 function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     const contenedorMatriz = document.getElementById('matriz');
-    
+    generarGrafoDesdeMatriz(fNom, cNom, matriz);
     let html = '<h2>Disponibilidad vs Demanda</h2>';
     html += '<table>';
     html += '<tr><th style = " background: #473179;"></th>';
@@ -343,7 +343,6 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
     html += `</table> <br><h3>Total maximo: ${total} </h3>`;
     contenedorMatriz.innerHTML = html;
     console.log("solucion",solucion);
-    generarGrafoDesdeMatriz(fNom, cNom, matrizSol);
 }
 function crearMatriz2(){
     let matriz = obtenerMatrizInicial();
