@@ -1,6 +1,133 @@
-// arbolesOrden.js
+function findIndex(array, value) {
+  for (let i = 0; i < array.length; i++) {
+      if (array[i] === value) return i;
+  }
+  return -1;
+}
 
-// Función para obtener el nodo raíz del árbol
+function addNodeAndEdgesToGraph(nodeId, label, leftId, rightId) {
+  nodosDataSet.add({id: nodeId, label: label});
+  if (leftId !== null) {
+      aristasDataSet.add({from: nodeId, to: leftId});
+  }
+  if (rightId !== null) {
+      aristasDataSet.add({from: nodeId, to: rightId});
+  }
+}
+
+function buildTreeFromPreIn(preorder, inorder, nodeIdCounter) {
+  if (preorder.length === 0 || inorder.length === 0) return null;
+  let rootValue = preorder.shift();
+  let rootId = nodeIdCounter.value++;
+  let index = findIndex(inorder, rootValue);
+
+  if (index === -1) return null; // Verifica que el valor esté en inorder
+
+  let inLeft = inorder.slice(0, index);
+  let inRight = inorder.slice(index + 1);
+
+  let leftChildId = buildTreeFromPreIn(preorder.slice(0, inLeft.length), inLeft, nodeIdCounter);
+  let rightChildId = buildTreeFromPreIn(preorder.slice(inLeft.length), inRight, nodeIdCounter);
+
+  addNodeAndEdgesToGraph(rootId, rootValue, leftChildId, rightChildId);
+  return rootId;
+}
+
+function buildTreeFromInPost(inorder, postorder, nodeIdCounter) {
+  if (inorder.length === 0 || postorder.length === 0) return null;
+  let rootValue = postorder.pop();
+  let rootId = nodeIdCounter.value++;
+  let index = findIndex(inorder, rootValue);
+
+  if (index === -1) return null; // Verifica que el valor esté en inorder
+
+  let inLeft = inorder.slice(0, index);
+  let inRight = inorder.slice(index + 1);
+
+  let leftChildId = buildTreeFromInPost(inLeft, postorder.slice(0, inLeft.length), nodeIdCounter);
+  let rightChildId = buildTreeFromInPost(inRight, postorder.slice(inLeft.length), nodeIdCounter);
+
+  addNodeAndEdgesToGraph(rootId, rootValue, leftChildId, rightChildId);
+  return rootId;
+}
+function buildTreeFromPrePost(preorder, postorder, nodeIdCounter) {
+  if (preorder.length === 0 || postorder.length === 0) return null;
+  if (preorder.length === 1) {
+      let rootId = nodeIdCounter.value++;
+      addNodeAndEdgesToGraph(rootId, preorder[0], null, null);
+      return rootId;
+  }
+
+  let rootValue = preorder[0];
+  let rootId = nodeIdCounter.value++;
+  let leftRoot = preorder[1]; // El primer elemento después de la raíz en el preorden es la raíz del subárbol izquierdo
+  let leftRootIndexInPost = postorder.indexOf(leftRoot);
+
+  if (leftRootIndexInPost === -1) return null; // Verifica que el valor esté en postorden
+
+  let leftSubtreePre = preorder.slice(1, leftRootIndexInPost + 2);
+  let leftSubtreePost = postorder.slice(0, leftRootIndexInPost + 1);
+  let rightSubtreePre = preorder.slice(leftRootIndexInPost + 2);
+  let rightSubtreePost = postorder.slice(leftRootIndexInPost + 1, postorder.length - 1);
+
+  let leftChildId = buildTreeFromPrePost(leftSubtreePre, leftSubtreePost, nodeIdCounter);
+  let rightChildId = buildTreeFromPrePost(rightSubtreePre, rightSubtreePost, nodeIdCounter);
+
+  addNodeAndEdgesToGraph(rootId, rootValue, leftChildId, rightChildId);
+  return rootId;
+}
+
+
+function generarArbol() {
+  nodosDataSet.clear();
+  aristasDataSet.clear();
+
+  // Configuración específica para el layout del árbol
+  grafo.setOptions({
+      layout: {
+          hierarchical: {
+              enabled: true,
+              levelSeparation: 100,
+              nodeSpacing: 100,
+              treeSpacing: 200,
+              direction: 'UD',
+              sortMethod: 'directed'
+          }
+      },
+      physics: {
+          enabled: false
+      }
+  });
+
+  let nodeIdCounter = { value: 1 };
+  const preordenInput = document.getElementById("preordenInput").value.split(",").map(x => x.trim());
+  const inordenInput = document.getElementById("inordenInput").value.split(",").map(x => x.trim());
+  const postordenInput = document.getElementById("postordenInput").value.split(",").map(x => x.trim());
+
+  let treeBuilt = false;
+  let son3=true;
+
+  if (preordenInput.length > 0 && inordenInput.length > 0 ) {
+    buildTreeFromPreIn([...preordenInput], [...inordenInput], nodeIdCounter);
+    treeBuilt = true;
+    son3=false;
+}
+if (inordenInput.length > 0 && postordenInput.length > 0) {
+  buildTreeFromInPost([...inordenInput], [...postordenInput], nodeIdCounter);
+  treeBuilt = true;
+}
+  if (preordenInput.length > 0 && postordenInput.length > 0 && !treeBuilt) {
+      // La reconstrucción usando preorden y postorden se puede manejar si se proporciona el supuesto de que el árbol es completo
+      buildTreeFromPrePost([...preordenInput], [...postordenInput], nodeIdCounter);
+      treeBuilt = true;
+  }
+  if (preordenInput.length > 0 && inordenInput.length > 0 && postordenInput.length > 0 && !treeBuilt) {
+      // Si se proporcionan todos, utilizamos preorden e inorden por ser la combinación más común para reconstrucción exacta
+      buildTreeFromPreIn([...preordenInput], [...inordenInput], nodeIdCounter);
+      treeBuilt = true;
+  }
+}
+
 function obtenerNodoRaiz() {
   const nodos = nodosDataSet.get({ returnType: "Object" });
   const aristas = aristasDataSet.get({ returnType: "Object" });
@@ -14,7 +141,6 @@ function obtenerNodoRaiz() {
 
   return nodoRaiz;
 }
-
 // Función para crear un objeto de nodo a partir de un objeto de vis.js
 function crearNodoArbol(nodoVis) {
   const nodo = {
