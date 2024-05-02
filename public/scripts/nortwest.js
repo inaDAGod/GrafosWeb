@@ -344,17 +344,19 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
     contenedorMatriz.innerHTML = html;
     console.log("solucion",solucion);
 }
-function crearMatriz2(){
+
+
+function crearMatriz2() {
     let matriz = obtenerMatrizInicial();
     let columnasNombres = obtenerNombresColumnas();
     let filasNombres = obtenerNombresFilas();
     let demanda = obtenerDemanda();
     let disponibilidad = obtenerDisponibilidad();
-    
-    mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
-    crearMatrizNortwestMinima(filasNombres, columnasNombres, demanda, disponibilidad);
-}
 
+    let resultado = minimizarCostosCostoMinimo(matriz, demanda, disponibilidad);
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
+    mostrarNortWestMinimo(filasNombres, columnasNombres, resultado.asignaciones, demanda, disponibilidad, resultado.totalCosto);
+}
 
 function mostrarNortWestMinimo(fNom, cNom, matriz,demanda,disponibilidad, minimoTotal) {
     console.log('se muestra la matriz');
@@ -566,4 +568,35 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
   
     // Actualizar la red con los nuevos datos
     grafo.setData({ nodes: nodosDataSet, edges: aristasDataSet });
+}
+function minimizarCostosCostoMinimo(costos, demanda, disponibilidad) {
+    let totalCosto = 0;
+    let asignaciones = Array.from({ length: costos.length }, () => Array(costos[0].length).fill(0));
+    let demandaRestante = [...demanda];
+    let disponibilidadRestante = [...disponibilidad];
+
+    while (demandaRestante.some(d => d > 0) && disponibilidadRestante.some(s => s > 0)) {
+        let { i, j } = encontrarMenorCosto(costos, demandaRestante, disponibilidadRestante);
+        let cantidad = Math.min(disponibilidadRestante[i], demandaRestante[j]);
+        asignaciones[i][j] += cantidad;
+        totalCosto += cantidad * costos[i][j];
+        disponibilidadRestante[i] -= cantidad;
+        demandaRestante[j] -= cantidad;
+    }
+
+    return { asignaciones, totalCosto };
+}
+
+function encontrarMenorCosto(costos, demandaRestante, disponibilidadRestante) {
+    let minCosto = Infinity;
+    let minPos = { i: -1, j: -1 };
+    for (let i = 0; i < costos.length; i++) {
+        for (let j = 0; j < costos[i].length; j++) {
+            if (costos[i][j] < minCosto && disponibilidadRestante[i] > 0 && demandaRestante[j] > 0) {
+                minCosto = costos[i][j];
+                minPos = { i, j };
+            }
+        }
+    }
+    return minPos;
 }
