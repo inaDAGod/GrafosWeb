@@ -243,10 +243,10 @@ function postorden(nodo) {
 }
 
 // Función para manejar los eventos de los botones
-// Función para manejar los eventos de los botones
 function manejarBotonOrden(orden) {
   const arbol = construirArbol();
   if (!arbol) {
+    console.log("No se pudo construir el árbol");
     return;
   }
 
@@ -261,24 +261,27 @@ function manejarBotonOrden(orden) {
     case 'postorden':
       resultado = postorden(arbol);
       break;
+    default:
+      resultado = [];
+      break;
   }
 
-  // Mostrar el resultado en pantalla
+  // Mostrar el resultado en el contenedor de solución
   const solucionContainer = document.getElementById('solucion');
   solucionContainer.innerHTML = ''; // Limpiar el contenido previo
 
-  // Crear un elemento de título h3 con el nombre del orden
   const titulo = document.createElement('h3');
-  titulo.textContent = `${orden.charAt(0).toUpperCase()}${orden.slice(1)}:`;
+  titulo.textContent = `${orden.charAt(0).toUpperCase() + orden.slice(1)}:`;
+  titulo.style.color = 'navy'; // Agrega un color al título
 
-  // Crear un párrafo para mostrar el resultado
   const resultadoParrafo = document.createElement('p');
   resultadoParrafo.textContent = resultado.join(', ');
+  resultadoParrafo.style.padding = '10px'; // Agrega un padding para mayor legibilidad
+  resultadoParrafo.style.border = '1px solid gray'; // Agrega un borde para formar un recuadro
+  resultadoParrafo.style.backgroundColor = '#f9f9f9'; // Un color de fondo suave
+  resultadoParrafo.style.borderRadius = '5px'; // Bordes redondeados
+  resultadoParrafo.style.margin = '10px 0'; // Margen para separar de otros elementos
 
-  // Agregar los elementos al contenedor de soluciones
   solucionContainer.appendChild(titulo);
   solucionContainer.appendChild(resultadoParrafo);
-
-  // Imprimir el resultado en la consola
-  console.log(`Resultado de ${orden}:`, resultado.join(', '));
 }

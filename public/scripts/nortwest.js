@@ -140,48 +140,42 @@ function eliminarColumna(button) {
 
 
 function crearMatriz(){
-    let matriz=[];
-    let columnasNombres=[];
-    let filasNombres=[];
-    let demanda=[];
-    let disponibilidad=[];
+    let matriz = [];
+    let columnasNombres = [];
+    let filasNombres = [];
+    let demanda = [];
+    let disponibilidad = [];
     const tabla = document.querySelector('#matrizInputs table');
+
     for(let i = 1; i < tabla.rows[0].cells.length-2; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
         columnasNombres.push(tabla.rows[0].cells[i].textContent);
     }
-    console.log(columnasNombres);
 
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
+    for(let i = 1; i < tabla.rows.length-2; i++){
         filasNombres.push(tabla.rows[i].cells[0].textContent);
     }
-    console.log(filasNombres);
-    for(let i = 1; i < tabla.rows.length-2;i++){
+
+    for(let i = 1; i < tabla.rows.length-2; i++){
         let fila = [];
         for(let j = 1; j < tabla.rows[i].cells.length-2; j++ ){
-            //console.log(tabla.rows[i].cells[j].querySelector('input[type="number"]').value);
             fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
         }
         matriz.push(fila);
     }
-    console.log( tabla.rows[tabla.rows.length-2].cells.length);
+
     for(let i = 1; i < tabla.rows[tabla.rows.length-2].cells.length; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
         demanda.push(parseInt(tabla.rows[tabla.rows.length-2].cells[i].querySelector('input[type="number"]').value));
     }
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
-        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
-    }
-    console.log("Maximizar");
-    console.log("matriz",matriz);
-    console.log("demanda",demanda);
-    console.log("disponibilidad",disponibilidad);
-    mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
-    imprimirCostos(filasNombres, columnasNombres,matriz, demanda, disponibilidad,  maximizarCostos2(matriz, demanda, disponibilidad));
 
+    for(let i = 1; i < tabla.rows.length-2; i++){
+        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[i].cells.length-2].querySelector('input[type="number"]').value));
+    }
+
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
+    let maximizedCosts = maximizarCostos2(matriz, demanda, disponibilidad);  // Asume que la función devuelve un resultado directamente
+    imprimirCostos(filasNombres, columnasNombres, matriz, demanda, disponibilidad, maximizedCosts);
 }
+
 
 
 function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
@@ -262,56 +256,30 @@ function obtenerDisponibilidad() {
     }
     return disponibilidad;
 }
-function maximizarCostos2(costos, demanda, disponibilidad) { 
-
+function maximizarCostos2(costos, demanda, disponibilidad) {
     let problem = {
-        optimize: 'max',
+        optimize: 'costo',
         opType: 'max',
         constraints: {},
         variables: {}
     };
 
-    // Agregar las variables al problema
-    for (let i = 0; i < costos.length; i++) {
-        for (let j = 0; j < costos[i].length; j++) {
-            const variableName = `x${i}${j}`;
+    costos.forEach((fila, i) => {
+        fila.forEach((costo, j) => {
+            let variableName = `x${i}${j}`;
             problem.variables[variableName] = {
-                [variableName]: 1
+                costo: costo
             };
-        }
-    }
+            problem.constraints[`demand${j}`] = { max: demanda[j] };
+            problem.constraints[`supply${i}`] = { max: disponibilidad[i] };
+            problem.variables[variableName][`demand${j}`] = 1;
+            problem.variables[variableName][`supply${i}`] = 1;
+        });
+    });
 
-    // Agregar las restricciones de disponibilidad al problema
-    for (let i = 0; i < disponibilidad.length; i++) {
-        const constraintName = `disponibilidad_${i}`;
-        problem.constraints[constraintName] = {
-            equal: disponibilidad[i]
-        };
-        for (let j = 0; j < costos[i].length; j++) {
-            const variableName = `x${i}${j}`;
-            problem.variables[variableName][constraintName] = 1;
-        }
-    }
-
-    // Agregar las restricciones de demanda al problema
-    for (let j = 0; j < demanda.length; j++) {
-        const constraintName = `demanda_${j}`;
-        problem.constraints[constraintName] = {
-            equal: demanda[j]
-        };
-        for (let i = 0; i < costos.length; i++) {
-            const variableName = `x${i}${j}`;
-            problem.variables[variableName][constraintName] = 1;
-        }
-    }
-
-    // Resolver el problema
-    const solution = solver.Solve(problem);
-
-    // Devolver la solución
-    console.log(solution);
-    return solution;
-    
+    let solverResult = solver.Solve(problem);
+    console.log(solverResult);
+    return solverResult;
 }
 
 
