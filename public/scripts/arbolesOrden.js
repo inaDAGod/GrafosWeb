@@ -5,7 +5,82 @@ function findIndex(array, value) {
   return -1;
 }
 
+function buildTreeFromList(list) {
+  nodosDataSet.clear();
+  aristasDataSet.clear();
 
+  // Configuración específica para el layout del árbol
+  grafo.setOptions({
+    layout: {
+      hierarchical: {
+        enabled: true,
+        levelSeparation: 100,
+        nodeSpacing: 100,
+        treeSpacing: 200,
+        direction: 'UD',
+        sortMethod: 'directed'
+      }
+    },
+    physics: {
+      enabled: false
+    }
+  });
+
+  if (list.length === 0) {
+    console.log("La lista está vacía.");
+    return; // Salir de la función sin hacer nada más
+  }
+
+  // Crear un nodo raíz con el primer elemento de la lista
+  const rootValue = list[0];
+  const rootId = ids++;
+  addNodeAndEdgesToGraph(rootId, rootValue.toString(), null, null);
+
+  // Recorrer el resto de la lista y agregar nodos y aristas al árbol
+  for (let i = 1; i < list.length; i++) {
+    const value = list[i];
+    let currentId = rootId;
+    let parentId = null;
+
+    while (currentId !== null) {
+      parentId = currentId;
+      if (value < nodosDataSet.get(currentId).label) {
+        currentId = getLeftChildId(currentId);
+      } else {
+        currentId = getRightChildId(currentId);
+      }
+    }
+
+    const newNodeId = ids++;
+    addNodeAndEdgesToGraph(newNodeId, value.toString(), null, null);
+
+    if (value < nodosDataSet.get(parentId).label) {
+      aristasDataSet.add({ from: parentId, to: newNodeId, id: ids++ });
+    } else {
+      aristasDataSet.add({ from: parentId, to: newNodeId, id: ids++ });
+    }
+  }
+}
+
+// Función auxiliar para obtener el ID del hijo izquierdo de un nodo
+function getLeftChildId(nodeId) {
+  const node = nodosDataSet.get(nodeId);
+  const edges = aristasDataSet.get({ filter: (edge) => edge.from === nodeId && edge.to !== null });
+  if (edges.length > 0) {
+    return edges[0].to;
+  }
+  return null;
+}
+
+// Función auxiliar para obtener el ID del hijo derecho de un nodo
+function getRightChildId(nodeId) {
+  const node = nodosDataSet.get(nodeId);
+  const edges = aristasDataSet.get({ filter: (edge) => edge.from === nodeId && edge.to !== null });
+  if (edges.length > 1) {
+    return edges[1].to;
+  }
+  return null;
+}
 function addNodeAndEdgesToGraph(nodeId, label, leftId, rightId) {
     // Usa la variable global 'ids' para asignar un ID único
     nodosDataSet.add({id: nodeId, label: label});
@@ -93,40 +168,45 @@ function generarArbol() {
   nodosDataSet.clear();
   aristasDataSet.clear();
 
-  // Configuración específica para el layout del árbol
   grafo.setOptions({
-      layout: {
-          hierarchical: {
-              enabled: true,
-              levelSeparation: 100,
-              nodeSpacing: 100,
-              treeSpacing: 200,
-              direction: 'UD',
-              sortMethod: 'directed'
-          }
-      },
-      physics: {
-          enabled: false
+    layout: {
+      hierarchical: {
+        enabled: true,
+        levelSeparation: 100,
+        nodeSpacing: 100,
+        treeSpacing: 200,
+        direction: 'UD',
+        sortMethod: 'directed'
       }
+    },
+    physics: {
+      enabled: false
+    }
   });
 
   let nodeIdCounter = { value: 1 };
+  const listaInput = document.getElementById("listaInput").value.split(",").map(Number).filter(x => !isNaN(x));
+
   const preordenInput = document.getElementById("preordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
   const inordenInput = document.getElementById("inordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
   const postordenInput = document.getElementById("postordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
 
   if (preordenInput.length > 0 && inordenInput.length > 0 && postordenInput.length > 0) {
-      buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+    buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
   } else if (preordenInput.length > 0 && inordenInput.length > 0) {
-      buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+    buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
   } else if (inordenInput.length > 0 && postordenInput.length > 0) {
-      buildTreeFromInPost(inordenInput, postordenInput, nodeIdCounter);
+    buildTreeFromInPost(inordenInput, postordenInput, nodeIdCounter);
   } else if (preordenInput.length > 0 && postordenInput.length > 0) {
-      buildTreeFromPrePost(preordenInput, postordenInput, nodeIdCounter);
+    buildTreeFromPrePost(preordenInput, postordenInput, nodeIdCounter);
+  } else if (listaInput.length === 0) {
+    console.log("La listaInput está vacía, no se genera ningún nodo.");
+    return; // Detener la ejecución si la lista está vacía para evitar la creación de nodos
   } else {
-      console.log("Datos insuficientes para construir un árbol.");
+    buildTreeFromList(listaInput);
   }
 }
+
 
 
 
