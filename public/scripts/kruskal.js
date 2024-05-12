@@ -1,11 +1,16 @@
+// Implementación de Kruskal para el algoritmo de expansión mínima
 function kruskalMaxMin(modo) {
-  // Reestablecer el estilo de todas las aristas antes de ejecutar el algoritmo
-  aristasDataSet.get().forEach(edge => {
-      aristasDataSet.update({id: edge.id, color: {color: '#848484'}, width: 1});  // Color gris por defecto y ancho normal
+  // Restablece el color y el grosor de todas las aristas antes de comenzar
+  aristasDataSet.forEach(function(arista) {
+      aristasDataSet.update({
+          id: arista.id,
+          color: { color: '#848484' }, // Puedes usar el color original de tus aristas
+          width: 1  // Grosor original de tus aristas
+      });
   });
 
   const edges = aristasDataSet.get({
-      filter: function (item) {
+      filter: function(item) {
           return true;
       }
   });
@@ -56,9 +61,12 @@ function kruskalMaxMin(modo) {
       if (root1 !== root2) {
           mst.push(edge);
           union(root1, root2);
-          // Marcar la arista en el grafo con el color y grosor específico
-          let color = modo === 'maximizar' ? 'green' : 'purple'; // Verde para maximizar, morado para minimizar
-          aristasDataSet.update({id: edge.id, color: {color: color}, width: 3});
+          // Marcar la arista en el grafo con color y grosor específicos
+          aristasDataSet.update({
+              id: edge.id,
+              color: { color: modo === 'maximizar' ? 'green' : 'purple' },
+              width: 3  // Grosor destacado para las aristas del MST
+          });
       }
   });
 
@@ -66,6 +74,27 @@ function kruskalMaxMin(modo) {
   return mst; // Retorna las aristas del árbol de expansión mínima
 }
 
-// Vincula las funciones a los botones de la UI
-document.getElementById('minimizar').addEventListener('click', () => kruskalMaxMin('minimizar'));
-document.getElementById('maximizar').addEventListener('click', () => kruskalMaxMin('maximizar'));
+function actualizarResultadosKruskal(mst, modo) {
+  // Calcular la suma total de las longitudes de las aristas del MST
+  const totalLength = mst.reduce((acc, edge) => acc + parseFloat(edge.label), 0);
+  const camino = mst.map(edge => edge.label).join(', ');
+
+  // Determinar el mensaje basado en el modo
+  const mensajeLongitud = modo === 'maximizar' ? 'La longitud máxima recorrida es: ' : 'La longitud mínima recorrida es: ';
+
+  // Actualizar el contenido del elemento con id 'solucion' en el HTML
+  const solucionContainer = document.getElementById('solucion');
+  solucionContainer.innerHTML = `<strong>${mensajeLongitud}</strong>${totalLength.toFixed(2)}<br><strong>Camino:</strong> ${camino}`;
+}
+
+// Modificar los listeners de los botones para incluir la actualización de resultados
+document.getElementById('minimizar').addEventListener('click', function() {
+  const mst = kruskalMaxMin('minimizar');
+  actualizarResultadosKruskal(mst, 'minimizar');
+});
+
+document.getElementById('maximizar').addEventListener('click', function() {
+  const mst = kruskalMaxMin('maximizar');
+  actualizarResultadosKruskal(mst, 'maximizar');
+});
+

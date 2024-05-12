@@ -12,20 +12,7 @@ function inicializarGrafo() {
   grafo.on('doubleClick', dobleClicEnArista);
   grafo.on('oncontext', editarCoordenadasNodo);
 }
-function mostrarCoordenadasNodos() {
-  const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
-  if (nodos.length === 0) {
-      alert("No hay nodos en el lienzo.");
-      return;
-  }
 
-  let coordenadas = "Coordenadas de los nodos:\n";
-  nodos.forEach(nodo => {
-      coordenadas += "Nodo " + nodo.label + ": (" + nodo.x + ", " + nodo.y + ")\n";
-  });
-
-  alert(coordenadas);
-}
 function editarCoordenadasNodo(propiedades) {
   const { nodes } = propiedades;
   if (nodes.length > 0) {
@@ -38,31 +25,67 @@ function editarCoordenadasNodo(propiedades) {
   }
 }
 
-function calcularPuntoMedioTotal() {
-  const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
-  if (nodos.length < 3) {
-      alert("Se necesitan al menos tres nodos para calcular el punto medio total.");
-      return;
+// Función para mostrar modales con mensajes
+function showModal(message) {
+  var modal = document.getElementById("modal");
+  var span = document.getElementsByClassName("close")[0];
+  document.getElementById("message").innerText = message;
+
+  modal.style.display = "block";
+
+  span.onclick = function() {
+      modal.style.display = "none";
   }
 
-  let puntos = nodos.map(nodo => ({ x: nodo.x, y: nodo.y }));
-
-  while (true) {
-      let nuevosPuntos = [];
-      for (let i = 0; i < puntos.length; i++) {
-          for (let j = i + 1; j < puntos.length; j++) {
-              let puntoMedio = calcularPuntoMedio(puntos[i], puntos[j]);
-              nuevosPuntos.push(puntoMedio);
-          }
-      }
-      if (nuevosPuntos.every(punto => punto.x === nuevosPuntos[0].x && punto.y === nuevosPuntos[0].y)) {
-          alert("El punto medio total es: (" + nuevosPuntos[0].x + ", " + nuevosPuntos[0].y + ")");
-          break;
-      } else {
-          puntos = nuevosPuntos;
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
       }
   }
 }
+
+function mostrarCoordenadasNodos() {
+  const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
+  if (nodos.length === 0) {
+      showModal("No hay nodos en el lienzo.");
+      return;
+  }
+
+  let coordenadas = "Coordenadas de los nodos:\n";
+  nodos.forEach(nodo => {
+      coordenadas += `Nodo ${nodo.label}: (${nodo.x.toFixed(2)}, ${nodo.y.toFixed(2)})\n`;
+  });
+
+  showModal(coordenadas);
+}
+
+function calcularPuntoMedioTotal() {
+  const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
+  if (nodos.length < 3) {
+      showModal("Se necesitan al menos tres nodos para calcular el punto medio total.");
+      return;
+  }
+
+  let sumX = 0, sumY = 0;
+  nodos.forEach(nodo => {
+      sumX += nodo.x;
+      sumY += nodo.y;
+  });
+  let centroX = sumX / nodos.length;
+  let centroY = sumY / nodos.length;
+
+  // Actualizar o crear un nodo en el centro
+  let centroId = 'centro'; // ID único para el nodo central
+  let centroNodo = nodosDataSet.get(centroId);
+  if (centroNodo) {
+      nodosDataSet.update({id: centroId, x: centroX, y: centroY});
+  } else {
+      nodosDataSet.add({id: centroId, label: '', x: centroX, y: centroY, color: {background: 'red', border: 'red'}});
+  }
+
+  showModal(`El punto medio total es: (${centroX.toFixed(2)}, ${centroY.toFixed(2)})`);
+}
+
 
 // Función para calcular el punto medio entre dos puntos
 function calcularPuntoMedio(punto1, punto2) {
