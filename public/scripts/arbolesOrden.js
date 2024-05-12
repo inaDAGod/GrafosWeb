@@ -31,36 +31,44 @@ function buildTreeFromList(list) {
     return; // Salir de la función sin hacer nada más
   }
 
+  // Convertir todos los valores a enteros (si no lo son)
+  list = list.map(Number);
+
   // Crear un nodo raíz con el primer elemento de la lista
   const rootValue = list[0];
   const rootId = ids++;
   addNodeAndEdgesToGraph(rootId, rootValue.toString(), null, null);
 
-  // Recorrer el resto de la lista y agregar nodos y aristas al árbol
-  for (let i = 1; i < list.length; i++) {
-    const value = list[i];
-    let currentId = rootId;
-    let parentId = null;
-
-    while (currentId !== null) {
-      parentId = currentId;
-      if (value < nodosDataSet.get(currentId).label) {
-        currentId = getLeftChildId(currentId);
+  // Función para insertar cada valor en el árbol correctamente
+  function insertIntoBST(parentId, value) {
+    let currentNode = nodosDataSet.get(parentId);
+    if (value < currentNode.label) {
+      let leftChildId = getLeftChildId(parentId);
+      if (leftChildId === null) {
+        const newNodeId = ids++;
+        addNodeAndEdgesToGraph(newNodeId, value.toString(), null, null);
+        aristasDataSet.add({ from: parentId, to: newNodeId, id: ids++ });
       } else {
-        currentId = getRightChildId(currentId);
+        insertIntoBST(leftChildId, value);
+      }
+    } else {
+      let rightChildId = getRightChildId(parentId);
+      if (rightChildId === null) {
+        const newNodeId = ids++;
+        addNodeAndEdgesToGraph(newNodeId, value.toString(), null, null);
+        aristasDataSet.add({ from: parentId, to: newNodeId, id: ids++ });
+      } else {
+        insertIntoBST(rightChildId, value);
       }
     }
+  }
 
-    const newNodeId = ids++;
-    addNodeAndEdgesToGraph(newNodeId, value.toString(), null, null);
-
-    if (value < nodosDataSet.get(parentId).label) {
-      aristasDataSet.add({ from: parentId, to: newNodeId, id: ids++ });
-    } else {
-      aristasDataSet.add({ from: parentId, to: newNodeId, id: ids++ });
-    }
+  // Recorrer el resto de la lista y agregar nodos y aristas al árbol
+  for (let i = 1; i < list.length; i++) {
+    insertIntoBST(rootId, list[i]);
   }
 }
+
 
 // Función auxiliar para obtener el ID del hijo izquierdo de un nodo
 function getLeftChildId(nodeId) {
@@ -162,6 +170,23 @@ function addNodeAndEdgesToGraph(nodeId, label, leftId, rightId) {
       aristasDataSet.add({from: nodeId, to: rightId, id: ids++}); // Asigna un ID único a cada arista
   }
 }
+function listasIguales(lista1, lista2) {
+  if (lista1.length !== lista2.length) {
+    return false;
+  }
+  const copiaLista1 = lista1.map(String).sort(); // Convertir todos los elementos a String y luego ordenar
+  const copiaLista2 = lista2.map(String).sort(); // Convertir todos los elementos a String y luego ordenar
+  for (let i = 0; i < copiaLista1.length; i++) {
+    if (copiaLista1[i] !== copiaLista2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function tresListasIguales(lista1, lista2, lista3) {
+  return listasIguales(lista1, lista2) && listasIguales(lista2, lista3);
+}
 
 
 function generarArbol() {
@@ -186,26 +211,40 @@ function generarArbol() {
 
   let nodeIdCounter = { value: 1 };
   const listaInput = document.getElementById("listaInput").value.split(",").map(Number).filter(x => !isNaN(x));
-
   const preordenInput = document.getElementById("preordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
   const inordenInput = document.getElementById("inordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
   const postordenInput = document.getElementById("postordenInput").value.split(",").map(x => x.trim()).filter(x => x !== "");
 
   if (preordenInput.length > 0 && inordenInput.length > 0 && postordenInput.length > 0) {
-    buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+    if (tresListasIguales(preordenInput, inordenInput, postordenInput)) {
+      buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+      return;  // Agrega un return para evitar ejecutar múltiples bloques
+    }
   } else if (preordenInput.length > 0 && inordenInput.length > 0) {
-    buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+    if (listasIguales(preordenInput, inordenInput)) {
+      buildTreeFromPreIn(preordenInput, inordenInput, nodeIdCounter);
+      return;
+    }
   } else if (inordenInput.length > 0 && postordenInput.length > 0) {
-    buildTreeFromInPost(inordenInput, postordenInput, nodeIdCounter);
+    if (listasIguales(inordenInput, postordenInput)) {
+      buildTreeFromInPost(inordenInput, postordenInput, nodeIdCounter);
+      return;
+    }
   } else if (preordenInput.length > 0 && postordenInput.length > 0) {
-    buildTreeFromPrePost(preordenInput, postordenInput, nodeIdCounter);
-  } else if (listaInput.length === 0) {
-    console.log("La listaInput está vacía, no se genera ningún nodo.");
-    return; // Detener la ejecución si la lista está vacía para evitar la creación de nodos
-  } else {
+    if (listasIguales(preordenInput, postordenInput)) {
+      buildTreeFromPrePost(preordenInput, postordenInput, nodeIdCounter);
+      return;
+    }
+  } else if (listaInput.length > 0) {
     buildTreeFromList(listaInput);
+    return;
   }
+
+  alert("Al menos una de las condiciones necesarias para generar un árbol no se cumple.");
 }
+
+
+
 
 
 
