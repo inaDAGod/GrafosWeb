@@ -262,4 +262,3 @@ function limpiar(){
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });
-

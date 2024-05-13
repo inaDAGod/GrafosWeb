@@ -10,8 +10,38 @@ function inicializarGrafo() {
     ids = 0;
     grafo.on('doubleClick', dobleClicEnNodo);
     grafo.on('doubleClick', dobleClicEnArista);
-    grafo.on('oncontext', editarCoordenadasNodo);
+    grafo.on('contextmenu', editarCoordenadasNodo);
+    grafo.on('hoverNode', mostrarCoordenadasNodoHover);
+    grafo.on('blurNode', () => {
+        const divCoordenadas = document.querySelector(".coordenadas-nodo");
+        if (divCoordenadas) {
+            divCoordenadas.remove();
+        }
+    });
 }
+
+function mostrarCoordenadasNodoHover(event) {
+    const nodeId = event.node;
+    const nodo = nodosDataSet.get(nodeId);
+    const coordenadas = "(" + nodo.x + ", " + nodo.y + ")";
+
+    // Crear un nuevo elemento div para mostrar las coordenadas
+    const coordenadasDiv = document.createElement('div');
+    coordenadasDiv.textContent = coordenadas;
+    coordenadasDiv.className = "coordenadas-nodo";
+
+    // Obtener la posición del nodo en el lienzo
+    const { x, y } = grafo.canvasToDOM({ x: nodo.x, y: nodo.y });
+
+    // Establecer la posición del recuadro de coordenadas sobre el nodo
+    coordenadasDiv.style.position = 'absolute';
+    coordenadasDiv.style.left = (x + 20) + 'px'; // Offset de 10 píxeles desde la izquierda
+    coordenadasDiv.style.top = (y - 50) + 'px'; // Offset de 30 píxeles desde arriba
+
+    // Agregar el recuadro de coordenadas al cuerpo del documento
+    document.body.appendChild(coordenadasDiv);
+}
+
 function mostrarCoordenadasNodos() {
     const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
     if (nodos.length === 0) {

@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/tipo.css">
+    <style>
+        .coordenadas-nodo {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+    </style>
     <title>Nodolandia</title>
 </head>
 <body>
@@ -20,8 +30,8 @@
             
             <button class="boton" onclick="limpiar()"><img src="assets/clean1.png" alt="Clean Icon" width="55px" height="70px"></button>
             <button class="boton" id="matrixButton" onclick="generarMatriz()"><img src="assets/matriz.png" alt="deleteEdge Icon" width="55px" height="70px"></button>
-            <button class="boton" onclick="calcularPuntoMedioTotal()">Calcular Punto Medio Total</button>
-            <button class="boton" onclick="mostrarCoordenadasNodos()">Mostrar Coordenadas de los Nodos</button>
+            <button class="boton" onclick="calcularPuntoMedioTotal()"><img src="assets/puntomedio1.png" alt="Clean Icon" width="55px" height="55px"></button>
+            <button class="boton" onclick="mostrarCoordenadasNodos()"><img src="assets/coor.png" alt="Clean Icon" width="55px" height="55px"></button>
 
             <div class="botones">
                 <a id="descargar" download="grafo.json"><button class="botonOtro" onclick="desactivarBotones(); desactivarBotones2() ">Exportar</button></a>
@@ -41,6 +51,7 @@
     
     <div id="contenedor">
         <div id="lienzo"></div>
+        <div id="coordenadas-nodo"></div>
         <div id="contenedor-matriz">
             <div id="matriz"></div>
             <div id="solucion" class="solucion-container"></div>
@@ -56,7 +67,11 @@
         </ul>
     </div>
 
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarGrafo();
+        });
+    </script>
     <script src="scripts/scriptD.js" defer></script>
     <script src="scripts/compet.js" defer></script>
     <script src="scripts/funcionamiento.js" defer></script>
