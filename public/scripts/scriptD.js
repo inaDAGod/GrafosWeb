@@ -12,59 +12,22 @@ let dobleClicEnNodoManejado = false;
 let ids = 0;
 let modoCambiarColorNodo = false;
 
-function configurarOpcionesDeGrafo() {
-  // Opciones con física ajustada y manipulación habilitada
-  return {
-      physics: {
-          enabled: false,  // Cambia a 'true' si deseas habilitar la física y ajusta los parámetros
-          barnesHut: {
-              gravitationalConstant: -2000,
-              centralGravity: 0.3,
-              springLength: 200,
-              springConstant: 0.005,
-              damping: 0.09
-          },
-          stabilization: { iterations: 150 }
-      },
-      manipulation: {
-          enabled: true,  // Habilita la manipulación directa (añadir y conectar nodos)
-          addNode: function (data, callback) {
-              data.label = prompt("Ingrese el nombre del nuevo nodo:", data.label) || "Nuevo Nodo";
-              callback(data);
-          },
-          editNode: function (data, callback) {
-              var nombre = prompt("Editar nombre del nodo:", data.label) || data.label;
-              data.label = nombre;
-              callback(data);
-          },
-          addEdge: function (data, callback) {
-              if (data.from !== data.to) {
-                  callback(data);
-              }
-          }
-      },
-      interaction: {
-          dragNodes: true  // Permite arrastrar nodos libremente
-      }
-  };
-}
+
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
   nodosDataSet = new vis.DataSet();
   aristasDataSet = new vis.DataSet();
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
-
-  // Usar la función para configurar opciones
-  const opciones = configurarOpcionesDeGrafo();
-
+  const opciones = {};
   grafo = new vis.Network(lienzo, data, opciones);
   desactivarBotones();
   desactivarBotones2();
   ids = 0;
-
-  // Eventos de doble clic
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
+
+
+
 }
 
 function desactivarBotones(){
@@ -299,4 +262,3 @@ function limpiar(){
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });
-
