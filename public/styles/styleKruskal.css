@@ -1,0 +1,19 @@
+.solucion-container {
+    background-color: #f9f9f9; /* Fondo claro */
+    border: 2px solid #ccc; /* Borde gris */
+    padding: 15px; /* Espacio interior suficiente */
+    margin-top: 20px; /* Espacio superior desde otros elementos */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    font-size: 16px; /* Tamaño de texto adecuado */
+    line-height: 1.5; /* Espaciado de línea para mejor legibilidad */
+    width: 300px; /* Ancho fijo */
+    position: absolute; /* Posición absoluta */
+    right: 10px; /* Alineado a la derecha con un pequeño margen */
+    top: 150px; /* Posición desde la parte superior */
+    text-align: left; /* Alineación del texto a la izquierda */
+    z-index: 1000; /* Asegura que esté sobre otros elementos si es necesario */
+}
+
+#contenedor {
+    position: relative; /* Establece el contenedor principal como relativo para posicionar absolutamente los hijos */
+}

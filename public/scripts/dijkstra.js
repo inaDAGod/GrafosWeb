@@ -222,12 +222,7 @@ function pintarCamino(camino) {
 function mostrarSolucion(distancias){
     const contenedor = document.getElementById('solucion');
     let destino = nodoDestino();
-    let html = '<h3>Distancias</h3><table>';
-    nodosDataSet.forEach(nodo => {
-        html += `<tr><th style="background: #9E7DD4;  width: 50px;">${nodo.label}</th></tr><tr><td style="background: #BCB9D8; width: 50px; text-align: center;">${distancias[nodo.id]}</td></tr>`;
-    });
-    html += '</table>';
-    html += `<h3>Total : ${distancias[destino]}</h3><table>`;
+    let html = `<h3>Total : ${distancias[destino]}</h3><table>`;
     contenedor.innerHTML = html;
 }
 
@@ -253,4 +248,3 @@ function limpiar2(){
 
 
  
-
