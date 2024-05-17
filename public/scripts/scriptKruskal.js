@@ -12,22 +12,57 @@ let dobleClicEnNodoManejado = false;
 let ids = 0;
 let modoCambiarColorNodo = false;
 
+function configurarOpcionesDeGrafo() {
+  // Opciones con física ajustada y manipulación habilitada
+  return {
+      physics: {
+          enabled: false,
+          barnesHut: {
+              gravitationalConstant: -2000,
+              centralGravity: 0.3,
+              springLength: 200,
+              springConstant: 0.005,
+              damping: 0.09
+          },
+          stabilization: { iterations: 150 }
+      },
+      manipulation: {
+          enabled: true,
+          addNode: function (data, callback) {
+              data.label = prompt("Ingrese el nombre del nuevo nodo:", data.label) || "Nuevo Nodo";
+              callback(data);
+          },
+          editNode: function (data, callback) {
+              var nombre = prompt("Editar nombre del nodo:", data.label) || data.label;
+              data.label = nombre;
+              callback(data);
+          },
+          addEdge: function (data, callback) {
+              if (data.from !== data.to) {
+                  data.arrows = '';
+                  callback(data);
+              }
+          }
+      },
+      interaction: {
+          dragNodes: true
+      }
+  };
+}
 
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
   nodosDataSet = new vis.DataSet();
   aristasDataSet = new vis.DataSet();
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
-  const opciones = {};
+  const opciones = configurarOpcionesDeGrafo();
+
   grafo = new vis.Network(lienzo, data, opciones);
   desactivarBotones();
   desactivarBotones2();
   ids = 0;
   grafo.on('doubleClick', dobleClicEnNodo);
   grafo.on('doubleClick', dobleClicEnArista);
-
-
-
 }
 
 function desactivarBotones(){
@@ -52,13 +87,8 @@ function clicEnNodo(propiedades) {
     if (seleccionado === undefined) {
       seleccionado = nodes[0];
     } else {
-      if (seleccionado !== nodes[0]) {
-        aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
-        seleccionado = undefined;
-      } else {
-        aristasDataSet.add({ from: seleccionado, to: seleccionado, arrows: 'to' });
-        seleccionado = undefined;
-      }
+      aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: '' });
+      seleccionado = undefined;
     }
   }
 }
@@ -69,58 +99,42 @@ function clicEnNodo2(propiedades) {
     if (seleccionado === undefined) {
       seleccionado = nodes[0];
     } else {
-      if (seleccionado !== nodes[0]) {
-        aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: 'to' });
-        aristasDataSet.add({ from: nodes[0], to: seleccionado, arrows: 'to' });
-        seleccionado = undefined;
-      } else {
-        aristasDataSet.add({ from: seleccionado, to: seleccionado, arrows: 'to' });
-        seleccionado = undefined;
-      }
+      aristasDataSet.add({ from: seleccionado, to: nodes[0], arrows: '' });
+      aristasDataSet.add({ from: nodes[0], to: seleccionado, arrows: '' });
+      seleccionado = undefined;
     }
   }
 }
 
-
-
-
-
 function dobleClicEnNodo(propiedades) {
   desactivarBotones();
-    const { nodes } = propiedades;
-    if (nodes.length > 0) {
-        const nodeId = nodes[0];
-        const nuevoNombre = prompt('Ingrese el nuevo nombre para el nodo:', nodosDataSet.get(nodeId).label);
-        if (nuevoNombre !== null) {
-          
-            nodosDataSet.update({ id: nodeId, label: nuevoNombre });
-        }
-        dobleClicEnNodoManejado = true;
-    }
+  const { nodes } = propiedades;
+  if (nodes.length > 0) {
+      const nodeId = nodes[0];
+      const nuevoNombre = prompt('Ingrese el nuevo nombre para el nodo:', nodosDataSet.get(nodeId).label);
+      if (nuevoNombre !== null) {
+          nodosDataSet.update({ id: nodeId, label: nuevoNombre });
+      }
+      dobleClicEnNodoManejado = true;
+  }
 }
-
-
-
 
 function dobleClicEnArista(propiedades) {
   desactivarBotones();
-    if (dobleClicEnNodoManejado) {
-        dobleClicEnNodoManejado = false;
-        return;
-    }
+  if (dobleClicEnNodoManejado) {
+      dobleClicEnNodoManejado = false;
+      return;
+  }
 
-    const { edges } = propiedades;
-    if (edges.length > 0) {
-        const edgeId = edges[0];
-        const nuevoNombre = prompt('Ingrese el nuevo nombre para la arista:', aristasDataSet.get(edgeId).label);
-        if (nuevoNombre !== null) {
-            aristasDataSet.update({ id: edgeId, label: nuevoNombre });
-        }
-    }
+  const { edges } = propiedades;
+  if (edges.length > 0) {
+      const edgeId = edges[0];
+      const nuevoNombre = prompt('Ingrese el nuevo nombre para la arista:', aristasDataSet.get(edgeId).label);
+      if (nuevoNombre !== null) {
+          aristasDataSet.update({ id: edgeId, label: nuevoNombre });
+      }
+  }
 }
-
-
-
 function eliminarAristaSeleccionada() {
   toggleButton('deleteEdgeButton');
     setActiveButton('deleteEdgeButton');
@@ -262,3 +276,5 @@ function limpiar(){
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafo();
 });
+
+

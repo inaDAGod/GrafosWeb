@@ -143,3 +143,33 @@ h1{
     color: #473179;
 }
 
+/* Estilos responsivos para helpSort.html */
+@media (max-width: 768px) {
+    /* Estilos para pantallas pequeñas */
+    .contenido {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  
+    .help td {
+      width: 100%;
+      display: block;
+      padding: 10px;
+    }
+  
+    .help td img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    /* Estilos para pantallas más pequeñas */
+    h1 {
+      font-size: 36px;
+    }
+  
+    .help td p {
+      font-size: 14px;
+    }
+  }
