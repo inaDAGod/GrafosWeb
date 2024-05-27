@@ -24,7 +24,8 @@ function configurarOpcionesDeGrafo() {
               springConstant: 0.005,
               damping: 0.09
           },
-          stabilization: { iterations: 150 }
+          stabilization: { iterations: 150 },
+          
       },
       manipulation: {
           enabled: true,
@@ -46,7 +47,27 @@ function configurarOpcionesDeGrafo() {
       },
       interaction: {
           dragNodes: true
-      }
+      },
+      nodes: {
+        font: {
+            color: 'black',
+            background: 'white'
+        }
+    },
+      edges: {
+        color: {
+            color: 'red'
+        },
+        smooth: {
+            enabled: false
+        },
+        width: 3 ,
+        font: {
+            color: 'white',
+            background: 'red',
+            strokeWidth: 0  // Optional: Set to 0 to remove any border around the label text
+        }
+    }
   };
 }
 
@@ -264,7 +285,6 @@ function eliminarNodo(event) {
 
 function limpiar(){  
 
-    document.getElementById('matriz').innerHTML = '';
     document.getElementById('solucion').innerHTML = '';
     const lienzo = document.getElementById('lienzo');
     const changeImage = document.getElementById('imagenFondo');
