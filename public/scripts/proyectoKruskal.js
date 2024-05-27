@@ -270,6 +270,15 @@ function limpiar(){
     inicializarGrafo();
     
 }
+//Para la API
+function initMap() {
+    var laPaz = {lat: -16.500000, lng: -68.150000}; // Coordenadas de La Paz, Bolivia
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: laPaz
+    });
+}
+
 
 
 
