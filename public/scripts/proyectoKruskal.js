@@ -24,7 +24,8 @@ function configurarOpcionesDeGrafo() {
               springConstant: 0.005,
               damping: 0.09
           },
-          stabilization: { iterations: 150 }
+          stabilization: { iterations: 150 },
+          
       },
       manipulation: {
           enabled: true,
@@ -46,12 +47,33 @@ function configurarOpcionesDeGrafo() {
       },
       interaction: {
           dragNodes: true
-      }
+      },
+      nodes: {
+        font: {
+            color: 'black',
+            background: 'white'
+        }
+    },
+      edges: {
+        color: {
+            color: 'red'
+        },
+        smooth: {
+            enabled: false
+        },
+        width: 3 ,
+        font: {
+            color: 'white',
+            background: 'red',
+            strokeWidth: 0  // Optional: Set to 0 to remove any border around the label text
+        }
+    }
   };
 }
 
 function inicializarGrafo() {
   const lienzo = document.getElementById('lienzo');
+  
   nodosDataSet = new vis.DataSet();
   aristasDataSet = new vis.DataSet();
   const data = { nodes: nodosDataSet, edges: aristasDataSet };
@@ -216,7 +238,7 @@ function agregarNodoSeleccionado(){
 }
 
 function agregarNodo(event){
-    nodosDataSet.add({ id: ids, label: 'Nodo ' + (ids + 1 ), x: event.pointer.canvas.x, y: event.pointer.canvas.y, image: "assets/antena.webp", shape: "image",});
+    nodosDataSet.add({ id: ids, label: 'Nodo ' + (ids + 1 ), x: event.pointer.canvas.x, y: event.pointer.canvas.y, image: "assets/antena.webp", shape: "circularImage",});
     ids++;
 }
 
@@ -263,9 +285,13 @@ function eliminarNodo(event) {
 
 function limpiar(){  
 
-    document.getElementById('matriz').innerHTML = '';
     document.getElementById('solucion').innerHTML = '';
-
+    const lienzo = document.getElementById('lienzo');
+    const changeImage = document.getElementById('imagenFondo');
+    changeImage.value = null;
+    // Establecer la imagen como fondo del div
+    lienzo.style.backgroundImage = 'url(https://previews.123rf.com/images/booblgum/booblgum1712/booblgum171200292/92337614-mapa-de-la-ciudad-de-la-paz-bolivia-en-estilo-retro-ilustraci%C3%B3n-vectorial-mapa-de-contorno.jpg)';
+    lienzo.style.backgroundSize = 'cover'; 
 
     inicializarGrafo();
     

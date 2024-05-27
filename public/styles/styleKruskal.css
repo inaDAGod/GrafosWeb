@@ -7,13 +7,35 @@
     font-size: 16px; /* Tamaño de texto adecuado */
     line-height: 1.5; /* Espaciado de línea para mejor legibilidad */
     width: 300px; /* Ancho fijo */
-    position: absolute; /* Posición absoluta */
-    right: 10px; /* Alineado a la derecha con un pequeño margen */
     top: 150px; /* Posición desde la parte superior */
     text-align: left; /* Alineación del texto a la izquierda */
-    z-index: 1000; /* Asegura que esté sobre otros elementos si es necesario */
+    align-self: center;
+    margin-right: 40%;
+    margin-left: 40%;
 }
 
 #contenedor {
-    position: relative; /* Establece el contenedor principal como relativo para posicionar absolutamente los hijos */
+    position: relative;
+    display: flex; /* Establece el contenedor principal como relativo para posicionar absolutamente los hijos */
+    flex-direction: column;
+    text-align: center;
+}
+
+
+#lienzo {
+    width: 80%; /* Ancho del lienzo */
+    height: 600px;
+    border: 1px solid #ccc;
+    margin-right: 10%;
+    margin-left: 10%;
+    background-image: url('https://previews.123rf.com/images/booblgum/booblgum1712/booblgum171200292/92337614-mapa-de-la-ciudad-de-la-paz-bolivia-en-estilo-retro-ilustraci%C3%B3n-vectorial-mapa-de-contorno.jpg');
+    background-size: contain; /* Change to contain to keep aspect ratio */
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.3s ease; /* Smooth transition for zoom */
+}
+
+#contenedor-matriz{
+    margin: 0 auto;
+    padding-bottom: 3%;
 }
