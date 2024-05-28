@@ -238,7 +238,7 @@ function agregarNodoSeleccionado(){
 }
 
 function agregarNodo(event){
-    nodosDataSet.add({ id: ids, label: 'Nodo ' + (ids + 1 ), x: event.pointer.canvas.x, y: event.pointer.canvas.y, image: "assets/antena.webp", shape: "circularImage",});
+    nodosDataSet.add({ id: ids, label: 'Antena ' + (ids + 1 ), x: event.pointer.canvas.x, y: event.pointer.canvas.y, image: "assets/antena.webp", shape: "circularImage",});
     ids++;
 }
 
