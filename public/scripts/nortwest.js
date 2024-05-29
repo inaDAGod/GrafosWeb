@@ -140,53 +140,47 @@ function eliminarColumna(button) {
 
 
 function crearMatriz(){
-    let matriz=[];
-    let columnasNombres=[];
-    let filasNombres=[];
-    let demanda=[];
-    let disponibilidad=[];
+    let matriz = [];
+    let columnasNombres = [];
+    let filasNombres = [];
+    let demanda = [];
+    let disponibilidad = [];
     const tabla = document.querySelector('#matrizInputs table');
+
     for(let i = 1; i < tabla.rows[0].cells.length-2; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
         columnasNombres.push(tabla.rows[0].cells[i].textContent);
     }
-    console.log(columnasNombres);
 
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
+    for(let i = 1; i < tabla.rows.length-2; i++){
         filasNombres.push(tabla.rows[i].cells[0].textContent);
     }
-    console.log(filasNombres);
-    for(let i = 1; i < tabla.rows.length-2;i++){
+
+    for(let i = 1; i < tabla.rows.length-2; i++){
         let fila = [];
         for(let j = 1; j < tabla.rows[i].cells.length-2; j++ ){
-            //console.log(tabla.rows[i].cells[j].querySelector('input[type="number"]').value);
             fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
         }
         matriz.push(fila);
     }
-    console.log( tabla.rows[tabla.rows.length-2].cells.length);
+
     for(let i = 1; i < tabla.rows[tabla.rows.length-2].cells.length; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
         demanda.push(parseInt(tabla.rows[tabla.rows.length-2].cells[i].querySelector('input[type="number"]').value));
     }
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
-        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
-    }
-    console.log("Maximizar");
-    console.log("matriz",matriz);
-    console.log("demanda",demanda);
-    console.log("disponibilidad",disponibilidad);
-    mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
-    imprimirCostos(filasNombres, columnasNombres,matriz, demanda, disponibilidad,  maximizarCostos2(matriz, demanda, disponibilidad));
 
+    for(let i = 1; i < tabla.rows.length-2; i++){
+        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[i].cells.length-2].querySelector('input[type="number"]').value));
+    }
+
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
+    let maximizedCosts = maximizarCostos2(matriz, demanda, disponibilidad);  // Asume que la función devuelve un resultado directamente
+    imprimirCostos(filasNombres, columnasNombres, matriz, demanda, disponibilidad, maximizedCosts);
 }
+
 
 
 function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     const contenedorMatriz = document.getElementById('matriz');
-    
+    generarGrafoDesdeMatriz(fNom, cNom, matriz);
     let html = '<h2>Disponibilidad vs Demanda</h2>';
     html += '<table>';
     html += '<tr><th style = " background: #473179;"></th>';
@@ -227,56 +221,65 @@ function mostrarMatrizNW(fNom, cNom, matriz,demanda,disponibilidad) {
     html += '</table>';
     contenedorMatriz.innerHTML = html;
 }
-function maximizarCostos2(costos, demanda, disponibilidad) { 
+function obtenerNombresColumnas() {
+    const tabla = document.querySelector('#matrizInputs table');
+    let columnasNombres = [];
+    for (let i = 1; i < tabla.rows[0].cells.length - 2; i++) {
+        columnasNombres.push(tabla.rows[0].cells[i].textContent);
+    }
+    return columnasNombres;
+}
 
+function obtenerNombresFilas() {
+    const tabla = document.querySelector('#matrizInputs table');
+    let filasNombres = [];
+    for (let i = 1; i < tabla.rows.length - 2; i++) {
+        filasNombres.push(tabla.rows[i].cells[0].textContent);
+    }
+    return filasNombres;
+}
+
+function obtenerDemanda() {
+    const tabla = document.querySelector('#matrizInputs table');
+    let demanda = [];
+    for (let i = 1; i < tabla.rows[tabla.rows.length - 2].cells.length; i++) {
+        demanda.push(parseInt(tabla.rows[tabla.rows.length - 2].cells[i].querySelector('input[type="number"]').value));
+    }
+    return demanda;
+}
+
+function obtenerDisponibilidad() {
+    const tabla = document.querySelector('#matrizInputs table');
+    let disponibilidad = [];
+    for (let i = 1; i < tabla.rows.length - 2; i++) {
+        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[i].cells.length - 2].querySelector('input[type="number"]').value));
+    }
+    return disponibilidad;
+}
+function maximizarCostos2(costos, demanda, disponibilidad) {
     let problem = {
-        optimize: 'max',
+        optimize: 'costo',
         opType: 'max',
         constraints: {},
         variables: {}
     };
 
-    // Agregar las variables al problema
-    for (let i = 0; i < costos.length; i++) {
-        for (let j = 0; j < costos[i].length; j++) {
-            const variableName = `x${i}${j}`;
+    costos.forEach((fila, i) => {
+        fila.forEach((costo, j) => {
+            let variableName = `x${i}${j}`;
             problem.variables[variableName] = {
-                [variableName]: 1
+                costo: costo
             };
-        }
-    }
+            problem.constraints[`demand${j}`] = { max: demanda[j] };
+            problem.constraints[`supply${i}`] = { max: disponibilidad[i] };
+            problem.variables[variableName][`demand${j}`] = 1;
+            problem.variables[variableName][`supply${i}`] = 1;
+        });
+    });
 
-    // Agregar las restricciones de disponibilidad al problema
-    for (let i = 0; i < disponibilidad.length; i++) {
-        const constraintName = `disponibilidad_${i}`;
-        problem.constraints[constraintName] = {
-            equal: disponibilidad[i]
-        };
-        for (let j = 0; j < costos[i].length; j++) {
-            const variableName = `x${i}${j}`;
-            problem.variables[variableName][constraintName] = 1;
-        }
-    }
-
-    // Agregar las restricciones de demanda al problema
-    for (let j = 0; j < demanda.length; j++) {
-        const constraintName = `demanda_${j}`;
-        problem.constraints[constraintName] = {
-            equal: demanda[j]
-        };
-        for (let i = 0; i < costos.length; i++) {
-            const variableName = `x${i}${j}`;
-            problem.variables[variableName][constraintName] = 1;
-        }
-    }
-
-    // Resolver el problema
-    const solution = solver.Solve(problem);
-
-    // Devolver la solución
-    console.log(solution);
-    return solution;
-    
+    let solverResult = solver.Solve(problem);
+    console.log(solverResult);
+    return solverResult;
 }
 
 
@@ -340,48 +343,20 @@ function imprimirCostos(fNom, cNom,costos, demanda, disponibilidad, solucion){
     html += `</table> <br><h3>Total maximo: ${total} </h3>`;
     contenedorMatriz.innerHTML = html;
     console.log("solucion",solucion);
-    generarGrafoDesdeMatriz(fNom, cNom, matrizSol);
-}
-function crearMatriz2(){
-    let matriz=[];
-    let columnasNombres=[];
-    let filasNombres=[];
-    let demanda=[];
-    let disponibilidad=[];
-    const tabla = document.querySelector('#matrizInputs table');
-    for(let i = 1; i < tabla.rows[0].cells.length-2; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
-        columnasNombres.push(tabla.rows[0].cells[i].textContent);
-    }
-    console.log(columnasNombres);
-
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
-        filasNombres.push(tabla.rows[i].cells[0].textContent);
-    }
-    console.log(filasNombres);
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        let fila = [];
-        for(let j = 1; j < tabla.rows[i].cells.length-2; j++ ){
-            //console.log(tabla.rows[i].cells[j].querySelector('input[type="number"]').value);
-            fila.push(parseInt(tabla.rows[i].cells[j].querySelector('input[type="number"]').value));
-        }
-        matriz.push(fila);
-    }
-    console.log( tabla.rows[tabla.rows.length-2].cells.length);
-    for(let i = 1; i < tabla.rows[tabla.rows.length-2].cells.length; i++ ){
-        //console.log(tabla.rows[0].cells[i].textContent);
-        demanda.push(parseInt(tabla.rows[tabla.rows.length-2].cells[i].querySelector('input[type="number"]').value));
-    }
-    for(let i = 1; i < tabla.rows.length-2;i++){
-        //console.log(tabla.rows[i].cells[0].textContent);
-        disponibilidad.push(parseInt(tabla.rows[i].cells[tabla.rows[1].cells.length-2].querySelector('input[type="number"]').value));
-    }
-    mostrarMatrizNW(filasNombres, columnasNombres, matriz,demanda,disponibilidad);
-    crearMatrizNortwestMinima(filasNombres, columnasNombres, demanda, disponibilidad);
-
 }
 
+
+function crearMatriz2() {
+    let matriz = obtenerMatrizInicial();
+    let columnasNombres = obtenerNombresColumnas();
+    let filasNombres = obtenerNombresFilas();
+    let demanda = obtenerDemanda();
+    let disponibilidad = obtenerDisponibilidad();
+
+    let resultado = minimizarCostosCostoMinimo(matriz, demanda, disponibilidad);
+    mostrarMatrizNW(filasNombres, columnasNombres, matriz, demanda, disponibilidad);
+    mostrarNortWestMinimo(filasNombres, columnasNombres, resultado.asignaciones, demanda, disponibilidad, resultado.totalCosto);
+}
 
 function mostrarNortWestMinimo(fNom, cNom, matriz,demanda,disponibilidad, minimoTotal) {
     console.log('se muestra la matriz');
@@ -429,74 +404,35 @@ function mostrarNortWestMinimo(fNom, cNom, matriz,demanda,disponibilidad, minimo
     contenedorMatriz.innerHTML = html;
 }
 function crearMatrizNortwestMinima(fNom, cNom, demanda, disponibilidad) {
-    console.log('crear matriz minima');
-const numFilas = disponibilidad.length;
-const numColumnas = demanda.length;
-let nortwest = []; // Matriz nortwest
-let demandaRestante = [...demanda]; // Copia de la demanda original para realizar las reducciones
-let disponibilidadRestante = [...disponibilidad]; // Copia de la disponibilidad original para realizar las reducciones
-let matrizInicial = obtenerMatrizInicial(); // Obtener la matriz de costos inicial
+    const numFilas = disponibilidad.length;
+    const numColumnas = demanda.length;
+    let nortwest = new Array(numFilas).fill().map(() => new Array(numColumnas).fill(0));
+    let demandaRestante = [...demanda];
+    let disponibilidadRestante = [...disponibilidad];
 
-// Inicializar la matriz nortwest con ceros
-for (let i = 0; i < numFilas; i++) {
-    nortwest.push(new Array(numColumnas).fill(0));
+    let i = 0, j = 0;
+    while (i < numFilas && j < numColumnas) {
+        const asignacion = Math.min(demandaRestante[j], disponibilidadRestante[i]);
+        nortwest[i][j] = asignacion;
+        demandaRestante[j] -= asignacion;
+        disponibilidadRestante[i] -= asignacion;
+
+        if (demandaRestante[j] === 0) j++;
+        if (disponibilidadRestante[i] === 0) i++;
+    }
+
+    let minimoTotal = calcularCostoTotal(nortwest, obtenerMatrizInicial());
+    mostrarNortWestMinimo(fNom, cNom, nortwest, demanda, disponibilidad, minimoTotal);
 }
-
-// Encontrar la posición del costo mínimo en la matriz inicial
-let costoMinimo = Number.MAX_SAFE_INTEGER;
-let posicionMinima = { fila: -1, columna: -1 };
-for (let i = 0; i < numFilas; i++) {
-    for (let j = 0; j < numColumnas; j++) {
-        if (matrizInicial[i][j] < costoMinimo) {
-            costoMinimo = matrizInicial[i][j];
-            posicionMinima.fila = i;
-            posicionMinima.columna = j;
+function calcularCostoTotal(nortwest, costos) {
+    let total = 0;
+    for (let i = 0; i < nortwest.length; i++) {
+        for (let j = 0; j < nortwest[i].length; j++) {
+            total += nortwest[i][j] * costos[i][j];
         }
     }
+    return total;
 }
-
-let mejorResultado = null;
-
-while (true) {
-    let asignacion = Math.min(demandaRestante[posicionMinima.columna], disponibilidadRestante[posicionMinima.fila]);
-
-    if (asignacion === 0) {
-        break;
-    }
-
-    nortwest[posicionMinima.fila][posicionMinima.columna] += asignacion;
-    demandaRestante[posicionMinima.columna] -= asignacion;
-    disponibilidadRestante[posicionMinima.fila] -= asignacion;
-
-    // Buscar la siguiente posición con el costo mínimo en la matriz
-    costoMinimo = Number.MAX_SAFE_INTEGER;
-    for (let i = 0; i < numFilas; i++) {
-        for (let j = 0; j < numColumnas; j++) {
-            if (matrizInicial[i][j] < costoMinimo && demandaRestante[j] > 0 && disponibilidadRestante[i] > 0) {
-                costoMinimo = matrizInicial[i][j];
-                posicionMinima.fila = i;
-                posicionMinima.columna = j;
-            }
-        }
-    }
-
-    let sumaDemandaRestante = demandaRestante.reduce((acc, val) => acc + val, 0);
-    let sumaDisponibilidadRestante = disponibilidadRestante.reduce((acc, val) => acc + val, 0);
-
-    // Salir del bucle si todas las demandas y disponibilidades han sido asignadas
-    if (sumaDemandaRestante === 0 && sumaDisponibilidadRestante === 0) {
-        break;
-    }
-}
-
-const resultado = multiplicacionYSuma(nortwest, obtenerMatrizInicial());
-mostrarNortWestMinimo(fNom, cNom, nortwest, demandaRestante, disponibilidadRestante, resultado);
-
-// Obtener la matriz resultante
-const { matriz: matrizResultante, demanda: demandaResultante, disponibilidad: disponibilidadResultante } = crearMatrizResultante(nortwest, matrizInicial);
-
-}
-
 function obtenerValorMinimo(i, j) {
     const tabla = document.querySelector('#matrizInputs table');
     return parseInt(tabla.rows[i + 1].cells[j + 1].querySelector('input[type="number"]').value);
@@ -632,4 +568,35 @@ function generarGrafoDesdeMatriz(filas, columnas, matriz) {
   
     // Actualizar la red con los nuevos datos
     grafo.setData({ nodes: nodosDataSet, edges: aristasDataSet });
+}
+function minimizarCostosCostoMinimo(costos, demanda, disponibilidad) {
+    let totalCosto = 0;
+    let asignaciones = Array.from({ length: costos.length }, () => Array(costos[0].length).fill(0));
+    let demandaRestante = [...demanda];
+    let disponibilidadRestante = [...disponibilidad];
+
+    while (demandaRestante.some(d => d > 0) && disponibilidadRestante.some(s => s > 0)) {
+        let { i, j } = encontrarMenorCosto(costos, demandaRestante, disponibilidadRestante);
+        let cantidad = Math.min(disponibilidadRestante[i], demandaRestante[j]);
+        asignaciones[i][j] += cantidad;
+        totalCosto += cantidad * costos[i][j];
+        disponibilidadRestante[i] -= cantidad;
+        demandaRestante[j] -= cantidad;
+    }
+
+    return { asignaciones, totalCosto };
+}
+
+function encontrarMenorCosto(costos, demandaRestante, disponibilidadRestante) {
+    let minCosto = Infinity;
+    let minPos = { i: -1, j: -1 };
+    for (let i = 0; i < costos.length; i++) {
+        for (let j = 0; j < costos[i].length; j++) {
+            if (costos[i][j] < minCosto && disponibilidadRestante[i] > 0 && demandaRestante[j] > 0) {
+                minCosto = costos[i][j];
+                minPos = { i, j };
+            }
+        }
+    }
+    return minPos;
 }

@@ -1,104 +1,95 @@
 function inicializarGrafo() {
-    const lienzo = document.getElementById('lienzo');
-    nodosDataSet = new vis.DataSet();
-    aristasDataSet = new vis.DataSet();
-    const data = { nodes: nodosDataSet, edges: aristasDataSet };
-    const opciones = {};
-    grafo = new vis.Network(lienzo, data, opciones);
-    desactivarBotones();
-    desactivarBotones2();
-    ids = 0;
-    grafo.on('doubleClick', dobleClicEnNodo);
-    grafo.on('doubleClick', dobleClicEnArista);
-    grafo.on('contextmenu', editarCoordenadasNodo);
-    grafo.on('hoverNode', mostrarCoordenadasNodoHover);
-    grafo.on('blurNode', () => {
-        const divCoordenadas = document.querySelector(".coordenadas-nodo");
-        if (divCoordenadas) {
-            divCoordenadas.remove();
-        }
-    });
+  const lienzo = document.getElementById('lienzo');
+  nodosDataSet = new vis.DataSet();
+  aristasDataSet = new vis.DataSet();
+  const data = { nodes: nodosDataSet, edges: aristasDataSet };
+  const opciones = {};
+  grafo = new vis.Network(lienzo, data, opciones);
+  desactivarBotones();
+  desactivarBotones2();
+  ids = 0;
+  grafo.on('doubleClick', dobleClicEnNodo);
+  grafo.on('doubleClick', dobleClicEnArista);
+  grafo.on('oncontext', editarCoordenadasNodo);
 }
 
-function mostrarCoordenadasNodoHover(event) {
-    const nodeId = event.node;
-    const nodo = nodosDataSet.get(nodeId);
-    const coordenadas = "(" + nodo.x + ", " + nodo.y + ")";
+function editarCoordenadasNodo(propiedades) {
+  const { nodes } = propiedades;
+  if (nodes.length > 0) {
+      const nodeId = nodes[0];
+      const nuevoX = prompt('Ingrese la nueva coordenada X para el nodo:', nodosDataSet.get(nodeId).x);
+      const nuevoY = prompt('Ingrese la nueva coordenada Y para el nodo:', nodosDataSet.get(nodeId).y);
+      if (nuevoX !== null && nuevoY !== null) {
+          nodosDataSet.update({ id: nodeId, x: parseFloat(nuevoX), y: parseFloat(nuevoY) });
+      }
+  }
+}
 
-    // Crear un nuevo elemento div para mostrar las coordenadas
-    const coordenadasDiv = document.createElement('div');
-    coordenadasDiv.textContent = coordenadas;
-    coordenadasDiv.className = "coordenadas-nodo";
+// Función para mostrar modales con mensajes
+function showModal(message) {
+  var modal = document.getElementById("modal");
+  var span = document.getElementsByClassName("close")[0];
+  document.getElementById("message").innerText = message;
 
-    // Obtener la posición del nodo en el lienzo
-    const { x, y } = grafo.canvasToDOM({ x: nodo.x, y: nodo.y });
+  modal.style.display = "block";
 
-    // Establecer la posición del recuadro de coordenadas sobre el nodo
-    coordenadasDiv.style.position = 'absolute';
-    coordenadasDiv.style.left = (x + 20) + 'px'; // Offset de 10 píxeles desde la izquierda
-    coordenadasDiv.style.top = (y - 50) + 'px'; // Offset de 30 píxeles desde arriba
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
 
-    // Agregar el recuadro de coordenadas al cuerpo del documento
-    document.body.appendChild(coordenadasDiv);
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
 }
 
 function mostrarCoordenadasNodos() {
-    const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
-    if (nodos.length === 0) {
-        alert("No hay nodos en el lienzo.");
-        return;
-    }
+  const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
+  if (nodos.length === 0) {
+      showModal("No hay nodos en el lienzo.");
+      return;
+  }
 
-    let coordenadas = "Coordenadas de los nodos:\n";
-    nodos.forEach(nodo => {
-        coordenadas += "Nodo " + nodo.label + ": (" + nodo.x + ", " + nodo.y + ")\n";
-    });
+  let coordenadas = "Coordenadas de los nodos:\n";
+  nodos.forEach(nodo => {
+      coordenadas += `Nodo ${nodo.label}: (${nodo.x.toFixed(2)}, ${nodo.y.toFixed(2)})\n`;
+  });
 
-    alert(coordenadas);
-}
-function editarCoordenadasNodo(propiedades) {
-    const { nodes } = propiedades;
-    if (nodes.length > 0) {
-        const nodeId = nodes[0];
-        const nuevoX = prompt('Ingrese la nueva coordenada X para el nodo:', nodosDataSet.get(nodeId).x);
-        const nuevoY = prompt('Ingrese la nueva coordenada Y para el nodo:', nodosDataSet.get(nodeId).y);
-        if (nuevoX !== null && nuevoY !== null) {
-            nodosDataSet.update({ id: nodeId, x: parseFloat(nuevoX), y: parseFloat(nuevoY) });
-        }
-    }
+  showModal(coordenadas);
 }
 
 function calcularPuntoMedioTotal() {
-    const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
-    if (nodos.length < 3) {
-        alert("Se necesitan al menos tres nodos para calcular el punto medio total.");
-        return;
-    }
+  const nodos = nodosDataSet.get(); // Obtener todos los nodos del DataSet
+  if (nodos.length < 3) {
+      showModal("Se necesitan al menos tres nodos para calcular el punto medio total.");
+      return;
+  }
 
-    let puntos = nodos.map(nodo => ({ x: nodo.x, y: nodo.y }));
+  let sumX = 0, sumY = 0;
+  nodos.forEach(nodo => {
+      sumX += nodo.x;
+      sumY += nodo.y;
+  });
+  let centroX = sumX / nodos.length;
+  let centroY = sumY / nodos.length;
 
-    while (true) {
-        let nuevosPuntos = [];
-        for (let i = 0; i < puntos.length; i++) {
-            for (let j = i + 1; j < puntos.length; j++) {
-                let puntoMedio = calcularPuntoMedio(puntos[i], puntos[j]);
-                nuevosPuntos.push(puntoMedio);
-            }
-        }
-        if (nuevosPuntos.every(punto => punto.x === nuevosPuntos[0].x && punto.y === nuevosPuntos[0].y)) {
-            alert("El punto medio total es: (" + nuevosPuntos[0].x + ", " + nuevosPuntos[0].y + ")");
-            break;
-        } else {
-            puntos = nuevosPuntos;
-        }
-    }
+  // Actualizar o crear un nodo en el centro
+  let centroId = 'centro'; // ID único para el nodo central
+  let centroNodo = nodosDataSet.get(centroId);
+  if (centroNodo) {
+      nodosDataSet.update({id: centroId, x: centroX, y: centroY});
+  } else {
+      nodosDataSet.add({id: centroId, label: '', x: centroX, y: centroY, color: {background: 'red', border: 'red'}});
+  }
+
+  showModal(`El punto medio total es: (${centroX.toFixed(2)}, ${centroY.toFixed(2)})`);
 }
+
 
 // Función para calcular el punto medio entre dos puntos
 function calcularPuntoMedio(punto1, punto2) {
-    let x = (punto1.x + punto2.x) / 2;
-    let y = (punto1.y + punto2.y) / 2;
-    return { x: x, y: y };
+  let x = (punto1.x + punto2.x) / 2;
+  let y = (punto1.y + punto2.y) / 2;
+  return { x: x, y: y };
 }
-
-

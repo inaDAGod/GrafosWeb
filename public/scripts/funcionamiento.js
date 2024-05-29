@@ -43,6 +43,24 @@ function openHelpPage() {
   var helpPageURL = 'help.html';
   window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
 }
+function openHelpPageKruskal() {
+    desactivarBotones();
+    desactivarBotones2();
+    var helpPageURL = 'helpKruskal.html';
+    window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+  }
+function openHelpPageCompet() {
+    desactivarBotones();
+    desactivarBotones2();
+    var helpPageURL = 'helpCompet.html';
+    window.open(helpPageURL, 'helpPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+  }
+function openHelpPageSort() {
+    desactivarBotones();
+    desactivarBotones2();
+    var helpPageURL = 'helpSort.html';
+    window.open(helpPageURL, 'helpSortPage', 'width=800,height=500,top=100,left=100,resizable=yes,scrollbars=yes');
+  }
 /*
 function dobleClicEnNodo(propiedades) {
     const { nodes } = propiedades;
@@ -163,7 +181,7 @@ function guardarGrafo() {
 
   if (nombreArchivo != null) {
       let estadoGrafo = {
-          nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color'] }),
+          nodos: nodosDataSet.get({ fields: ['id', 'label', 'x', 'y', 'color', 'image','shape'] }),
           aristas: aristasDataSet.get({ fields: ['id', 'from', 'to', 'label', 'arrows'] })
       };
       let estadoJSON = JSON.stringify(estadoGrafo);
@@ -202,7 +220,9 @@ function guardarGrafo() {
             label: nodo.label,
             x: nodo.x,
             y: nodo.y,
-            color: nodo.color
+            color: nodo.color,
+            image: nodo.image,
+            shape: nodo.shape,
         });
         if(nodo.id > nodosMayor){
           nodosMayor = nodo.id;
